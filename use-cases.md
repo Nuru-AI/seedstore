@@ -196,7 +196,8 @@ outlet or a single unit left changes the advice.
 
 ## sippar-facebook-social
 
-Facebook and Instagram ads from Meta's Ad Library, as Social Fetch returns them. Ads only, not posts.
+Facebook and Instagram ads from Meta's Ad Library, and a public page's posts, as Social Fetch
+returns them.
 
 **What a competitor is advertising.** `{"query": "Stripe", "by": "company"}`: every ad the company
 runs, with its text, headline, call to action and landing link. Group by `linkUrl` to see which
@@ -208,7 +209,11 @@ pages they send people to, and by `displayFormat` for image against video.
 **Messaging research.** Read `creative.bodyText`, `title` and `callToAction` across 30 ads for the
 claims and offers a category leads with. Cite each ad by its `url` in the Ad Library.
 
-**Go deeper.** Follow the cursor in the closing line for the next 30.
+**What a brand says to its followers.** `{"query": "https://www.facebook.com/StripeHQ", "by":
+"page"}`: its latest posts with reactions, comments and the top comments; next to its ads (a separate
+`"by": "company"` request), what it says in public against what it pays to promote.
+
+**Go deeper.** Follow the cursor in the closing line: the next 30 ads, or the next 3 posts.
 
 ## sippar-github
 

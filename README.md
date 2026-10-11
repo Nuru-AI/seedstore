@@ -22,7 +22,7 @@ Thirteen models, one seller peer:
 | `sippar-reddit-social` | public Reddit posts on any subject matching a search: each post's title, thread link, subreddit, author, date, score and comment count, not the post text or comments; up to 10 posts a call | glim.sh |
 | `sippar-hotel-search` | hotels, hostels and other places to stay for one search: type, star class, guest rating, amenities, address and the current nightly price Google shows, and on request each booking site's price; up to 10 places a call | Google Maps, via OpenWeb Ninja |
 | `sippar-amazon` | Amazon products for a search or a category's bestsellers on amazon.com, .co.uk, .de, .fr, .es and .it, with gross and VAT-excluded price, rating and review count; or one product's buybox offer, other sellers, stock, delivery and top reviews | glim.sh |
-| `sippar-facebook-social` | Facebook and Instagram ads from Meta's Ad Library: a keyword search across all advertisers, or the ads one company runs; each ad's text, headline, link, call to action, media links, platforms, dates and whether it is running; 30 ads a call | Meta Ad Library, via Social Fetch |
+| `sippar-facebook-social` | Facebook and Instagram ads from Meta's Ad Library (a keyword search across all advertisers, or the ads one company runs; 30 ads a call), or one public Facebook page's recent posts with text, counts, media links and top comments (3 posts a call) | Meta Ad Library and Facebook, via Social Fetch |
 
 Two models also answer under their earlier ids, with the same data and rate: `sippar-chain-state`
 and `onchain-token-rankings`. Use the new ids above. `sippar-skills` and `crypto-skills` are two
@@ -46,7 +46,7 @@ models: the aggregator over both indexes, and the CryptoSkill-only one.
 | Reddit posts: how to search, the date window, the next page, reading the page | [skills/sippar-reddit-social/SKILL.md](./skills/sippar-reddit-social/SKILL.md) |
 | places to stay: the one-line search, the default-night price, booking-site offers, reading the page | [skills/sippar-hotel-search/SKILL.md](./skills/sippar-hotel-search/SKILL.md) |
 | Amazon: searches, bestsellers, a product's offer and reviews, the options, reading the page | [skills/sippar-amazon/SKILL.md](./skills/sippar-amazon/SKILL.md) |
-| Facebook and Instagram ads: keyword or company, the filters, the next page, reading the page | [skills/sippar-facebook-social/SKILL.md](./skills/sippar-facebook-social/SKILL.md) |
+| Facebook and Instagram ads (keyword or company) and a page's posts: the filters, the next page, reading the page | [skills/sippar-facebook-social/SKILL.md](./skills/sippar-facebook-social/SKILL.md) |
 | ideas: what each model is for, options per model, and how to combine them | [use-cases.md](./use-cases.md) |
 | copy a working call | [examples/curl.sh](./examples/curl.sh), [examples/python.py](./examples/python.py) |
 | check, offline and free, which request shapes keep your arguments | [tools/check-argument-survival.mjs](./tools/check-argument-survival.mjs) |

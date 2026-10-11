@@ -145,6 +145,17 @@ def amazon(line: str, **options) -> str:
     return r.choices[0].message.content
 
 
+def facebook_page_posts(page_url: str, cursor: str | None = None) -> str:
+    """One public Facebook page's recent posts as Social Fetch returns them (3 a call): text, link, date,
+    counts, media links and top comments. `page_url` is its facebook.com link."""
+    ask = {"query": page_url, "by": "page", **({"cursor": cursor} if cursor else {})}
+    r = client.chat.completions.create(
+        model="sippar-facebook-social",
+        messages=[{"role": "user", "content": json.dumps(ask)}],
+    )
+    return r.choices[0].message.content
+
+
 def facebook_ads(search: str, company: bool = False, **filters) -> str:
     """Facebook and Instagram ads from Meta's Ad Library, as Social Fetch returns them (30 ads a page).
     `company=True` lists one company's ads instead of a keyword search. Filters: country, status,

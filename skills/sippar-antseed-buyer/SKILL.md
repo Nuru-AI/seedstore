@@ -2,7 +2,7 @@
 name: sippar-antseed-buyer
 description: Reach Sippar's models on the AntSeed network and get the answer you asked for. Use this before calling quicknode-blockchain-data, nansen-crypto-screener, tavily-web-search, crypto-skills, sippar-skills, sippar-x-social, sippar-flight-search, sippar-linkedin-social, sippar-github, sippar-reddit-social, sippar-hotel-search or sippar-amazon, sippar-facebook-social from an AntSeed buyer or through an AntSeed API-key gateway. It carries the endpoint (your buyer proxy, or a gateway with your key), the peer pin, the one request shape that keeps your arguments, the two channels that survive a translating client, the fail-closed header, the 8-calls-in-flight limit, and how to read the routing line. Triggers on - buy data from Sippar on AntSeed, pin the Sippar peer, my network parameter was ignored, I was served the wrong chain, 429 buyer_concurrency_limit, metadata.sippar, x-sippar headers, x-antseed-required-parameters, ANTSEED_BASE_URL, antseed: command not found, connection refused on 8377.
 metadata:
-  version: "2.13.0"
+  version: "2.13.1"
   updated: "2026-10-11"
 ---
 
@@ -27,7 +27,7 @@ answer that it did. What each model answers, and what you can do with it, is in 
 | `sippar-reddit-social` | public Reddit posts matching a search, from glim.sh: title, thread link, subreddit, author, date, score and comment count per post, no post text or comments. Send keywords; `time` and `cursor` go inside the message text as JSON | the `sippar-reddit-social` skill |
 | `sippar-hotel-search` | places to stay for one search, from Google Maps via OpenWeb Ninja: type, stars, rating, amenities, address and Google's current nightly price; end the line with `offers` for each booking site's price | the `sippar-hotel-search` skill |
 | `sippar-amazon` | Amazon from glim.sh: products for a search or `bestsellers:<category>` on six marketplaces, or one product's offer, other sellers and top reviews by ASIN or product URL; options in a JSON message | the `sippar-amazon` skill |
-| `sippar-facebook-social` | Facebook and Instagram ads from Meta's Ad Library via Social Fetch, as returned: a keyword search, or `"by": "company"` for one company's ads; filters and `cursor` go inside the message text as JSON. Pages are long (about 18,000 to 80,000 tokens) | the `sippar-facebook-social` skill |
+| `sippar-facebook-social` | Facebook via Social Fetch, as returned: Ad Library ads by keyword, or `"by": "company"` for one company's ads (long pages, about 18,000 to 80,000 tokens), or `"by": "page"` with a facebook.com page link for its recent posts; filters and `cursor` go inside the message text as JSON | the `sippar-facebook-social` skill |
 
 Two models also answer under their earlier ids, with the same data, arguments and rate:
 `sippar-chain-state` (now `quicknode-blockchain-data`) and `onchain-token-rankings` (now
@@ -200,6 +200,7 @@ non-zero if the behaviour has moved.
 
 ## Changes
 
+- 2.13.1 (2026-10-11): `sippar-facebook-social` also serves a public page's posts (`"by": "page"`).
 - 2.13.0 (2026-10-11): the thirteenth model, `sippar-facebook-social`.
 - 2.12.2 (2026-10-11): `tavily-web-search` buys from Tavily directly first, via gedx402 when Tavily refuses.
 - 2.12.1 (2026-10-11): `tavily-web-search` announces `include_images, max_results`;
