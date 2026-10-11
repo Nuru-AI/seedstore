@@ -1,4 +1,4 @@
-"""Working calls to Sippar's five models on AntSeed with the OpenAI Python SDK.
+"""Working calls to Sippar's twelve models on AntSeed with the OpenAI Python SDK.
 
 Each call is a paid purchase from YOUR AntSeed buyer proxy, billed per output token at the
 rate on the peer record. Use the chat-completions path only: the SDK's `responses` path is
@@ -55,7 +55,7 @@ def perp_screener() -> str:
 
 
 def web_search(question: str) -> str:
-    """The last user message is the query; the model takes no arguments."""
+    """The last user message is the query; `max_results` and `include_images` are optional."""
     r = client.chat.completions.create(
         model="tavily-web-search",
         messages=[{"role": "user", "content": question}],

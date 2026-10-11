@@ -115,7 +115,7 @@ page costs 2,500 to 6,000 output tokens on the skills model; the video itself is
 AntSeed seller at the price the recap shows, and Sippar is not in that payment.
 
 Learned on the first real run (2026-10-10, `genmedia-labs/skills/seedance-2-5-image-to-video`
-mapped to `seedance-2-5-image-to-video-basic`, 5 s at 720p for $0.652): an image seller may
+mapped to `seedance-2-5-image-to-video-basic`, 5 s at 720p): an image seller may
 accept a `size` and still return another shape (1024x1792 asked, 1024x768 returned, twice), so
 check each frame's shape and let the user choose between redoing it and keeping its ratio; the
 first paid call of a session can fail with a 409 "payment channel could not be recovered" and

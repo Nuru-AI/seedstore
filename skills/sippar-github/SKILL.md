@@ -2,7 +2,7 @@
 name: sippar-github
 description: Read and search public GitHub through Sippar's sippar-github model on AntSeed, from glim.sh - a repository's README and metadata, a folder's file list, one file, an issue, a pull request with its comments and changed files, a discussion, commits, releases, and code search with snippets and line numbers across public repositories. Use it when an agent on AntSeed needs to understand a library or a codebase, find where something is defined, read a project's docs or changelog, or check what an issue or PR says, without leaving AntSeed. Triggers on - read a GitHub repo, GitHub code search on AntSeed, where is X defined, read this file on GitHub, what does this repo do, issues about, release notes, sippar-github.
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
   updated: "2026-10-10"
 ---
 
@@ -132,7 +132,7 @@ repositories only: glim.sh reads GitHub without signing in.
 
 ## Cost
 
-Per output token at the rate on the peer record (18.70 USD per million output tokens on 2026-10-10).
+Per output token at the rate on the peer record.
 Every served page is billed by its width. That includes the short ones: glim.sh's 404 reason (about
 450 tokens), the too-big description (about 435), a `Not sent` page (about 370), an empty file list
 (323) and an empty search (385).
@@ -145,4 +145,5 @@ ceiling plus the page's own lines (about 24,400 tokens); a bigger answer is desc
 
 ## Changes
 
+- 1.0.1 (2026-10-11): no printed rate; read it from the peer record.
 - 1.0.0 (2026-10-10): first publish.

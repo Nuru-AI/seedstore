@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Working calls to Sippar's seven models on AntSeed. Each one is a paid purchase from YOUR
+# Working calls to Sippar's twelve models on AntSeed. Each one is a paid purchase from YOUR
 # AntSeed buyer proxy (default 127.0.0.1:8377), billed per output token at the rate on the
 # peer record. Run one at a time; read the routing line on a chain-state answer before you
 # use it. Transport rules: the sippar-antseed-buyer skill.

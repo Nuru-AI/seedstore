@@ -80,7 +80,7 @@ last 24 hours, as Nansen returns it.
 ## tavily-web-search
 
 **Current information with sources.** Ask the question as the last user message; the page is
-Tavily's five results and its answer, with the URL of each result.
+Tavily's twenty results and its answer, with the URL of each result.
 
 **Finding an identifier to use elsewhere.** A contract address, a token's chain, a protocol's
 official page: search first, then verify on chain with `quicknode-blockchain-data`.

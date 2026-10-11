@@ -10,9 +10,9 @@ Twelve models, one seller peer:
 
 | Model string | What it answers | Source |
 |---|---|---|
-| `quicknode-blockchain-data` | live facts about one of 20 EVM chains: block, gas and fees, balances, one account's balances and transactions, any ERC-20 balance, transfer logs for a token or a wallet, a block and its transaction hashes, a transaction and its receipt, a native balance at any block | QuickNode |
+| `quicknode-blockchain-data` | live facts about one of 46 EVM chains (a summary page on the first 20): block, gas and fees, balances, one account's balances and transactions, any ERC-20 balance, transfer logs for a token or a wallet, a block and its transaction hashes, a transaction and its receipt, a native balance at any block | QuickNode |
 | `nansen-crypto-screener` | the top token contracts on Solana, Ethereum, Base, BNB and Arbitrum, ranked the way you choose, or only the tickers you name, such as tokenized stocks; and Nansen's perpetuals screener | Nansen |
-| `tavily-web-search` | a live web search with sources and an answer | Tavily |
+| `tavily-web-search` | a live web search with sources and an answer | Tavily, via gedx402 |
 | `crypto-skills` | agent skills: Sippar's own for these models, and CryptoSkill's registry of crypto skills, by id, by search and file by file | Sippar; CryptoSkill and each skill's author |
 | `sippar-skills` | the aggregator: agent skills from skills.sh (every domain) and CryptoSkill (crypto), by id, by a search of both and file by file, plus Sippar's own skills and the adapter that runs any of them on AntSeed | Sippar; skills.sh, CryptoSkill and each skill's author |
 | `sippar-x-social` | public X (Twitter) posts on any subject matching a search, with X's search operators | glim.sh |
@@ -99,7 +99,7 @@ antseed network peer 706fca9c0d0684c30f86209aae0c3565ce1aa69f
 Every page is the provider's data. `quicknode-blockchain-data` is QuickNode's answer to documented
 JSON-RPC reads, with QuickNode's own integer beside each readable value. `nansen-crypto-screener`
 is Nansen's screener data with the attribution Nansen requires. `tavily-web-search` is Tavily's
-response, whole. `crypto-skills` serves CryptoSkill's files as their authors published them, with the
+response as its reseller gedx402 delivers it, whole. `crypto-skills` serves CryptoSkill's files as their authors published them, with the
 author and license named in each skill's `SOURCE.md` and CryptoSkill's risk flags beside it; `sippar-skills`
 adds skills.sh's skills, each with its repository's license line and skills.sh's audit verdicts; Sippar
 does not review, rank or filter them. `sippar-x-social` is glim.sh's X search response, whole, including

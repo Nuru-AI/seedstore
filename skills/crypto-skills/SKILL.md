@@ -1,9 +1,9 @@
 ---
 name: crypto-skills
-description: Get agent skills from Sippar's crypto-skills model on AntSeed. It serves Sippar's own skills for its data models, and CryptoSkill's registry of crypto agent skills by id, by search, and file by file, each served as its author published it with the author named. Use it when an agent on AntSeed needs instructions for a crypto protocol or task, or wants Sippar's skill for one of its data models without leaving AntSeed. Triggers on - get a skill, skill for aave, find a skill for, crypto agent skills, cryptoskill, SKILL.md from AntSeed, crypto-skills, sippar-skills.
+description: Get agent skills from Sippar's crypto-skills model on AntSeed. It serves Sippar's own skills for its data models, and CryptoSkill's registry of crypto agent skills by id, by search, and file by file, each served as its author published it with the author named. Use it when an agent on AntSeed needs instructions for a crypto protocol or task, or wants Sippar's skill for one of its data models without leaving AntSeed. Triggers on - get a skill, skill for aave, find a skill for, crypto agent skills, cryptoskill, SKILL.md from AntSeed, crypto-skills.
 metadata:
-  version: "2.0.0"
-  updated: "2026-10-08"
+  version: "2.1.0"
+  updated: "2026-10-11"
 ---
 
 # crypto-skills
@@ -11,14 +11,17 @@ metadata:
 Agent skills, served as their authors published them. Transport (pin, request shape, the
 8-in-flight limit) is in the `sippar-antseed-buyer` skill; read it first. Model string:
 `crypto-skills`.
-The earlier id `sippar-skills` still answers the same way.
+`sippar-skills` is a separate model, the aggregator that adds skills.sh's directory; this one
+serves CryptoSkill's registry and Sippar's own skills only.
 
 Two sources, both read fresh on every call:
 
-- **Sippar's own skills** for its models, from this repository: `sippar-antseed-buyer`,
-  `quicknode-blockchain-data`, `nansen-crypto-screener`, `tavily-web-search`, `crypto-skills`.
-  The earlier names `sippar-chain-state`, `onchain-token-rankings` and `sippar-skills` fetch the
-  same files.
+- **Sippar's own skills**, from this repository. Listed and searched: `sippar-antseed-buyer`,
+  `quicknode-blockchain-data`, `nansen-crypto-screener`, `tavily-web-search`, `crypto-skills`,
+  `sippar-skills` and `sippar-skill-adapter`. The other models' skills (`sippar-x-social`,
+  `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`,
+  `sippar-hotel-search`, `sippar-amazon`) open when you send the exact name. The earlier names
+  `sippar-chain-state` and `onchain-token-rankings` fetch the same files as the new ones.
 - **CryptoSkill's registry** of crypto agent skills (cryptoskill.org, github.com/jiayaoqijia/cryptoskill),
   thousands of skills across chains, DeFi, exchanges, wallets, trading and more.
 
@@ -107,7 +110,9 @@ a greeting and a no-match page.
 
 ## Changes
 
-- 2.0.0 (2026-10-08): the model is `crypto-skills` (the old id `sippar-skills` still answers). A
+- 2.1.0 (2026-10-11): `sippar-skills` is its own model, the aggregator, not an earlier id of this
+  one. The full list of Sippar's own skills this model serves.
+- 2.0.0 (2026-10-08): the model is `crypto-skills`. A
   single word is a search; search pages by `{"query": ..., "page": ...}`; skill pages carry the
   quality score and the file list; files fetch by path.
 - 1.0.0 (2026-10-08): first publish.

@@ -17,7 +17,7 @@
     },
     {
       "id": "tavily-web-search",
-      "supportedParameters": []
+      "supportedParameters": ["include_images", "max_results"]
     },
     {
       "id": "crypto-skills",
@@ -63,7 +63,6 @@
     },
     {
       "id": "sippar-skills",
-      "sameAs": "crypto-skills",
       "supportedParameters": []
     }
   ],
