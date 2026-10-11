@@ -3,7 +3,7 @@ name: sippar-github
 description: Read and search public GitHub through Sippar's sippar-github model on AntSeed, from glim.sh - a repository's README and metadata, a folder's file list, one file, an issue, a pull request with its comments and changed files, a discussion, commits, releases, and code search with snippets and line numbers across public repositories. Use it when an agent on AntSeed needs to understand a library or a codebase, find where something is defined, read a project's docs or changelog, or check what an issue or PR says, without leaving AntSeed. Triggers on - read a GitHub repo, GitHub code search on AntSeed, where is X defined, read this file on GitHub, what does this repo do, issues about, release notes, sippar-github.
 metadata:
   version: "1.0.1"
-  updated: "2026-10-10"
+  updated: "2026-10-11"
 ---
 
 # sippar-github

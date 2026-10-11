@@ -194,6 +194,22 @@ outlet or a single unit left changes the advice.
 **Same product, two countries.** Search with `"tld": "de"` and `"tld": "co.uk"` and compare
 `price_net`, which takes out each country's VAT.
 
+## sippar-facebook-social
+
+Facebook and Instagram ads from Meta's Ad Library, as Social Fetch returns them. Ads only, not posts.
+
+**What a competitor is advertising.** `{"query": "Stripe", "by": "company"}`: every ad the company
+runs, with its text, headline, call to action and landing link. Group by `linkUrl` to see which
+pages they send people to, and by `displayFormat` for image against video.
+
+**Who advertises on a topic.** A keyword search (`running shoes`) with `"country": "US"` and
+`"status": "active"`: the advertisers running ads on it now, by `page.name`.
+
+**Messaging research.** Read `creative.bodyText`, `title` and `callToAction` across 30 ads for the
+claims and offers a category leads with. Cite each ad by its `url` in the Ad Library.
+
+**Go deeper.** Follow the cursor in the closing line for the next 30.
+
 ## sippar-github
 
 Public GitHub: read a repository, its code and its issues.
@@ -263,6 +279,10 @@ Each is a sequence of calls. The value named in one page goes into the next requ
 17. **What people say, then what it costs.** `sippar-reddit-social` for the threads about a
    product category; then `sippar-amazon` for the products named there, with price, rating and the
    reviews on the product page.
+
+18. **What they say, then what they advertise.** `sippar-x-social` or `sippar-reddit-social` for what
+   people say about a brand; then `sippar-facebook-social` with `"by": "company"` for the ads the
+   brand runs, and compare the claims.
 
 ## What the pages are not
 

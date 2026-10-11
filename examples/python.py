@@ -1,4 +1,4 @@
-"""Working calls to Sippar's twelve models on AntSeed with the OpenAI Python SDK.
+"""Working calls to Sippar's thirteen models on AntSeed with the OpenAI Python SDK.
 
 Each call is a paid purchase from YOUR AntSeed buyer proxy, billed per output token at the
 rate on the peer record. Use the chat-completions path only: the SDK's `responses` path is
@@ -141,6 +141,18 @@ def amazon(line: str, **options) -> str:
     r = client.chat.completions.create(
         model="sippar-amazon",
         messages=[{"role": "user", "content": content}],
+    )
+    return r.choices[0].message.content
+
+
+def facebook_ads(search: str, company: bool = False, **filters) -> str:
+    """Facebook and Instagram ads from Meta's Ad Library, as Social Fetch returns them (30 ads a page).
+    `company=True` lists one company's ads instead of a keyword search. Filters: country, status,
+    sortBy, mediaType, startDate, endDate, cursor. Everything goes INSIDE the message text, as JSON."""
+    ask = {"query": search, **({"by": "company"} if company else {}), **filters}
+    r = client.chat.completions.create(
+        model="sippar-facebook-social",
+        messages=[{"role": "user", "content": json.dumps(ask) if (company or filters) else search}],
     )
     return r.choices[0].message.content
 

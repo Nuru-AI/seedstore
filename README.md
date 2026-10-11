@@ -6,13 +6,13 @@ on Base from its own payment channel, and gets the provider's data as the provid
 with the source named on every page. Sippar is the connector: it buys the data when you ask,
 passes it through unchanged, and does not store, cache or blend it.
 
-Twelve models, one seller peer:
+Thirteen models, one seller peer:
 
 | Model string | What it answers | Source |
 |---|---|---|
 | `quicknode-blockchain-data` | live facts about one of 46 EVM chains (a summary page on the first 20): block, gas and fees, balances, one account's balances and transactions, any ERC-20 balance, transfer logs for a token or a wallet, a block and its transaction hashes, a transaction and its receipt, a native balance at any block | QuickNode |
 | `nansen-crypto-screener` | the top token contracts on Solana, Ethereum, Base, BNB and Arbitrum, ranked the way you choose, or only the tickers you name, such as tokenized stocks; and Nansen's perpetuals screener | Nansen |
-| `tavily-web-search` | a live web search with sources and an answer | Tavily, via gedx402 |
+| `tavily-web-search` | a live web search with sources and an answer | Tavily (directly, or via gedx402) |
 | `crypto-skills` | agent skills: Sippar's own for these models, and CryptoSkill's registry of crypto skills, by id, by search and file by file | Sippar; CryptoSkill and each skill's author |
 | `sippar-skills` | the aggregator: agent skills from skills.sh (every domain) and CryptoSkill (crypto), by id, by a search of both and file by file, plus Sippar's own skills and the adapter that runs any of them on AntSeed | Sippar; skills.sh, CryptoSkill and each skill's author |
 | `sippar-x-social` | public X (Twitter) posts on any subject matching a search, with X's search operators | glim.sh |
@@ -22,6 +22,7 @@ Twelve models, one seller peer:
 | `sippar-reddit-social` | public Reddit posts on any subject matching a search: each post's title, thread link, subreddit, author, date, score and comment count, not the post text or comments; up to 10 posts a call | glim.sh |
 | `sippar-hotel-search` | hotels, hostels and other places to stay for one search: type, star class, guest rating, amenities, address and the current nightly price Google shows, and on request each booking site's price; up to 10 places a call | Google Maps, via OpenWeb Ninja |
 | `sippar-amazon` | Amazon products for a search or a category's bestsellers on amazon.com, .co.uk, .de, .fr, .es and .it, with gross and VAT-excluded price, rating and review count; or one product's buybox offer, other sellers, stock, delivery and top reviews | glim.sh |
+| `sippar-facebook-social` | Facebook and Instagram ads from Meta's Ad Library: a keyword search across all advertisers, or the ads one company runs; each ad's text, headline, link, call to action, media links, platforms, dates and whether it is running; 30 ads a call | Meta Ad Library, via Social Fetch |
 
 Two models also answer under their earlier ids, with the same data and rate: `sippar-chain-state`
 and `onchain-token-rankings`. Use the new ids above. `sippar-skills` and `crypto-skills` are two
@@ -45,11 +46,12 @@ models: the aggregator over both indexes, and the CryptoSkill-only one.
 | Reddit posts: how to search, the date window, the next page, reading the page | [skills/sippar-reddit-social/SKILL.md](./skills/sippar-reddit-social/SKILL.md) |
 | places to stay: the one-line search, the default-night price, booking-site offers, reading the page | [skills/sippar-hotel-search/SKILL.md](./skills/sippar-hotel-search/SKILL.md) |
 | Amazon: searches, bestsellers, a product's offer and reviews, the options, reading the page | [skills/sippar-amazon/SKILL.md](./skills/sippar-amazon/SKILL.md) |
+| Facebook and Instagram ads: keyword or company, the filters, the next page, reading the page | [skills/sippar-facebook-social/SKILL.md](./skills/sippar-facebook-social/SKILL.md) |
 | ideas: what each model is for, options per model, and how to combine them | [use-cases.md](./use-cases.md) |
 | copy a working call | [examples/curl.sh](./examples/curl.sh), [examples/python.py](./examples/python.py) |
 | check, offline and free, which request shapes keep your arguments | [tools/check-argument-survival.mjs](./tools/check-argument-survival.mjs) |
 
-The fourteen files under `skills/` are agent skills (a `SKILL.md` with frontmatter) and they are
+The fifteen files under `skills/` are agent skills (a `SKILL.md` with frontmatter) and they are
 also the documentation. Give your agent the folder, or read them yourself; they say the same
 thing either way.
 
@@ -99,7 +101,7 @@ antseed network peer 706fca9c0d0684c30f86209aae0c3565ce1aa69f
 Every page is the provider's data. `quicknode-blockchain-data` is QuickNode's answer to documented
 JSON-RPC reads, with QuickNode's own integer beside each readable value. `nansen-crypto-screener`
 is Nansen's screener data with the attribution Nansen requires. `tavily-web-search` is Tavily's
-response as its reseller gedx402 delivers it, whole. `crypto-skills` serves CryptoSkill's files as their authors published them, with the
+response, whole, bought from Tavily or through its reseller gedx402 as the page says. `crypto-skills` serves CryptoSkill's files as their authors published them, with the
 author and license named in each skill's `SOURCE.md` and CryptoSkill's risk flags beside it; `sippar-skills`
 adds skills.sh's skills, each with its repository's license line and skills.sh's audit verdicts; Sippar
 does not review, rank or filter them. `sippar-x-social` is glim.sh's X search response, whole, including

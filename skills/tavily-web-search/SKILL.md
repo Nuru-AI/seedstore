@@ -1,15 +1,16 @@
 ---
 name: tavily-web-search
-description: Buy a live web search with sources from Sippar's tavily-web-search model on AntSeed, served as Tavily returns it, bought through the reseller gedx402. Use it when an agent on AntSeed needs current information from the web with the pages it came from. Triggers on - web search on AntSeed, search the web, find sources for, what does the web say about, tavily-web-search.
+description: Buy a live web search with sources from Sippar's tavily-web-search model on AntSeed, served as Tavily returns it: bought from Tavily directly, or through the reseller gedx402 when Tavily refuses. Use it when an agent on AntSeed needs current information from the web with the pages it came from. Triggers on - web search on AntSeed, search the web, find sources for, what does the web say about, tavily-web-search.
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
   updated: "2026-10-11"
 ---
 
 # tavily-web-search
 
-A live web search from Tavily, bought through gedx402 (a Tavily reseller) and served as
-Tavily returns it. Transport (pin, request shape, the 8-in-flight limit) is in the `sippar-antseed-buyer` skill; read it first. Model string:
+A live web search from Tavily, served as Tavily returns it. Each call is bought from Tavily
+directly; when Tavily's own payment door refuses, it is bought through gedx402, a Tavily reseller,
+and the page says which. Transport (pin, request shape, the 8-in-flight limit) is in the `sippar-antseed-buyer` skill; read it first. Model string:
 `tavily-web-search`.
 
 ## How to ask
@@ -45,14 +46,15 @@ refused.
 
 ## Reading the page
 
-Four parts, in this order: a source line naming Tavily and gedx402, the endpoint, when it was
-retrieved, and the request that was sent (`Request sent: {"query": …}`); then Tavily's JSON as
-gedx402 delivers it, unfenced; then a closing line; then a disclaimer.
+Four parts, separated by blank lines, in this order: a source line naming Tavily (and gedx402
+when the call went through it), the endpoint, when it was retrieved, and the request that was sent
+(`Request sent: {"query": …}`); then Tavily's JSON, unfenced; then a closing line; then a
+disclaimer.
 
-Take the JSON after the line that ends "Tavily's response as gedx402 delivers it, unchanged
-(gedx402 adds route, provider and tavily_ms)." A parser that grabs the first `{` on the page gets
-the request echo instead. Tavily's JSON carries `query`, `answer`, and `results` with `url`,
-`title`, `content` and `score` per result; gedx402 adds `route`, `provider` and `tavily_ms`.
+Take the second part, the JSON after the source line. A parser that grabs the first `{` on the
+page gets the request echo instead. Tavily's JSON carries `query`, `answer`, and `results` with `url`,
+`title`, `content` and `score` per result; a page bought through gedx402 also carries gedx402's
+`route`, `provider` and `tavily_ms`.
 Verify at the linked sources; the content is third-party web material as Tavily returned it.
 
 ## Cost
@@ -63,6 +65,8 @@ nothing on an open channel.
 
 ## Changes
 
+- 1.3.0 (2026-10-11): bought from Tavily directly first, through gedx402 when Tavily refuses;
+  the source line names which.
 - 1.2.0 (2026-10-11): bought through gedx402. Twenty results by default, `max_results` 20 to
   25; `include_raw_content` is not served.
 - 1.1.0 (2026-10-10): `max_results`, `include_raw_content` and `include_images` (image links).

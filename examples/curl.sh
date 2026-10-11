@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Working calls to Sippar's twelve models on AntSeed. Each one is a paid purchase from YOUR
+# Working calls to Sippar's thirteen models on AntSeed. Each one is a paid purchase from YOUR
 # AntSeed buyer proxy (default 127.0.0.1:8377), billed per output token at the rate on the
 # peer record. Run one at a time; read the routing line on a chain-state answer before you
 # use it. Transport rules: the sippar-antseed-buyer skill.
@@ -65,10 +65,12 @@ case "${1:-}" in
     call "{\"model\":\"sippar-hotel-search\",\"messages\":[{\"role\":\"user\",\"content\":\"$2\"}]}" ;;
   amazon) # Amazon: a search, bestsellers:<category>, an ASIN or a product URL; options as JSON, e.g. '{"query":"electric kettle","tld":"co.uk"}'
     call "$(jq -cn --arg c "$2" '{model:"sippar-amazon",messages:[{role:"user",content:$c}]}')" ;;
+  facebook) # Facebook/Instagram ads (Meta Ad Library): keywords, or one company's ads as JSON, e.g. '{"query":"Stripe","by":"company","country":"US"}'
+    call "$(jq -cn --arg c "$2" '{model:"sippar-facebook-social",messages:[{role:"user",content:$c}]}')" ;;
   translated) # a client that must post the Anthropic shape: arguments ride metadata.sippar and survive
     curl -s "$PROXY/v1/messages" -H 'content-type: application/json' -H "x-antseed-pin-peer: $PEER" \
       -d '{"model":"quicknode-blockchain-data","max_tokens":1024,
            "metadata":{"sippar":{"network":"base","fields":["blockNumber","gasPrice"]}},
            "messages":[{"role":"user","content":"chain state"}]}' ;;
-  *) echo "usage: $0 chain | account 0x… | logs | wallet 0x… | block | tokens | stocks | perps | search 'question' | skill 'chains/aave' | x 'Formula 1 since:2026-10-01' | flights 'JFK LHR 2026-11-12 2026-11-19 2' | linkedin 'remote work burnout' | github 'x402-foundation/x402' | reddit 'home espresso machine' | hotels 'hostels in Lisbon, Portugal' | amazon 'usb c charger' | translated"; exit 2 ;;
+  *) echo "usage: $0 chain | account 0x… | logs | wallet 0x… | block | tokens | stocks | perps | search 'question' | skill 'chains/aave' | x 'Formula 1 since:2026-10-01' | flights 'JFK LHR 2026-11-12 2026-11-19 2' | linkedin 'remote work burnout' | github 'x402-foundation/x402' | reddit 'home espresso machine' | hotels 'hostels in Lisbon, Portugal' | amazon 'usb c charger' | facebook 'running shoes' | translated"; exit 2 ;;
 esac

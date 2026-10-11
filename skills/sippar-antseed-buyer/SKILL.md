@@ -1,14 +1,14 @@
 ---
 name: sippar-antseed-buyer
-description: Reach Sippar's models on the AntSeed network and get the answer you asked for. Use this before calling quicknode-blockchain-data, nansen-crypto-screener, tavily-web-search, crypto-skills, sippar-skills, sippar-x-social, sippar-flight-search, sippar-linkedin-social, sippar-github, sippar-reddit-social, sippar-hotel-search or sippar-amazon from an AntSeed buyer or through an AntSeed API-key gateway. It carries the endpoint (your buyer proxy, or a gateway with your key), the peer pin, the one request shape that keeps your arguments, the two channels that survive a translating client, the fail-closed header, the 8-calls-in-flight limit, and how to read the routing line. Triggers on - buy data from Sippar on AntSeed, pin the Sippar peer, my network parameter was ignored, I was served the wrong chain, 429 buyer_concurrency_limit, metadata.sippar, x-sippar headers, x-antseed-required-parameters, ANTSEED_BASE_URL, antseed: command not found, connection refused on 8377.
+description: Reach Sippar's models on the AntSeed network and get the answer you asked for. Use this before calling quicknode-blockchain-data, nansen-crypto-screener, tavily-web-search, crypto-skills, sippar-skills, sippar-x-social, sippar-flight-search, sippar-linkedin-social, sippar-github, sippar-reddit-social, sippar-hotel-search or sippar-amazon, sippar-facebook-social from an AntSeed buyer or through an AntSeed API-key gateway. It carries the endpoint (your buyer proxy, or a gateway with your key), the peer pin, the one request shape that keeps your arguments, the two channels that survive a translating client, the fail-closed header, the 8-calls-in-flight limit, and how to read the routing line. Triggers on - buy data from Sippar on AntSeed, pin the Sippar peer, my network parameter was ignored, I was served the wrong chain, 429 buyer_concurrency_limit, metadata.sippar, x-sippar headers, x-antseed-required-parameters, ANTSEED_BASE_URL, antseed: command not found, connection refused on 8377.
 metadata:
-  version: "2.12.1"
+  version: "2.13.0"
   updated: "2026-10-11"
 ---
 
 # Reaching Sippar's models on AntSeed
 
-Sippar sells twelve models on AntSeed. Each one is a provider's data or files served as the
+Sippar sells thirteen models on AntSeed. Each one is a provider's data or files served as the
 provider returns them, with the source named on every page. This skill is about the transport:
 how a request reaches the right seller with its arguments intact, and how to tell from the
 answer that it did. What each model answers, and what you can do with it, is in its own skill:
@@ -17,7 +17,7 @@ answer that it did. What each model answers, and what you can do with it, is in 
 |---|---|---|
 | `quicknode-blockchain-data` | live facts about one of 46 EVM chains, bought from QuickNode when you ask | the `quicknode-blockchain-data` skill |
 | `nansen-crypto-screener` | the top token contracts on Solana, Ethereum, Base, BNB and Arbitrum, from Nansen, plus Nansen's perpetuals screener | the `nansen-crypto-screener` skill |
-| `tavily-web-search` | a live web search with sources, from Tavily via gedx402 | the `tavily-web-search` skill |
+| `tavily-web-search` | a live web search with sources, from Tavily (directly, or via gedx402) | the `tavily-web-search` skill |
 | `crypto-skills` | agent skills: our own, and CryptoSkill's registry of crypto skills, as their authors published them. Send a skill name, an id or two or three keywords as the message, never a sentence | the `crypto-skills` skill |
 | `sippar-skills` | the aggregator: our own, skills.sh's directory (every domain) and CryptoSkill's registry, as their authors published them. Send a skill name, an id (`owner/repo/skill` or `category/name`) or two or three keywords, never a sentence | the `sippar-skills` skill; `sippar-skill-adapter` to run one on AntSeed |
 | `sippar-x-social` | public X (Twitter) posts on any subject matching a search, from glim.sh. Send keywords, names or X operators, never a sentence | the `sippar-x-social` skill |
@@ -27,6 +27,7 @@ answer that it did. What each model answers, and what you can do with it, is in 
 | `sippar-reddit-social` | public Reddit posts matching a search, from glim.sh: title, thread link, subreddit, author, date, score and comment count per post, no post text or comments. Send keywords; `time` and `cursor` go inside the message text as JSON | the `sippar-reddit-social` skill |
 | `sippar-hotel-search` | places to stay for one search, from Google Maps via OpenWeb Ninja: type, stars, rating, amenities, address and Google's current nightly price; end the line with `offers` for each booking site's price | the `sippar-hotel-search` skill |
 | `sippar-amazon` | Amazon from glim.sh: products for a search or `bestsellers:<category>` on six marketplaces, or one product's offer, other sellers and top reviews by ASIN or product URL; options in a JSON message | the `sippar-amazon` skill |
+| `sippar-facebook-social` | Facebook and Instagram ads from Meta's Ad Library via Social Fetch, as returned: a keyword search, or `"by": "company"` for one company's ads; filters and `cursor` go inside the message text as JSON. Pages are long (about 18,000 to 80,000 tokens) | the `sippar-facebook-social` skill |
 
 Two models also answer under their earlier ids, with the same data, arguments and rate:
 `sippar-chain-state` (now `quicknode-blockchain-data`) and `onchain-token-rankings` (now
@@ -154,7 +155,7 @@ Two rules. It checks what the seller announces, not what your body contains, so 
 key still gets served and billed. And require only what the model announces:
 `quicknode-blockchain-data` announces `address, blocks, fields, network, rpc, tokens`;
 `nansen-crypto-screener` announces `chains, rows, sort, symbols, timeframe, view`; `tavily-web-search`
-announces `include_images, max_results`; `crypto-skills`, `sippar-skills`, `sippar-x-social`, `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search` and `sippar-amazon` announce nothing, so requiring any name on them refuses every call. Read the current lists:
+announces `include_images, max_results`; `crypto-skills`, `sippar-skills`, `sippar-x-social`, `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search`, `sippar-amazon` and `sippar-facebook-social` announce nothing, so requiring any name on them refuses every call. Read the current lists:
 
 ```bash
 antseed network peer 706fca9c0d0684c30f86209aae0c3565ce1aa69f --json \
@@ -163,7 +164,7 @@ antseed network peer 706fca9c0d0684c30f86209aae0c3565ce1aa69f --json \
 
 ## 5. At most 8 calls in flight
 
-The seller serves at most 8 calls at once per buyer, across all twelve models together. The
+The seller serves at most 8 calls at once per buyer, across all thirteen models together. The
 ninth is refused with `429 buyer_concurrency_limit` and `retry-after: 1`; nothing is served and
 nothing is billed. The peer record's `maxConcurrency` is the node's ceiling, not this number. A
 sweep over many chains runs in batches of 8 or fewer, with a retry on 429.
@@ -199,6 +200,8 @@ non-zero if the behaviour has moved.
 
 ## Changes
 
+- 2.13.0 (2026-10-11): the thirteenth model, `sippar-facebook-social`.
+- 2.12.2 (2026-10-11): `tavily-web-search` buys from Tavily directly first, via gedx402 when Tavily refuses.
 - 2.12.1 (2026-10-11): `tavily-web-search` announces `include_images, max_results`;
   `sippar-skills` announces nothing; 46 chains; the 8-in-flight limit spans all twelve models.
 - 2.12.0 (2026-10-10): the twelfth model, `sippar-amazon`.
