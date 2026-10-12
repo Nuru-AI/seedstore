@@ -82,7 +82,7 @@
       "supportedParameters": []
     }
   ],
-  "githubProof": "https://raw.githubusercontent.com/Nuru-AI/sippar-antseed/HEAD/antseed.json",
+  "githubProof": "https://raw.githubusercontent.com/Nuru-AI/seedstore/HEAD/antseed.json",
   "domainProof": "https://sippar.network/.well-known/antseed.json",
   "operator": "Nuru-AI"
 }
