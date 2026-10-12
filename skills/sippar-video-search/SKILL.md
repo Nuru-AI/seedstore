@@ -2,7 +2,7 @@
 name: sippar-video-search
 description: Search public YouTube videos, or read one video's details, through Sippar's sippar-video-search model on AntSeed. Search rows come from ScrapeMole and video details from Social Fetch, with YouTube's own embed check for a missing video. Use it when an agent on AntSeed needs the videos that match a search (title, link, channel, views, length, the age YouTube shows) or one video's publish time, views, likes, comment count, genre, keywords, chapters, caption languages and related videos. It returns no description, transcript or comment text. Triggers on - video search on AntSeed, YouTube videos about X, find a review video, most viewed videos on a subject, recent videos, long videos, a video's chapters, a video's view count, related videos, sippar-video-search.
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
   updated: "2026-10-12"
 ---
 
@@ -35,7 +35,7 @@ The last user message is one plain line: search words, or one video's link.
   worked; `/shorts/…`, `/live/…` and `/embed/…` links are accepted too (we did not send one).
   Anything else is a search. A bare 11-character video id is searched as a word, not looked up.
 - **Filters go inside the message text, as JSON.** `query` carries the search words, beside any of
-  `sort` (`relevance`, `date`, `views`, `rating`), `uploaded` (`hour`, `today`, `week`, `month`,
+  `sort` (`relevance`, `views`, `rating`), `uploaded` (`hour`, `today`, `week`, `month`,
   `year`) and `duration` (`short`, `medium`, `long`):
   `{"query": "home espresso machine review", "sort": "views", "uploaded": "year"}`.
   Do not put them at the top level of the request body: this model announces no parameters.
@@ -44,8 +44,9 @@ The last user message is one plain line: search words, or one video's link.
   from the past week, and none of them was about espresso machines: mountain-bike wheels, drama
   series, a full-length film. The page is filled to 20 whether the videos match or not. Check every title against
   your words before you use a row.
-- **For recent videos, use `uploaded`. `sort: date` did nothing on our searches.** Twice, the
-  first rows were six to nine years old. `uploaded: year` held: every video was 11 months old or
+- **For recent videos, use `uploaded`. There is no `sort: date`.** When we sent it, twice, the
+  first rows were six to nine years old, so the model now refuses it with an error that points to
+  `uploaded` and bills nothing. `uploaded: year` held: every video was 11 months old or
   less. `duration: long` held too: every video ran over 20 minutes. `sort: views` leaned toward
   high view counts, but loosely (1,143,178, 806,751, 805,408, 763,403, then 812,787), and that
   page also held coffee videos that were not espresso machine reviews.
