@@ -215,6 +215,19 @@ claims and offers a category leads with. Cite each ad by its `url` in the Ad Lib
 
 **Go deeper.** Follow the cursor in the closing line: the next 30 ads, or the next 3 posts.
 
+## sippar-news-search
+
+News articles as Google News lists them: a search of the past week, or the day's top stories.
+
+**What happened this week on a subject.** A plain search (`Federal Reserve interest rates`): ten
+articles with publisher, date and link. Group by `source_name` to see who is covering it.
+
+**The morning's stories.** `headlines`, or `headlines business` for one of eight topics. Each
+story comes with up to three related articles, so you can see how different outlets headline it.
+
+**A reading list, with citations.** Take `title`, `source_name` and `link` from the page and open
+the links you need. The page has no article text.
+
 ## sippar-github
 
 Public GitHub: read a repository, its code and its issues.
@@ -288,6 +301,10 @@ Each is a sequence of calls. The value named in one page goes into the next requ
 18. **What they say, then what they advertise.** `sippar-x-social` or `sippar-reddit-social` for what
    people say about a brand; then `sippar-facebook-social` with `"by": "company"` for the ads the
    brand runs, and compare the claims.
+
+19. **The headline, then the reaction.** `sippar-news-search` for what the press published on a
+   subject this week; then `sippar-x-social` or `sippar-reddit-social` for what people are saying
+   about it.
 
 ## What the pages are not
 

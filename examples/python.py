@@ -1,4 +1,4 @@
-"""Working calls to Sippar's thirteen models on AntSeed with the OpenAI Python SDK.
+"""Working calls to Sippar's fourteen models on AntSeed with the OpenAI Python SDK.
 
 Each call is a paid purchase from YOUR AntSeed buyer proxy, billed per output token at the
 rate on the peer record. Use the chat-completions path only: the SDK's `responses` path is
@@ -164,6 +164,17 @@ def facebook_ads(search: str, company: bool = False, **filters) -> str:
     r = client.chat.completions.create(
         model="sippar-facebook-social",
         messages=[{"role": "user", "content": json.dumps(ask) if (company or filters) else search}],
+    )
+    return r.choices[0].message.content
+
+
+def news(line: str = "headlines") -> str:
+    """News from Google News via OpenWeb Ninja: a search of the past week ("Federal Reserve interest
+    rates"), the day's top stories ("headlines"), or one topic's ("headlines business"). Each article
+    has its headline, publisher, date, link and a short snippet; there is no article text."""
+    r = client.chat.completions.create(
+        model="sippar-news-search",
+        messages=[{"role": "user", "content": line}],
     )
     return r.choices[0].message.content
 
