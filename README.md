@@ -6,7 +6,7 @@ on Base from its own payment channel, and gets the provider's data as the provid
 with the source named on every page. Sippar is the connector: it buys the data when you ask,
 passes it through unchanged, and does not store, cache or blend it.
 
-Fourteen models, one seller peer:
+Fifteen models, one seller peer:
 
 | Model string | What it answers | Source |
 |---|---|---|
@@ -24,6 +24,7 @@ Fourteen models, one seller peer:
 | `sippar-amazon` | Amazon products for a search or a category's bestsellers on amazon.com, .co.uk, .de, .fr, .es and .it, with gross and VAT-excluded price, rating and review count; or one product's buybox offer, other sellers, stock, delivery and top reviews | glim.sh |
 | `sippar-facebook-social` | Facebook and Instagram ads from Meta's Ad Library (a keyword search across all advertisers, or the ads one company runs; 30 ads a call), or one public Facebook page's recent posts with text, counts, media links and top comments (3 posts a call) | Meta Ad Library and Facebook, via Social Fetch |
 | `sippar-news-search` | news articles for a search of the past week, or the day's top stories overall or for one of eight topics: each article's headline, publisher, date, link and a short snippet, and related articles from other outlets on a headlines page; no article text | Google News, via OpenWeb Ninja |
+| `sippar-job-search` | job postings for one search (a role and a place), up to 10 a call: each posting's title, employer, the site that published it, employment type, place, posted time, pay where the posting states it, benefits and the link to the posting; no description text | Google for Jobs, via OpenWeb Ninja |
 
 Two models also answer under their earlier ids, with the same data and rate: `sippar-chain-state`
 and `onchain-token-rankings`. Use the new ids above. `sippar-skills` and `crypto-skills` are two
@@ -49,11 +50,12 @@ models: the aggregator over both indexes, and the CryptoSkill-only one.
 | Amazon: searches, bestsellers, a product's offer and reviews, the options, reading the page | [skills/sippar-amazon/SKILL.md](./skills/sippar-amazon/SKILL.md) |
 | Facebook and Instagram ads (keyword or company) and a page's posts: the filters, the next page, reading the page | [skills/sippar-facebook-social/SKILL.md](./skills/sippar-facebook-social/SKILL.md) |
 | news: a search, the top stories, a topic's stories, reading the two page shapes | [skills/sippar-news-search/SKILL.md](./skills/sippar-news-search/SKILL.md) |
+| job postings: the one-line search, the country, the next page, reading the page | [skills/sippar-job-search/SKILL.md](./skills/sippar-job-search/SKILL.md) |
 | ideas: what each model is for, options per model, and how to combine them | [use-cases.md](./use-cases.md) |
 | copy a working call | [examples/curl.sh](./examples/curl.sh), [examples/python.py](./examples/python.py) |
 | check, offline and free, which request shapes keep your arguments | [tools/check-argument-survival.mjs](./tools/check-argument-survival.mjs) |
 
-The sixteen files under `skills/` are agent skills (a `SKILL.md` with frontmatter) and they are
+The seventeen files under `skills/` are agent skills (a `SKILL.md` with frontmatter) and they are
 also the documentation. Give your agent the folder, or read them yourself; they say the same
 thing either way.
 

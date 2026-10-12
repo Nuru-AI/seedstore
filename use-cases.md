@@ -228,6 +228,24 @@ story comes with up to three related articles, so you can see how different outl
 **A reading list, with citations.** Take `title`, `source_name` and `link` from the page and open
 the links you need. The page has no article text.
 
+## sippar-job-search
+
+Job postings as Google for Jobs lists them: details and links, no description text.
+
+**Open roles for a role and a place.** `data engineer jobs in Austin, TX`: ten postings with the
+employer, the site that published each one, the place and the link. End the same line with
+`cursor` and the page's cursor value for the next ten.
+
+**What a role pays, where postings say.** On US pages read `job_min_salary`, `job_max_salary` and
+`job_salary_period`, and skip the postings where they are `null`. The postings we read outside the
+US stated no pay.
+
+**One employer's openings.** `Is Stripe hiring software engineers in San Francisco?` returned ten
+Stripe postings. Check `employer_name` on each row.
+
+**Outside the US.** End the line with the country: `marketing manager jobs in Berlin country de`.
+Without it the search runs in the US.
+
 ## sippar-github
 
 Public GitHub: read a repository, its code and its issues.
@@ -305,6 +323,10 @@ Each is a sequence of calls. The value named in one page goes into the next requ
 19. **The headline, then the reaction.** `sippar-news-search` for what the press published on a
    subject this week; then `sippar-x-social` or `sippar-reddit-social` for what people are saying
    about it.
+
+20. **An employer's openings, then the employer in the news.** `sippar-job-search` for the
+   postings a company has open; then `sippar-news-search` for what the press published about it
+   this week.
 
 ## What the pages are not
 

@@ -1,4 +1,4 @@
-"""Working calls to Sippar's fourteen models on AntSeed with the OpenAI Python SDK.
+"""Working calls to Sippar's fifteen models on AntSeed with the OpenAI Python SDK.
 
 Each call is a paid purchase from YOUR AntSeed buyer proxy, billed per output token at the
 rate on the peer record. Use the chat-completions path only: the SDK's `responses` path is
@@ -174,6 +174,19 @@ def news(line: str = "headlines") -> str:
     has its headline, publisher, date, link and a short snippet; there is no article text."""
     r = client.chat.completions.create(
         model="sippar-news-search",
+        messages=[{"role": "user", "content": line}],
+    )
+    return r.choices[0].message.content
+
+
+def jobs(line: str) -> str:
+    """Job postings from Google for Jobs via OpenWeb Ninja: one line naming the role and the place
+    ("data engineer jobs in Austin, TX"). Outside the US end the line with the country
+    ("marketing manager jobs in Berlin country de"); for the next page end it with "cursor" and the
+    page's data.cursor value. Each posting has its title, employer, publishing site, place, pay
+    where stated and the link; there is no description text."""
+    r = client.chat.completions.create(
+        model="sippar-job-search",
         messages=[{"role": "user", "content": line}],
     )
     return r.choices[0].message.content
