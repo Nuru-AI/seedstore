@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Working calls to Sippar's fifteen models on AntSeed. Each one is a paid purchase from YOUR
+# Working calls to Sippar's sixteen models on AntSeed. Each one is a paid purchase from YOUR
 # AntSeed buyer proxy (default 127.0.0.1:8377), billed per output token at the rate on the
 # peer record. Run one at a time; read the routing line on a chain-state answer before you
 # use it. Transport rules: the sippar-antseed-buyer skill.
@@ -71,10 +71,12 @@ case "${1:-}" in
     call "$(jq -cn --arg c "$2" '{model:"sippar-news-search",messages:[{role:"user",content:$c}]}')" ;;
   jobs) # Job postings: one line, a role and a place; outside the US end it with the country, e.g. 'marketing manager jobs in Berlin country de'
     call "$(jq -cn --arg c "$2" '{model:"sippar-job-search",messages:[{role:"user",content:$c}]}')" ;;
+  video) # Videos: search words, or one video's link for its details; filters as JSON, e.g. '{"query":"home espresso machine review","uploaded":"year"}'
+    call "$(jq -cn --arg c "$2" '{model:"sippar-video-search",messages:[{role:"user",content:$c}]}')" ;;
   translated) # a client that must post the Anthropic shape: arguments ride metadata.sippar and survive
     curl -s "$PROXY/v1/messages" -H 'content-type: application/json' -H "x-antseed-pin-peer: $PEER" \
       -d '{"model":"quicknode-blockchain-data","max_tokens":1024,
            "metadata":{"sippar":{"network":"base","fields":["blockNumber","gasPrice"]}},
            "messages":[{"role":"user","content":"chain state"}]}' ;;
-  *) echo "usage: $0 chain | account 0x… | logs | wallet 0x… | block | tokens | stocks | perps | search 'question' | skill 'chains/aave' | x 'Formula 1 since:2026-10-01' | flights 'JFK LHR 2026-11-12 2026-11-19 2' | linkedin 'remote work burnout' | github 'x402-foundation/x402' | reddit 'home espresso machine' | hotels 'hostels in Lisbon, Portugal' | amazon 'usb c charger' | facebook 'running shoes' | news 'Federal Reserve interest rates' | jobs 'data engineer jobs in Austin, TX' | translated"; exit 2 ;;
+  *) echo "usage: $0 chain | account 0x… | logs | wallet 0x… | block | tokens | stocks | perps | search 'question' | skill 'chains/aave' | x 'Formula 1 since:2026-10-01' | flights 'JFK LHR 2026-11-12 2026-11-19 2' | linkedin 'remote work burnout' | github 'x402-foundation/x402' | reddit 'home espresso machine' | hotels 'hostels in Lisbon, Portugal' | amazon 'usb c charger' | facebook 'running shoes' | news 'Federal Reserve interest rates' | jobs 'data engineer jobs in Austin, TX' | video 'home espresso machine review' | translated"; exit 2 ;;
 esac

@@ -15,8 +15,9 @@ this model is the aggregator: skills.sh as well.
 
 Three sources, all read fresh on every call:
 
-- **skills.sh** (skills.sh, Vercel's Agent Skills Directory): tens of thousands of agent skills
-  across every domain, indexed from their authors' public GitHub repositories. Each skill is
+- **skills.sh** (skills.sh, Vercel's Agent Skills Directory): about 1.28 million agent skills
+  (leaderboard header, read 2026-10-11) across every domain, indexed from their authors' public
+  GitHub repositories. Each skill is
   served from its own repository, with the repository's license line and skills.sh's three
   audit verdicts (Gen Agent Trust Hub, Socket, Snyk) beside it.
 - **CryptoSkill's registry** (cryptoskill.org, github.com/jiayaoqijia/cryptoskill): thousands of

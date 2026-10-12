@@ -246,6 +246,26 @@ Stripe postings. Check `employer_name` on each row.
 **Outside the US.** End the line with the country: `marketing manager jobs in Berlin country de`.
 Without it the search runs in the US.
 
+## sippar-video-search
+
+Public YouTube videos: a search's videos, or one video's details. No description, transcript or
+comment text.
+
+**What creators are saying about a product.** `home espresso machine review`: twenty videos with
+the channel, views, length and age. Group by `channel` to see who covers the category, and check
+each title: a search page also carries buying guides and news clips.
+
+**What landed this year.** `{"query": "home espresso machine review", "uploaded": "year"}` for
+videos from the past year only. Add `"sort": "views"` to lean toward the most watched. On a narrow
+subject a date filter can return unrelated videos, so read the titles first.
+
+**A long watch, or a short one.** `"duration": "long"` keeps videos over 20 minutes: full
+courses, long reviews. `short` and `medium` narrow the other way.
+
+**One video up close.** Send its link: the exact publish time, views, likes, the creator's
+keywords, the chapters with their start times and the twelve videos YouTube lists beside it. The
+chapters are a table of contents you can link into without watching the whole video.
+
 ## sippar-github
 
 Public GitHub: read a repository, its code and its issues.
@@ -327,6 +347,10 @@ Each is a sequence of calls. The value named in one page goes into the next requ
 20. **An employer's openings, then the employer in the news.** `sippar-job-search` for the
    postings a company has open; then `sippar-news-search` for what the press published about it
    this week.
+
+21. **The reviews, then the price.** `sippar-video-search` for the review videos on a product
+   category and the products they name in their titles and chapters; then `sippar-amazon` for
+   those products, with price, rating and the reviews on the product page.
 
 ## What the pages are not
 

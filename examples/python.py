@@ -1,4 +1,4 @@
-"""Working calls to Sippar's fifteen models on AntSeed with the OpenAI Python SDK.
+"""Working calls to Sippar's sixteen models on AntSeed with the OpenAI Python SDK.
 
 Each call is a paid purchase from YOUR AntSeed buyer proxy, billed per output token at the
 rate on the peer record. Use the chat-completions path only: the SDK's `responses` path is
@@ -188,6 +188,20 @@ def jobs(line: str) -> str:
     r = client.chat.completions.create(
         model="sippar-job-search",
         messages=[{"role": "user", "content": line}],
+    )
+    return r.choices[0].message.content
+
+
+def video(line: str, **filters: str) -> str:
+    """Public YouTube videos: search words for up to 20 matching videos, or one video's link
+    ("https://www.youtube.com/watch?v=...") for its details. Search filters ride inside the message
+    text as JSON: sort, uploaded (hour, today, week, month, year) and duration (short, medium,
+    long), e.g. video("home espresso machine review", uploaded="year"). There is no description,
+    transcript or comment text; check each title against your words before using a row."""
+    content = json.dumps({"query": line, **filters}) if filters else line
+    r = client.chat.completions.create(
+        model="sippar-video-search",
+        messages=[{"role": "user", "content": content}],
     )
     return r.choices[0].message.content
 
