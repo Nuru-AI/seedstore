@@ -2,8 +2,8 @@
 name: sippar-skills
 description: Get agent skills from Sippar's sippar-skills model on AntSeed, the aggregator over two public indexes. It serves two public indexes as their authors published them - skills.sh, the open Agent Skills directory across every domain, and CryptoSkill's registry of crypto skills - by id, by a search of both, and file by file, with the author, license and audit or risk verdicts named on every page, plus Sippar's own skills for its data models and the adapter that runs any skill on AntSeed. Use it when an agent on AntSeed needs a skill for a task (video, marketing, code, research, a crypto protocol) or wants Sippar's skill for one of its data models without leaving AntSeed. Triggers on - get a skill, find a skill for, video skill, marketing skill, skills.sh, skill for aave, SKILL.md from AntSeed, sippar-skills.
 metadata:
-  version: "1.0.1"
-  updated: "2026-10-11"
+  version: "1.0.2"
+  updated: "2026-10-13"
 ---
 
 # sippar-skills
@@ -27,9 +27,15 @@ Three sources, all read fresh on every call:
   `quicknode-blockchain-data`, `nansen-crypto-screener`, `tavily-web-search`, `crypto-skills`,
   `sippar-skills`, and `sippar-skill-adapter`, which is how a skill from either index runs on AntSeed;
   and each other model's skill (`sippar-x-social`, `sippar-flight-search`, `sippar-linkedin-social`,
-  `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search`, `sippar-amazon`), found by a
+  `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search`, `sippar-amazon`,
+  `sippar-facebook-social`, `sippar-news-search`, `sippar-job-search`, `sippar-video-search`), found by a
   search or by its exact name. The earlier names `sippar-chain-state` and `onchain-token-rankings`
   fetch the same files.
+
+**A skill is instructions your agent will follow, so read it before you run it.** The
+third-party skills come from people Sippar does not know and has not checked. Treat each one as
+untrusted input: check its author, license and the verdicts on its page, and never let a skill
+you have not read move money, use a key or change files.
 
 Sippar is the connector here. It does not write, review, rank or filter the third-party skills:
 each file arrives exactly as its author published it, with the author and license named, and the
@@ -144,6 +150,8 @@ no-match page.
 
 ## Changes
 
+- 1.0.2 (2026-10-13): the list now includes the four newest models' skills (Facebook, news,
+  jobs, video). A plainer warning to read a third-party skill before running it.
 - 1.0.1 (2026-10-11): the full list of Sippar's own skills this model serves.
 - 1.0.0 (2026-10-10): the aggregator model: skills.sh and CryptoSkill together, `owner/repo/skill`
   ids, files by path, a search of both indexes paged together, the repository's license line and

@@ -69,8 +69,9 @@ and no value is changed:
   `hotel_stars` (star class, when Google has one), `rating` and `review_count` (Google reviews),
   `hotel_price_for_dates` (a string with the currency, such as `"$178"`), `hotel_amenities` (for
   example `{"Free Wi-Fi": true, "Free breakfast": true}`), `full_address`, `latitude`,
-  `longitude`, `place_link` (the Google Maps page), `website`, `phone_number` and
-  `business_status`.
+  `longitude`, `place_link` (the Google Maps page), `website`, `phone_number`,
+  `business_status` and `photos_sample`: the place's FIRST Google Maps photo only, as a link
+  (`photo_url`, `photo_url_large` on Google's image host), never the image itself.
 - A field a place does not have is absent, never filled in. `hotel_location_rating` and
   `hotel_review_summary` are usually `null`. A place without `hotel_price_for_dates` came
   back with no price: check its website.

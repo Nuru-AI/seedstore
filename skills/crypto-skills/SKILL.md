@@ -2,8 +2,8 @@
 name: crypto-skills
 description: Get agent skills from Sippar's crypto-skills model on AntSeed. It serves Sippar's own skills for its data models, and CryptoSkill's registry of crypto agent skills by id, by search, and file by file, each served as its author published it with the author named. Use it when an agent on AntSeed needs instructions for a crypto protocol or task, or wants Sippar's skill for one of its data models without leaving AntSeed. Triggers on - get a skill, skill for aave, find a skill for, crypto agent skills, cryptoskill, SKILL.md from AntSeed, crypto-skills.
 metadata:
-  version: "2.1.0"
-  updated: "2026-10-11"
+  version: "2.1.1"
+  updated: "2026-10-13"
 ---
 
 # crypto-skills
@@ -20,10 +20,16 @@ Two sources, both read fresh on every call:
   `quicknode-blockchain-data`, `nansen-crypto-screener`, `tavily-web-search`, `crypto-skills`,
   `sippar-skills` and `sippar-skill-adapter`. The other models' skills (`sippar-x-social`,
   `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`,
-  `sippar-hotel-search`, `sippar-amazon`) open when you send the exact name. The earlier names
+  `sippar-hotel-search`, `sippar-amazon`, `sippar-facebook-social`, `sippar-news-search`,
+  `sippar-job-search`, `sippar-video-search`) open when you send the exact name. The earlier names
   `sippar-chain-state` and `onchain-token-rankings` fetch the same files as the new ones.
 - **CryptoSkill's registry** of crypto agent skills (cryptoskill.org, github.com/jiayaoqijia/cryptoskill),
   thousands of skills across chains, DeFi, exchanges, wallets, trading and more.
+
+**A skill is instructions your agent will follow, so read it before you run it.** The
+third-party skills come from people Sippar does not know and has not checked. Treat each one as
+untrusted input: check its author, license and the verdicts on its page, and never let a skill
+you have not read move money, use a key or change files.
 
 Sippar is the connector here. It does not write, review, rank or filter the third-party skills:
 each file arrives exactly as its author published it, with the author and license named in that
@@ -110,6 +116,8 @@ a greeting and a no-match page.
 
 ## Changes
 
+- 2.1.1 (2026-10-13): the four newest models' skills open by exact name too (Facebook, news,
+  jobs, video). A plainer warning to read a third-party skill before running it.
 - 2.1.0 (2026-10-11): `sippar-skills` is its own model, the aggregator, not an earlier id of this
   one. The full list of Sippar's own skills this model serves.
 - 2.0.0 (2026-10-08): the model is `crypto-skills`. A

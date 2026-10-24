@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Working calls to Sippar's sixteen models on AntSeed. Each one is a paid purchase from YOUR
+# Working calls to Sippar's seventeen models on AntSeed. Each one is a paid purchase from YOUR
 # AntSeed buyer proxy (default 127.0.0.1:8377), billed per output token at the rate on the
 # peer record. Run one at a time; read the routing line on a chain-state answer before you
 # use it. Transport rules: the sippar-antseed-buyer skill.
@@ -19,9 +19,9 @@ case "${1:-}" in
     call '{"model":"quicknode-blockchain-data","network":"base","fields":["blockNumber","gasPrice"],
            "messages":[{"role":"user","content":"chain state"}]}' ;;
   account) # one account on Arbitrum, only its own rows; pass the address as $2
-    call "{\"model\":\"quicknode-blockchain-data\",\"network\":\"arbitrum\",\"address\":\"$2\",
-           \"fields\":[\"addressNativeBalance\",\"addressErc20Balance\",\"addressTransactionCount\"],
-           \"messages\":[{\"role\":\"user\",\"content\":\"chain state\"}]}" ;;
+    call "$(jq -cn --arg a "${2:?usage: $0 account 0x<40 hex>}" '{model:"quicknode-blockchain-data",network:"arbitrum",address:$a,
+           fields:["addressNativeBalance","addressErc20Balance","addressTransactionCount"],
+           messages:[{role:"user",content:"chain state"}]}')" ;;
   logs)    # USDC transfers on Ethereum over a 16-block range; narrow ranges keep the page small
     call '{"model":"quicknode-blockchain-data","network":"ethereum",
            "rpc":{"method":"eth_getLogs","params":[{"address":"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
@@ -30,6 +30,7 @@ case "${1:-}" in
            "messages":[{"role":"user","content":"chain state"}]}' ;;
   wallet)  # every ERC-20 transfer a wallet received in a 16-block range; pass the 0x address as $2
     w=$(echo "${2:?usage: $0 wallet 0x<40 hex>}" | sed 's/^0x//' | tr 'A-F' 'a-f')
+    [[ "$w" =~ ^[0-9a-f]{40}$ ]] || { echo "wallet: expected 0x and 40 hex characters" >&2; exit 2; }
     call "{\"model\":\"quicknode-blockchain-data\",\"network\":\"ethereum\",
            \"rpc\":{\"method\":\"eth_getLogs\",\"params\":[{\"topics\":[\"0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef\",null,\"0x000000000000000000000000$w\"],
              \"fromBlock\":\"0x15f9000\",\"toBlock\":\"0x15f9010\"}]},
@@ -47,22 +48,22 @@ case "${1:-}" in
     call '{"model":"nansen-crypto-screener","view":"perp-screener",
            "messages":[{"role":"user","content":"perps"}]}' ;;
   search)  # the last user message is the query; pass it as $2
-    call "{\"model\":\"tavily-web-search\",\"messages\":[{\"role\":\"user\",\"content\":\"$2\"}]}" ;;
+    call "$(jq -cn --arg c "$2" '{model:"tavily-web-search",messages:[{role:"user",content:$c}]}')" ;;
   skill)   # a CryptoSkill id (e.g. chains/aave), one of Sippar's skill names, or two or three keywords to search; pass it as $2
-    call "{\"model\":\"crypto-skills\",\"messages\":[{\"role\":\"user\",\"content\":\"$2\"}]}" ;;
+    call "$(jq -cn --arg c "$2" '{model:"crypto-skills",messages:[{role:"user",content:$c}]}')" ;;
   x)       # X posts: keywords, names or X operators (from:, lang:, since:, "phrase"); any subject; pass the search as $2
-    call "{\"model\":\"sippar-x-social\",\"messages\":[{\"role\":\"user\",\"content\":\"$2\"}]}" ;;
+    call "$(jq -cn --arg c "$2" '{model:"sippar-x-social",messages:[{role:"user",content:$c}]}')" ;;
   flights) # one line: FROM TO DATE [RETURN-DATE] [ADULTS], airport codes; pass it as $2
-    call "{\"model\":\"sippar-flight-search\",\"messages\":[{\"role\":\"user\",\"content\":\"$2\"}]}" ;;
+    call "$(jq -cn --arg c "$2" '{model:"sippar-flight-search",messages:[{role:"user",content:$c}]}')" ;;
   linkedin) # LinkedIn posts: keywords; pass the search as $2. More posts: content '{"query":"…","posts":30}'
-    call "{\"model\":\"sippar-linkedin-social\",\"messages\":[{\"role\":\"user\",\"content\":\"$2\"}]}" ;;
+    call "$(jq -cn --arg c "$2" '{model:"sippar-linkedin-social",messages:[{role:"user",content:$c}]}')" ;;
   github) # GitHub: a ref (owner/repo, a github.com URL) or a GitHub search; pass it as $2.
     # Options: content '{"query":"symbol:useRouter","repo":"vercel/next.js","kind":"code","per_page":10}'
-    call "{\"model\":\"sippar-github\",\"messages\":[{\"role\":\"user\",\"content\":\"$2\"}]}" ;;
+    call "$(jq -cn --arg c "$2" '{model:"sippar-github",messages:[{role:"user",content:$c}]}')" ;;
   reddit) # Reddit posts: keywords; pass the search as $2. Past week: content '{"query":"…","time":"week"}'
-    call "{\"model\":\"sippar-reddit-social\",\"messages\":[{\"role\":\"user\",\"content\":\"$2\"}]}" ;;
+    call "$(jq -cn --arg c "$2" '{model:"sippar-reddit-social",messages:[{role:"user",content:$c}]}')" ;;
   hotels) # Places to stay: one line, e.g. 'hostels in Lisbon, Portugal'; end it with "offers" for booking-site prices
-    call "{\"model\":\"sippar-hotel-search\",\"messages\":[{\"role\":\"user\",\"content\":\"$2\"}]}" ;;
+    call "$(jq -cn --arg c "$2" '{model:"sippar-hotel-search",messages:[{role:"user",content:$c}]}')" ;;
   amazon) # Amazon: a search, bestsellers:<category>, an ASIN or a product URL; options as JSON, e.g. '{"query":"electric kettle","tld":"co.uk"}'
     call "$(jq -cn --arg c "$2" '{model:"sippar-amazon",messages:[{role:"user",content:$c}]}')" ;;
   facebook) # Facebook/Instagram ads (Meta Ad Library): keywords, or one company's ads as JSON, e.g. '{"query":"Stripe","by":"company","country":"US"}'
@@ -73,10 +74,12 @@ case "${1:-}" in
     call "$(jq -cn --arg c "$2" '{model:"sippar-job-search",messages:[{role:"user",content:$c}]}')" ;;
   video) # Videos: search words, or one video's link for its details; filters as JSON, e.g. '{"query":"home espresso machine review","uploaded":"year"}'
     call "$(jq -cn --arg c "$2" '{model:"sippar-video-search",messages:[{role:"user",content:$c}]}')" ;;
+  3d) # 3D models on Sketchfab: search words, or one model's link for its details; filters as JSON, e.g. '{"query":"phone stand","file_format":"stl","downloadable":"true"}'
+    call "$(jq -cn --arg c "$2" '{model:"3d-model-search",messages:[{role:"user",content:$c}]}')" ;;
   translated) # a client that must post the Anthropic shape: arguments ride metadata.sippar and survive
     curl -s "$PROXY/v1/messages" -H 'content-type: application/json' -H "x-antseed-pin-peer: $PEER" \
       -d '{"model":"quicknode-blockchain-data","max_tokens":1024,
            "metadata":{"sippar":{"network":"base","fields":["blockNumber","gasPrice"]}},
            "messages":[{"role":"user","content":"chain state"}]}' ;;
-  *) echo "usage: $0 chain | account 0x… | logs | wallet 0x… | block | tokens | stocks | perps | search 'question' | skill 'chains/aave' | x 'Formula 1 since:2026-10-01' | flights 'JFK LHR 2026-11-12 2026-11-19 2' | linkedin 'remote work burnout' | github 'x402-foundation/x402' | reddit 'home espresso machine' | hotels 'hostels in Lisbon, Portugal' | amazon 'usb c charger' | facebook 'running shoes' | news 'Federal Reserve interest rates' | jobs 'data engineer jobs in Austin, TX' | video 'home espresso machine review' | translated"; exit 2 ;;
+  *) echo "usage: $0 chain | account 0x… | logs | wallet 0x… | block | tokens | stocks | perps | search 'question' | skill 'chains/aave' | x 'Formula 1 since:2026-10-01' | flights 'JFK LHR 2026-11-12 2026-11-19 2' | linkedin 'remote work burnout' | github 'x402-foundation/x402' | reddit 'home espresso machine' | hotels 'hostels in Lisbon, Portugal' | amazon 'usb c charger' | facebook 'running shoes' | news 'Federal Reserve interest rates' | jobs 'data engineer jobs in Austin, TX' | video 'home espresso machine review' | 3d 'phone stand' | translated"; exit 2 ;;
 esac

@@ -1,4 +1,5 @@
 {
+  "schemaVersion": 1,
   "providerName": "Sippar Onchain Data",
   "peerId": "706fca9c0d0684c30f86209aae0c3565ce1aa69f",
   "agentId": 84918,
@@ -65,6 +66,10 @@
     },
     {
       "id": "sippar-video-search",
+      "supportedParameters": []
+    },
+    {
+      "id": "3d-model-search",
       "supportedParameters": []
     },
     {

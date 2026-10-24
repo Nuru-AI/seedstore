@@ -2,8 +2,8 @@
 name: quicknode-blockchain-data
 description: Buy live facts about one EVM chain from Sippar's quicknode-blockchain-data model on AntSeed, served as QuickNode returns them. Use it for the current block, gas and fees, how full the last block was, native and ERC-20 balances, one account's balances and transaction count, any ERC-20 balance by contract, transfer logs for a token or for a wallet over a block range, a block's header with its transaction hashes, a transaction's receipt, a transaction itself, an account's native balance at any block, the calls and internal transfers that touched a wallet, and any read-only contract call at any block. Triggers on - chain state, block number, gas price on Base, balance of an address on Arbitrum, token balance by contract, eth_getLogs, transfer logs, tokens a wallet sent or received, eth_getBlockByNumber, eth_getTransactionReceipt, eth_getTransactionByHash, eth_getBalance, balance at a past block, trace_filter, internal transactions, native coin moved by a contract, eth_call, balanceOf at a past block, transaction receipt, transaction by hash, rpc on AntSeed, rpc on Avalanche, zkSync, HyperEVM, Sei, Kaia, X Layer or another chain, sippar-chain-state, which chains does quicknode-blockchain-data serve.
 metadata:
-  version: "3.5.1"
-  updated: "2026-10-09"
+  version: "3.6.2"
+  updated: "2026-10-21"
 ---
 
 # quicknode-blockchain-data
@@ -38,8 +38,8 @@ it. Name the chain with `network`; QuickNode's own network name is accepted too 
 
 ethereum, base, arbitrum, bnb, polygon, optimism, blast, celo, mantle, unichain, ink, soneium,
 world chain, gnosis, scroll, linea, fantom, sonic, berachain, monad, 0g, abstract, arc, avalanche,
-b3, cyber, flare, fraxtal, hemi, hyperevm, imx, joc, kaia, lisk, mode, morph, arbitrum-nova, peaq,
-plasma, sei, story, tempo, vana, xlayer, xrplevm, zksync.
+b3, cyber, flare, flow (Flow EVM), fraxtal, gravity (Gravity Alpha), hemi, hyperevm, imx, joc, kaia,
+lisk, mode, morph, arbitrum-nova, peaq, plasma, sei, story, tempo, vana, xlayer, xrplevm, zksync.
 
 **The summary page is an extra on the first 20** (ethereum to monad). A request without `rpc`
 gets it: the fields in the table above, which Sippar reads from QuickNode in several requests and
@@ -59,7 +59,7 @@ All six are optional top-level keys, all announced in `supportedParameters`.
 | `address` | A `0x` + 40 hex account. Adds that account's three rows beside the chain's. Makes the page wider, so name `fields` to keep it narrow. Mixed case is checked as an EIP-55 checksum before anything is bought. |
 | `blocks` | With `address`: scan that account's transactions in the newest block. Capped at 1; older blocks are not served by this field. |
 | `tokens` | With `address`: up to 10 ERC-20 contracts, as a list or a comma string. Two rows per contract, the balance in the token's smallest unit and the contract's own `decimals()`. A contract that does not answer shows as failed, never as zero. A contract already on the chain's own token list is not read here: sent alone it is refused free with a note; sent beside other contracts it is silently left out. For those, ask for `addressErc20Balance` in `fields` instead. |
-| `rpc` | One read-only QuickNode command, answered as QuickNode returns it: `eth_getLogs` (transfer logs), `eth_getBlockByNumber` (a block), `eth_getTransactionReceipt` (a receipt), `eth_getTransactionByHash` (a transaction), `eth_getBalance` (a native balance at a block), `trace_filter` (the traces that touched a wallet) or `eth_call` (a contract's read-only answer at a block). Send it alone, with `network` for a chain other than Ethereum. |
+| `rpc` | One read-only QuickNode command, answered as QuickNode returns it: `eth_getLogs` (transfer logs), `eth_getBlockByNumber` (a block), `eth_getTransactionReceipt` (a receipt), `eth_getTransactionByHash` (a transaction), `eth_getBalance` (a native balance at a block), `trace_filter` (the traces that touched a wallet) or `eth_call` (a contract's read-only answer at a block). Send it alone. `network` is needed only for a chain other than Ethereum: without it, `rpc` runs on Ethereum and is billed. |
 
 Example, two fields on Base:
 
@@ -92,7 +92,7 @@ command it does serve, so send one when you need to know. Every command that wri
 served, and old-block (archive) reads and traces vary most from chain to chain. An unsupported
 command comes back as QuickNode's own error, unchanged. On the 26 chains added on 2026-10-09 (0g to zksync above), each answers
 `eth_chainId` with its own chain id, and `eth_getBlockByNumber` is proven on zksync; nothing else
-is proven there yet. The `rpc` object may be at most 1,000 bytes.
+is proven there yet. flow and gravity, added on 2026-10-19, answer `eth_chainId` with 747 and 1625. The `rpc` object may be at most 1,000 bytes.
 
 The same command on another chain, here the newest block on zkSync:
 
@@ -259,6 +259,27 @@ the chain. Here, USDC's `balanceOf(0xd8da6bf2…6045)` at block 15,000,000:
   and what to send next: the same request with `"resultFrom": <number>` inside `rpc`. The slices,
   joined in order, are the whole value. `resultFrom` is accepted on `eth_call` only.
 
+### Sui: Sui's own commands, with `"network": "sui"`
+
+Sui is not an EVM chain, so it takes its own read-only commands instead of `eth_*`, each answered
+as QuickNode returns it: `sui_getLatestCheckpointSequenceNumber`, `suix_getReferenceGasPrice`,
+`sui_getChainIdentifier`, `sui_getCheckpoint` (a sequence number as a decimal string),
+`suix_getAllBalances` and `suix_getBalance` (an owner, `0x` and 64 hex; `suix_getBalance` also takes
+a coin type), `suix_getCoinMetadata` and `suix_getTotalSupply` (a coin type such as
+`0x2::sui::SUI`), and `sui_getTransactionBlock` (a digest, and optionally `showInput`,
+`showEffects`, `showEvents`, `showBalanceChanges`, `showObjectChanges`). Here, the latest checkpoint:
+
+```json
+{"model": "quicknode-blockchain-data", "network": "sui",
+ "rpc": {"method": "sui_getLatestCheckpointSequenceNumber", "params": []},
+ "messages": [{"role": "user", "content": "chain state"}]}
+```
+
+- A Sui command without `"network": "sui"`, or an `eth_*` command with it, is refused free.
+- Sui retired its JSON-RPC, so each Sui command is answered from QuickNode's Sui GraphQL, served as
+  QuickNode returns it: `response` is a GraphQL body (`data`, plus `errors` when there are any), and
+  the answer carries `"via": "graphql"`. Lists stop at 50 entries and say whether there are more.
+
 ## Reading the page
 
 The page is a markdown table for a person with the same rows fenced as JSON beneath it for a
@@ -293,6 +314,9 @@ refusal bills nothing on an open channel.
 
 ## Changes
 
+- 3.6.2 (2026-10-22): Sui commands answered from Sui GraphQL, since Sui's JSON-RPC is retired.
+- 3.6.1 (2026-10-21): `rpc` without `network` runs on Ethereum, stated plainly.
+- 3.6.0 (2026-10-21): Sui, with its own read-only commands.
 - 3.5.1 (2026-10-09): `rpc` stated as the way in on all 46 chains; the summary page is an extra on
   the first 20.
 - 3.5.0 (2026-10-09): `rpc` on 26 more chains with no page (`rpc`-only), from avalanche to zksync.

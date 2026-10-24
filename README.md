@@ -6,7 +6,7 @@ on Base from its own payment channel, and gets the provider's data as the provid
 with the source named on every page. Sippar is the connector: it buys the data when you ask,
 passes it through unchanged, and does not store, cache or blend it.
 
-Sixteen models, one seller peer:
+Seventeen models, one seller peer:
 
 | Model string | What it answers | Source |
 |---|---|---|
@@ -26,6 +26,7 @@ Sixteen models, one seller peer:
 | `sippar-news-search` | news articles for a search of the past week, or the day's top stories overall or for one of eight topics: each article's headline, publisher, date, link and a short snippet, and related articles from other outlets on a headlines page; no article text | Google News, via OpenWeb Ninja |
 | `sippar-job-search` | job postings for one search (a role and a place), up to 10 a call: each posting's title, employer, the site that published it, employment type, place, posted time, pay where the posting states it, benefits and the link to the posting; no description text | Google for Jobs, via OpenWeb Ninja |
 | `sippar-video-search` | public YouTube videos: a search's matching videos, up to 20 a call, each with its title, link, channel, views, length and the age YouTube shows; or one video's details by its link: publish time, views, likes, comment count, genre, keywords, chapters, caption languages and related videos; no description, transcript or comment text | YouTube, via ScrapeMole (search) and Social Fetch (details) |
+| `3d-model-search` | public 3D models: a search's matching models, up to 24 a call, each with its title, link, creator, licence, thumbnail, whether it can be downloaded, face and vertex counts, views, likes and the download formats Sketchfab offers; filters for licence, downloadable models, the uploaded file type (such as STL) and category; or one model's details by its link: the licence's terms, downloads, materials and textures; no files and no description text | Sketchfab |
 
 Two models also answer under their earlier ids, with the same data and rate: `sippar-chain-state`
 and `onchain-token-rankings`. Use the new ids above. `sippar-skills` and `crypto-skills` are two
@@ -53,11 +54,12 @@ models: the aggregator over both indexes, and the CryptoSkill-only one.
 | news: a search, the top stories, a topic's stories, reading the two page shapes | [skills/sippar-news-search/SKILL.md](./skills/sippar-news-search/SKILL.md) |
 | job postings: the one-line search, the country, the next page, reading the page | [skills/sippar-job-search/SKILL.md](./skills/sippar-job-search/SKILL.md) |
 | videos: a search and its filters, one video's details by its link, reading the two page shapes | [skills/sippar-video-search/SKILL.md](./skills/sippar-video-search/SKILL.md) |
+| 3D models: a search and its filters, printable STL uploads, what each licence allows, one model's details by its link | [skills/3d-model-search/SKILL.md](./skills/3d-model-search/SKILL.md) |
 | ideas: what each model is for, options per model, and how to combine them | [use-cases.md](./use-cases.md) |
 | copy a working call | [examples/curl.sh](./examples/curl.sh), [examples/python.py](./examples/python.py) |
 | check, offline and free, which request shapes keep your arguments | [tools/check-argument-survival.mjs](./tools/check-argument-survival.mjs) |
 
-The eighteen files under `skills/` are agent skills (a `SKILL.md` with frontmatter) and they are
+The nineteen files under `skills/` are agent skills (a `SKILL.md` with frontmatter) and they are
 also the documentation. Give your agent the folder, or read them yourself; they say the same
 thing either way.
 

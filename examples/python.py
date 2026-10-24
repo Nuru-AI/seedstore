@@ -1,4 +1,4 @@
-"""Working calls to Sippar's sixteen models on AntSeed with the OpenAI Python SDK.
+"""Working calls to Sippar's seventeen models on AntSeed with the OpenAI Python SDK.
 
 Each call is a paid purchase from YOUR AntSeed buyer proxy, billed per output token at the
 rate on the peer record. Use the chat-completions path only: the SDK's `responses` path is
@@ -201,6 +201,21 @@ def video(line: str, **filters: str) -> str:
     content = json.dumps({"query": line, **filters}) if filters else line
     r = client.chat.completions.create(
         model="sippar-video-search",
+        messages=[{"role": "user", "content": content}],
+    )
+    return r.choices[0].message.content
+
+
+def models3d(line: str, **filters: str) -> str:
+    """Public 3D models on Sketchfab: search words for up to 24 matching models, or one model's link
+    ("https://sketchfab.com/3d-models/...") for its details. Search filters ride inside the message
+    text as JSON: license (cc0, by, by-sa, by-nd, by-nc, ...), downloadable ("true"), file_format
+    (the uploaded type, e.g. "stl"), categories, sort_by and cursor, e.g.
+    models3d("phone stand", file_format="stl", downloadable="true"). No files and no description
+    text: open the link and download on Sketchfab with an account. Check each model's licence."""
+    content = json.dumps({"query": line, **filters}) if filters else line
+    r = client.chat.completions.create(
+        model="3d-model-search",
         messages=[{"role": "user", "content": content}],
     )
     return r.choices[0].message.content

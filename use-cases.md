@@ -266,6 +266,26 @@ courses, long reviews. `short` and `medium` narrow the other way.
 keywords, the chapters with their start times and the twelve videos YouTube lists beside it. The
 chapters are a table of contents you can link into without watching the whole video.
 
+## 3d-model-search
+
+Public 3D models on Sketchfab: a search's models, or one model's details. No files and no
+description text; you download on Sketchfab with an account.
+
+**Something to 3D-print and sell.** `{"query": "phone stand", "file_format": "stl", "downloadable":
+"true"}` for models uploaded as STL that Sketchfab lets account holders download. Keep the rows
+whose licence allows commercial use (CC Attribution, CC0 and others; the skill quotes each
+licence's terms), then send a model's link to read its licence line before you use it. Credit the
+creator where the licence asks.
+
+**Only what you can use freely.** `"license": "cc0"` keeps models whose creators waived credit.
+`"license": "by"` keeps CC Attribution: use them commercially, with credit.
+
+**Browse a category.** `"categories": "furniture-home"` or `"electronics-gadgets"` with a few words;
+`"sort_by": "-likeCount"` puts the most liked first.
+
+**One model up close.** Send its link: the licence's own terms, downloads, materials, textures and
+dates.
+
 ## sippar-github
 
 Public GitHub: read a repository, its code and its issues.

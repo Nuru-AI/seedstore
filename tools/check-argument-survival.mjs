@@ -41,26 +41,38 @@
  * Usage:  node tools/check-argument-survival.mjs
  * Exit:   0 when the observed behaviour matches what is written above,
  *         1 when it has CHANGED, which is the interesting outcome and means the
- *           guidance in the skills needs re-reading,
+ *           guidance in the skills needs re-reading. A package that is installed
+ *           but whose transform no longer imports counts as changed too: the
+ *           vendor surface moved,
  *         2 when no AntSeed install could be found to test against.
+ *
+ * Installed somewhere this script does not look (pnpm, a custom npm prefix)?
+ * Point it at the package folder:
+ *   ANTSEED_API_ADAPTER_DIR=/path/to/@antseed/api-adapter node tools/check-argument-survival.mjs
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { homedir } from 'node:os';
+import { execSync } from 'node:child_process';
 
 /* The same package ships in several places depending on how you installed
    AntSeed. We load whichever copy imports and print which one it was, so the
    result always names what it measured. */
+let npmRoot = null;
+try { npmRoot = execSync('npm root -g', { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] }).trim(); } catch { /* no npm */ }
 const CANDIDATES = [
+  ...(process.env.ANTSEED_API_ADAPTER_DIR ? [{ label: 'ANTSEED_API_ADAPTER_DIR', dir: process.env.ANTSEED_API_ADAPTER_DIR }] : []),
   { label: 'user plugin dir', dir: join(homedir(), '.antseed/plugins/node_modules/@antseed/api-adapter') },
   { label: '@antseed/cli nested copy', dir: '/opt/homebrew/lib/node_modules/@antseed/cli/node_modules/@antseed/api-adapter' },
   { label: '@antseed/cli nested copy (linux/npm prefix)', dir: '/usr/local/lib/node_modules/@antseed/cli/node_modules/@antseed/api-adapter' },
+  ...(npmRoot ? [{ label: `@antseed/cli nested copy (npm root -g)`, dir: join(npmRoot, '@antseed/cli/node_modules/@antseed/api-adapter') }] : []),
   { label: 'AntSeed desktop bundled plugins', dir: '/Applications/AntSeed VPR.app/Contents/Resources/bundled-plugins/@antseed/api-adapter' },
 ];
 
 let found = null;
 let transformRequest = null;
+let presentButBroken = 0;
 for (const c of CANDIDATES) {
   if (!existsSync(join(c.dir, 'package.json'))) continue;
   try {
@@ -68,8 +80,15 @@ for (const c of CANDIDATES) {
     found = c;
     break;
   } catch (e) {
+    presentButBroken++;
     console.log(`(${c.label} present but not importable: ${e.code ?? e.message})`);
   }
+}
+if (!found && presentButBroken > 0) {
+  console.error('@antseed/api-adapter is installed, but its request transform no longer imports from');
+  console.error('dist/request-transform.js. The vendor surface has CHANGED: re-read the buyer skill');
+  console.error('before trusting its guidance, and report it on the repository.');
+  process.exit(1);
 }
 if (!found) {
   console.error('No importable @antseed/api-adapter found. This check needs an AntSeed install');

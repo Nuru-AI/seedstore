@@ -2,8 +2,8 @@
 name: nansen-crypto-screener
 description: Buy the top onchain token contracts on Solana, Ethereum, Base, BNB and Arbitrum from Sippar's nansen-crypto-screener model on AntSeed, ranked by fully diluted value, volume, net flow, liquidity, price change, buy or sell volume over a window you choose, served with Nansen's attribution. Also named tickers through the symbols argument, such as tokenized stocks (TSLAX, NVDAX, SPYX), and Nansen's Hyperliquid perpetuals screener through the view argument. Triggers on - top tokens, tokenized stocks, xStocks, stock tokens, TSLAX price, biggest tokens on Base, token rankings, FDV ranking, volume leaders on Solana, net flow, perp screener, perpetuals on Hyperliquid, view perp-screener, onchain-token-rankings.
 metadata:
-  version: "3.1.0"
-  updated: "2026-10-10"
+  version: "3.2.0"
+  updated: "2026-10-21"
 ---
 
 # nansen-crypto-screener
@@ -30,10 +30,10 @@ All optional, all top-level, all announced in `supportedParameters`.
 
 | Argument | Legal values | Default |
 |---|---|---|
-| `chains` | any of `solana`, `ethereum`, `base`, `bnb`, `arbitrum`; a list or a comma string | all five |
+| `chains` | any of `solana`, `ethereum`, `base`, `bnb`, `arbitrum`, `sui`, one or any grouping; a list or a comma string | `solana`, `ethereum`, `base`, `bnb`, `arbitrum` |
 | `timeframe` | `5m`, `10m`, `1h`, `6h`, `24h`, `7d`, `30d` | `24h` |
 | `sort` | `fdv`, `volume`, `netflow`, `liquidity`, `priceChange`, `buyVolume`, `sellVolume`; largest first; case does not matter | `fdv` |
-| `rows` | a whole number from 5 to 50 | 25 |
+| `rows` | a whole number from 5 to 50; from 10 when more than five chains are named | 25 |
 | `symbols` | up to 25 token symbols, such as `TSLAX` or `NVDAX`; a list or a comma string; a leading `$` is fine; case does not matter | none |
 | `view` | `perp-screener` | none |
 
