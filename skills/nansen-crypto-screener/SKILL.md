@@ -1,8 +1,8 @@
 ---
 name: nansen-crypto-screener
-description: Buy the top onchain token contracts on Solana, Ethereum, Base, BNB and Arbitrum from Sippar's nansen-crypto-screener model on AntSeed, ranked by fully diluted value, volume, net flow, liquidity, price change, buy or sell volume over a window you choose, served with Nansen's attribution. Also named tickers through the symbols argument, such as tokenized stocks (TSLAX, NVDAX, SPYX), and Nansen's Hyperliquid perpetuals screener through the view argument. Triggers on - top tokens, tokenized stocks, xStocks, stock tokens, TSLAX price, biggest tokens on Base, token rankings, FDV ranking, volume leaders on Solana, net flow, perp screener, perpetuals on Hyperliquid, view perp-screener, onchain-token-rankings.
+description: Buy the top onchain token contracts on Solana, Ethereum, Base, BNB, Arbitrum or Sui from Sippar's nansen-crypto-screener model on AntSeed, ranked by fully diluted value, volume, net flow, liquidity, price change, buy or sell volume over a window you choose, served with Nansen's attribution. Also named tickers through the symbols argument, such as tokenized stocks (TSLAX, NVDAX, SPYX), and Nansen's Hyperliquid perpetuals screener through the view argument. Triggers on - top tokens, tokenized stocks, xStocks, stock tokens, TSLAX price, biggest tokens on Base, token rankings, FDV ranking, volume leaders on Solana, net flow, perp screener, perpetuals on Hyperliquid, view perp-screener, onchain-token-rankings.
 metadata:
-  version: "3.2.0"
+  version: "3.2.1"
   updated: "2026-10-21"
 ---
 
@@ -104,6 +104,8 @@ bills nothing on an open channel.
 
 ## Changes
 
+- 3.2.1 (2026-11-02): Sui named in the description; this entry for 3.2.0.
+- 3.2.0 (2026-10-21): `sui` in `chains`.
 - 3.1.0 (2026-10-10): added `symbols`, named tickers such as tokenized stocks, and the two
   keys it adds to the page.
 - 3.0.0 (2026-10-08): the model is `nansen-crypto-screener` (the old id `onchain-token-rankings`

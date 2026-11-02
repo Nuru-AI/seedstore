@@ -1,10 +1,259 @@
 # What to do with Sippar's models on AntSeed
 
-Ideas, not recipes. Each model answers one kind of question; the options are the arguments it
-takes; the combinations are calls you chain, feeding one answer into the next request. Every
-page is the provider's data as returned, so what you make of it is yours. Transport is in
-[skills/sippar-antseed-buyer/SKILL.md](./skills/sippar-antseed-buyer/SKILL.md); each model's
-arguments are in its own skill.
+A few things to try with each model, then ways to chain them, where one answer feeds the next
+request. How to reach the seller is in the [buyer guide](./skills/sippar-antseed-buyer/SKILL.md);
+each model's options are in its own guide.
+
+## sippar-x-social
+
+X search on any subject, not only crypto.
+
+**Reactions to a launch, a brand or an event.** The name with `since:` a recent date (a product
+launch, a match, an announcement): the popular posts about it, with links, likes and views per post.
+
+**What an account posted.** `from:handle`, optionally with `since:`: a company's, a team's or a
+person's own posts.
+
+**Mentions of a phrase.** Quote it: `"best pizza"`, `"agent wallet"`, a slogan or a product name.
+
+**One language or market.** Add `lang:de`, `lang:es` and so on.
+
+Keywords and names work; plain questions and single generic words do not (a coin ticker on its
+own returns giveaway spam).
+
+## sippar-reddit-social
+
+Public Reddit posts matching a search: which threads discuss it, in which subreddits, and how much
+attention each got, with a link to read it. The post text and comments are not on the page.
+
+**Where a topic is discussed.** Search it and group the posts by `subreddit`: the communities
+that talk about it most, and the threads in each.
+
+**Which threads mattered.** Rank by `score` or `numComments` to find the threads worth opening.
+
+**Reaction to something recent.** Set `"time": "week"` (or `day`) to see the threads a launch, an
+outage or a news story started, then open the busiest ones.
+
+**Go deeper on one search.** Follow `next.cursor` for the following ten.
+
+## sippar-linkedin-social
+
+Public LinkedIn posts matching a search: who posted, when, and how much engagement each post got,
+with a link to read it. The post text is not on the page.
+
+**Who is talking about a topic.** Search the topic with `"posts": 30` and rank the authors by
+`followers`, or by `reactions` across their posts.
+
+**A company's or product's LinkedIn reach.** Search its name; the authors are the people and pages
+mentioning it, the counts show which mentions landed.
+
+**Hiring, layoffs, funding: what the professional crowd posts.** Keyword searches such as
+`hiring freeze`, `layoffs 2026` or `climate tech funding` return the posts, sorted by relevance;
+sort by `publishedAt` yourself for the newest.
+
+**Go deeper on one search.** Follow `next.cursor` for the following ten, or ask for up to 50 at
+once with `posts`.
+
+## sippar-facebook-social
+
+Facebook and Instagram ads from Meta's Ad Library, and a public page's posts, as Social Fetch
+returns them.
+
+**What a competitor is advertising.** `{"query": "Stripe", "by": "company"}`: every ad the company
+runs, with its text, headline, call to action and landing link. Group by `linkUrl` to see which
+pages they send people to, and by `displayFormat` for image against video.
+
+**Who advertises on a topic.** A keyword search (`running shoes`) with `"country": "US"` and
+`"status": "active"`: the advertisers running ads on it now, by `page.name`.
+
+**Messaging research.** Read `creative.bodyText`, `title` and `callToAction` across 30 ads for the
+claims and offers a category leads with. Cite each ad by its `url` in the Ad Library.
+
+**What a brand says to its followers.** `{"query": "https://www.facebook.com/StripeHQ", "by":
+"page"}`: its latest posts with reactions, comments and the top comments; next to its ads (a separate
+`"by": "company"` request), what it says in public against what it pays to promote.
+
+**Go deeper.** Follow the cursor in the closing line: the next 30 ads, or the next 3 posts.
+
+## sippar-video-search
+
+Public YouTube videos: a search's videos, or one video's details. No description, transcript or
+comment text.
+
+**What creators are saying about a product.** `home espresso machine review`: twenty videos with
+the channel, views, length and age. Group by `channel` to see who covers the category, and check
+each title: a search page also carries buying guides and news clips.
+
+**What landed this year.** `{"query": "home espresso machine review", "uploaded": "year"}` for
+videos from the past year only. Add `"sort": "views"` to lean toward the most watched. On a narrow
+subject a date filter can return unrelated videos, so read the titles first.
+
+**A long watch, or a short one.** `"duration": "long"` keeps videos over 20 minutes: full
+courses, long reviews. `short` and `medium` narrow the other way.
+
+**One video up close.** Send its link: the exact publish time, views, likes, the creator's
+keywords, the chapters with their start times and the twelve videos YouTube lists beside it. The
+chapters are a table of contents you can link into without watching the whole video.
+
+## 3d-model-search
+
+Public 3D models on Sketchfab: a search's models, or one model's details. No files and no
+description text; you download on Sketchfab with an account.
+
+**Something to 3D-print and sell.** `{"query": "phone stand", "file_format": "stl", "downloadable":
+"true"}` for models uploaded as STL that Sketchfab lets account holders download. Keep the rows
+whose licence allows commercial use (CC Attribution, CC0 and others; the skill quotes each
+licence's terms), then send a model's link to read its licence line before you use it. Credit the
+creator where the licence asks.
+
+**Only what you can use freely.** `"license": "cc0"` keeps models whose creators waived credit.
+`"license": "by"` keeps CC Attribution: use them commercially, with credit.
+
+**Browse a category.** `"categories": "furniture-home"` or `"electronics-gadgets"` with a few words;
+`"sort_by": "-likeCount"` puts the most liked first.
+
+**One model up close.** Send its link: the licence's own terms, downloads, materials, textures and
+dates.
+
+## ui-animation-search
+
+Animated React components from nine open-source shadcn registries, with their source. Free.
+
+**Find a component.** Two or three words its title would carry: `text reveal`, `marquee`,
+`number ticker`, `loader`. Each row has the component's id and the shadcn install line.
+
+**Take the code.** Send a row's id (`@magicui/marquee`): the source files, CSS keyframes,
+dependencies and the MIT notice to keep with the copy.
+
+**Browse one registry.** `@magicui` or `@motion-primitives` lists its components, 24 at a time.
+
+## sippar-news-search
+
+News articles as Google News lists them: a search of the past week, or the day's top stories.
+
+**What happened this week on a subject.** A plain search (`Federal Reserve interest rates`): ten
+articles with publisher, date and link. Group by `source_name` to see who is covering it.
+
+**The morning's stories.** `headlines`, or `headlines business` for one of eight topics. Each
+story comes with up to three related articles, so you can see how different outlets headline it.
+
+**A reading list, with citations.** Take `title`, `source_name` and `link` from the page and open
+the links you need. The page has no article text.
+
+## sippar-flight-search
+
+Google Flights fares for one route and date. One call is one search; the page carries every
+itinerary Google showed, with its price for the whole party.
+
+**Is this fare good?** One way on the date you want: `price_insights` says whether the price is
+low, typical or high for the route, with the typical range and about two months of daily lows.
+
+**The cheapest day in a window.** One call per date across the window (at most 8 in flight),
+then compare the cheapest `price` on each page.
+
+**A round trip for a group.** `FROM TO DATE RETURN-DATE ADULTS`: round-trip totals for the party,
+listed by outbound flight. For return-flight options, search the return as its own one-way line.
+
+**Where can I go from here.** One call per candidate destination on the same date, then rank by
+the cheapest fare.
+
+## sippar-hotel-search
+
+Places to stay that Google Maps finds for one search, with star class, rating, amenities and the
+price Google shows for its default night.
+
+**Where to stay, at what level.** `hotels in Lisbon, Portugal` or `hostels in Lisbon, Portugal`,
+then sort by `hotel_price_for_dates` and `rating` to shortlist.
+
+**Compare the booking sites.** End the line with `offers` and each place lists every site's price
+and link, so you can say where a room is cheapest for that night.
+
+**Filter on amenities or stars.** Keep the places with `"Free breakfast": true` in `hotel_amenities`, or
+four stars and up, from the list.
+
+## sippar-amazon
+
+Amazon products and offers on six marketplaces, as glim.sh returns them.
+
+**Shortlist by trust, not by ad.** `{"query": "noise cancelling headphones", "sort_by": "most_reviewed",
+"min_reviews": 1000}`, then collapse the colour variants, which share one review count.
+
+**Check one offer before recommending it.** Look up the ASIN from the search. Read
+`offers_summary.buybox.seller`, `stock`, `delivery` and `other_offers_from_price`: a returns
+outlet or a single unit left changes the advice.
+
+**Same product, two countries.** Search with `"tld": "de"` and `"tld": "co.uk"` and compare
+`price_net`, which takes out each country's VAT.
+
+## sippar-job-search
+
+Job postings as Google for Jobs lists them: details and links, no description text.
+
+**Open roles for a role and a place.** `data engineer jobs in Austin, TX`: ten postings with the
+employer, the site that published each one, the place and the link. End the same line with
+`cursor` and the page's cursor value for the next ten.
+
+**What a role pays, where postings say.** On US pages read `job_min_salary`, `job_max_salary` and
+`job_salary_period`, and skip the postings where they are `null`. The postings we read outside the
+US stated no pay.
+
+**One employer's openings.** `Is Stripe hiring software engineers in San Francisco?` returned ten
+Stripe postings. Check `employer_name` on each row.
+
+**Outside the US.** End the line with the country: `marketing manager jobs in Berlin country de`.
+Without it the search runs in the US.
+
+## tavily-web-search
+
+**Current information with sources.** Ask the question as the last user message; the page is
+Tavily's twenty results and its answer, with the URL of each result.
+
+**Finding an identifier to use elsewhere.** A contract address, a token's chain, a protocol's
+official page: search first, then verify on chain with `quicknode-blockchain-data`.
+
+## sippar-github
+
+Public GitHub: read a repository, its code and its issues.
+
+**Understand a library before using it.** `owner/repo` for the README and default branch, then the
+docs folder's file list and its files (or `llms.txt` if the repository has one).
+
+**Where is this defined?** `symbol:name` with `"repo": "owner/name"` and `"kind": "code"`: the files
+and lines that define it; then fetch the file from a hit's `url` for the body.
+
+**Has anyone hit this error?** The exact error message in quotes with `is:issue` and `"repo"`:
+the issues that mention it, then the issue itself for the thread.
+
+**What changed?** `owner/repo/releases/latest` for the release notes, or
+`owner/repo/commits/<branch>/<path>` for one file's history and `/commit/<sha>` for a diff.
+
+**Find projects.** A repository search with qualifiers: `x402 language:typescript`,
+`created:>2026-09-01 sort:stars`, or `topics/<name>`.
+
+## sippar-skills
+
+Agent skills from skills.sh and CryptoSkill, as their authors published them.
+
+**Find a skill for a task.** Two or three keywords (`video generation`, `seo audit`): matches
+from both indexes, with install counts, licence and audit results.
+
+**Read one before your agent runs it.** Send its id (`owner/repo/skill`): the `SKILL.md`, the
+repository's licence line and skills.sh's audit verdicts. Then
+[sippar-skill-adapter](./skills/sippar-skill-adapter/SKILL.md) for running it on AntSeed.
+
+## crypto-skills
+
+**Before acting on a protocol.** Ask for its skill by its id (`chains/aave`; a single word such as
+`aave` is a search): the author's instructions, the source and license, and CryptoSkill's risk flags, in one
+page. Read the flags before your agent follows the skill.
+
+**Finding a skill for a task.** Two or three keywords, not a sentence (`aave lending`, `USDC bridge`),
+return the matching registry entries; ask for the one you want by its id, built as
+`category/name` from the entry's own fields.
+
+**Onboarding an agent without GitHub.** Ask for `sippar-antseed-buyer` and then the skill for the
+model you need (`quicknode-blockchain-data`, `nansen-crypto-screener`, `tavily-web-search`), all through
+AntSeed itself.
 
 ## quicknode-blockchain-data
 
@@ -77,306 +326,74 @@ US markets are open, and free to drift on nights and weekends.
 **Perpetuals.** `view: perp-screener` alone: Nansen's Hyperliquid perpetuals screener over the
 last 24 hours, as Nansen returns it.
 
-## tavily-web-search
-
-**Current information with sources.** Ask the question as the last user message; the page is
-Tavily's twenty results and its answer, with the URL of each result.
-
-**Finding an identifier to use elsewhere.** A contract address, a token's chain, a protocol's
-official page: search first, then verify on chain with `quicknode-blockchain-data`.
-
-## crypto-skills
-
-**Before acting on a protocol.** Ask for its skill by its id (`chains/aave`; a single word such as
-`aave` is a search): the author's instructions, the source and license, and CryptoSkill's risk flags, in one
-page. Read the flags before your agent follows the skill.
-
-**Finding a skill for a task.** Two or three keywords, not a sentence (`aave lending`, `USDC bridge`),
-return the matching registry entries; ask for the one you want by its id, built as
-`category/name` from the entry's own fields.
-
-**Onboarding an agent without GitHub.** Ask for `sippar-antseed-buyer` and then the skill for the
-model you need (`quicknode-blockchain-data`, `nansen-crypto-screener`, `tavily-web-search`), all through
-AntSeed itself.
-
-## sippar-x-social
-
-X search on any subject, not only crypto.
-
-**Reactions to a launch, a brand or an event.** The name with `since:` a recent date (a product
-launch, a match, an announcement): the popular posts about it, with links, likes and views per post.
-
-**What an account posted.** `from:handle`, optionally with `since:`: a company's, a team's or a
-person's own posts.
-
-**Mentions of a phrase.** Quote it: `"best pizza"`, `"agent wallet"`, a slogan or a product name.
-
-**One language or market.** Add `lang:de`, `lang:es` and so on.
-
-Keywords and names work; plain questions and single generic words do not (a coin ticker on its
-own returns giveaway spam).
-
-## sippar-flight-search
-
-Google Flights fares for one route and date. One call is one search; the page carries every
-itinerary Google showed, with its price for the whole party.
-
-**Is this fare good?** One way on the date you want: `price_insights` says whether the price is
-low, typical or high for the route, with the typical range and about two months of daily lows.
-
-**The cheapest day in a window.** One call per date across the window (at most 8 in flight),
-then compare the cheapest `price` on each page.
-
-**A round trip for a group.** `FROM TO DATE RETURN-DATE ADULTS`: round-trip totals for the party,
-listed by outbound flight. For return-flight options, search the return as its own one-way line.
-
-**Where can I go from here.** One call per candidate destination on the same date, then rank by
-the cheapest fare.
-
-## sippar-linkedin-social
-
-Public LinkedIn posts matching a search: who posted, when, and how much engagement each post got,
-with a link to read it. The post text is not on the page.
-
-**Who is talking about a topic.** Search the topic with `"posts": 30` and rank the authors by
-`followers`, or by `reactions` across their posts.
-
-**A company's or product's LinkedIn reach.** Search its name; the authors are the people and pages
-mentioning it, the counts show which mentions landed.
-
-**Hiring, layoffs, funding: what the professional crowd posts.** Keyword searches such as
-`hiring freeze`, `layoffs 2026` or `climate tech funding` return the posts, sorted by relevance;
-sort by `publishedAt` yourself for the newest.
-
-**Go deeper on one search.** Follow `next.cursor` for the following ten, or ask for up to 50 at
-once with `posts`.
-
-## sippar-reddit-social
-
-Public Reddit posts matching a search: which threads discuss it, in which subreddits, and how much
-attention each got, with a link to read it. The post text and comments are not on the page.
-
-**Where a topic is discussed.** Search it and group the posts by `subreddit`: the communities
-that talk about it most, and the threads in each.
-
-**Which threads mattered.** Rank by `score` or `numComments` to find the threads worth opening.
-
-**Reaction to something recent.** Set `"time": "week"` (or `day`) to see the threads a launch, an
-outage or a news story started, then open the busiest ones.
-
-**Go deeper on one search.** Follow `next.cursor` for the following ten.
-
-## sippar-hotel-search
-
-Places to stay that Google Maps finds for one search, with star class, rating, amenities and the
-price Google shows for its default night.
-
-**Where to stay, at what level.** `hotels in Lisbon, Portugal` or `hostels in Lisbon, Portugal`,
-then sort by `hotel_price_for_dates` and `rating` to shortlist.
-
-**Compare the booking sites.** End the line with `offers` and each place lists every site's price
-and link, so you can say where a room is cheapest for that night.
-
-**Filter on amenities or stars.** Keep the places with `"Free breakfast": true` in `hotel_amenities`, or
-four stars and up, from the list.
-
-## sippar-amazon
-
-Amazon products and offers on six marketplaces, as glim.sh returns them.
-
-**Shortlist by trust, not by ad.** `{"query": "noise cancelling headphones", "sort_by": "most_reviewed",
-"min_reviews": 1000}`, then collapse the colour variants, which share one review count.
-
-**Check one offer before recommending it.** Look up the ASIN from the search. Read
-`offers_summary.buybox.seller`, `stock`, `delivery` and `other_offers_from_price`: a returns
-outlet or a single unit left changes the advice.
-
-**Same product, two countries.** Search with `"tld": "de"` and `"tld": "co.uk"` and compare
-`price_net`, which takes out each country's VAT.
-
-## sippar-facebook-social
-
-Facebook and Instagram ads from Meta's Ad Library, and a public page's posts, as Social Fetch
-returns them.
-
-**What a competitor is advertising.** `{"query": "Stripe", "by": "company"}`: every ad the company
-runs, with its text, headline, call to action and landing link. Group by `linkUrl` to see which
-pages they send people to, and by `displayFormat` for image against video.
-
-**Who advertises on a topic.** A keyword search (`running shoes`) with `"country": "US"` and
-`"status": "active"`: the advertisers running ads on it now, by `page.name`.
-
-**Messaging research.** Read `creative.bodyText`, `title` and `callToAction` across 30 ads for the
-claims and offers a category leads with. Cite each ad by its `url` in the Ad Library.
-
-**What a brand says to its followers.** `{"query": "https://www.facebook.com/StripeHQ", "by":
-"page"}`: its latest posts with reactions, comments and the top comments; next to its ads (a separate
-`"by": "company"` request), what it says in public against what it pays to promote.
-
-**Go deeper.** Follow the cursor in the closing line: the next 30 ads, or the next 3 posts.
-
-## sippar-news-search
-
-News articles as Google News lists them: a search of the past week, or the day's top stories.
-
-**What happened this week on a subject.** A plain search (`Federal Reserve interest rates`): ten
-articles with publisher, date and link. Group by `source_name` to see who is covering it.
-
-**The morning's stories.** `headlines`, or `headlines business` for one of eight topics. Each
-story comes with up to three related articles, so you can see how different outlets headline it.
-
-**A reading list, with citations.** Take `title`, `source_name` and `link` from the page and open
-the links you need. The page has no article text.
-
-## sippar-job-search
-
-Job postings as Google for Jobs lists them: details and links, no description text.
-
-**Open roles for a role and a place.** `data engineer jobs in Austin, TX`: ten postings with the
-employer, the site that published each one, the place and the link. End the same line with
-`cursor` and the page's cursor value for the next ten.
-
-**What a role pays, where postings say.** On US pages read `job_min_salary`, `job_max_salary` and
-`job_salary_period`, and skip the postings where they are `null`. The postings we read outside the
-US stated no pay.
-
-**One employer's openings.** `Is Stripe hiring software engineers in San Francisco?` returned ten
-Stripe postings. Check `employer_name` on each row.
-
-**Outside the US.** End the line with the country: `marketing manager jobs in Berlin country de`.
-Without it the search runs in the US.
-
-## sippar-video-search
-
-Public YouTube videos: a search's videos, or one video's details. No description, transcript or
-comment text.
-
-**What creators are saying about a product.** `home espresso machine review`: twenty videos with
-the channel, views, length and age. Group by `channel` to see who covers the category, and check
-each title: a search page also carries buying guides and news clips.
-
-**What landed this year.** `{"query": "home espresso machine review", "uploaded": "year"}` for
-videos from the past year only. Add `"sort": "views"` to lean toward the most watched. On a narrow
-subject a date filter can return unrelated videos, so read the titles first.
-
-**A long watch, or a short one.** `"duration": "long"` keeps videos over 20 minutes: full
-courses, long reviews. `short` and `medium` narrow the other way.
-
-**One video up close.** Send its link: the exact publish time, views, likes, the creator's
-keywords, the chapters with their start times and the twelve videos YouTube lists beside it. The
-chapters are a table of contents you can link into without watching the whole video.
-
-## 3d-model-search
-
-Public 3D models on Sketchfab: a search's models, or one model's details. No files and no
-description text; you download on Sketchfab with an account.
-
-**Something to 3D-print and sell.** `{"query": "phone stand", "file_format": "stl", "downloadable":
-"true"}` for models uploaded as STL that Sketchfab lets account holders download. Keep the rows
-whose licence allows commercial use (CC Attribution, CC0 and others; the skill quotes each
-licence's terms), then send a model's link to read its licence line before you use it. Credit the
-creator where the licence asks.
-
-**Only what you can use freely.** `"license": "cc0"` keeps models whose creators waived credit.
-`"license": "by"` keeps CC Attribution: use them commercially, with credit.
-
-**Browse a category.** `"categories": "furniture-home"` or `"electronics-gadgets"` with a few words;
-`"sort_by": "-likeCount"` puts the most liked first.
-
-**One model up close.** Send its link: the licence's own terms, downloads, materials, textures and
-dates.
-
-## sippar-github
-
-Public GitHub: read a repository, its code and its issues.
-
-**Understand a library before using it.** `owner/repo` for the README and default branch, then the
-docs folder's file list and its files (or `llms.txt` if the repository has one).
-
-**Where is this defined?** `symbol:name` with `"repo": "owner/name"` and `"kind": "code"`: the files
-and lines that define it; then fetch the file from a hit's `url` for the body.
-
-**Has anyone hit this error?** The exact error message in quotes with `is:issue` and `"repo"`:
-the issues that mention it, then the issue itself for the thread.
-
-**What changed?** `owner/repo/releases/latest` for the release notes, or
-`owner/repo/commits/<branch>/<path>` for one file's history and `/commit/<sha>` for a diff.
-
-**Find projects.** A repository search with qualifiers: `x402 language:typescript`,
-`created:>2026-09-01 sort:stars`, or `topics/<name>`.
-
 ## Combinations
 
-Each is a sequence of calls. The value named in one page goes into the next request.
+Each is a sequence of calls. A value from one answer goes into the next request.
 
-1. **From a name to its transfers.** `tavily-web-search` for the token's contract address on
-   Ethereum; then `quicknode-blockchain-data` with `rpc` `eth_getLogs` on that address over a recent
-   block range.
-2. **From a ranking to a holder.** `nansen-crypto-screener` with `chains: ["base"]`, `sort:
-   volume`, `rows: 10`; take a contract from the page; then `quicknode-blockchain-data` on Base with
-   `address` (an account you watch) and `tokens: [that contract]`.
-3. **Market context for a chain read.** `quicknode-blockchain-data` on one chain for fees and
-   activity, beside `nansen-crypto-screener` for the same chain over `24h`: what the chain is
-   doing and what is trading on it, from two providers, at the same moment.
-4. **Two angles on the same market.** `nansen-crypto-screener` ranked by `netflow` over `1h`,
-   and `view: perp-screener` in a second call. Spot flows and perpetuals side by side.
-5. **A watchlist sweep.** For each address you follow, one `quicknode-blockchain-data` call per chain
-   it uses with the three `address*` fields; at most 8 calls in flight; the pages are the
-   record.
-6. **News plus the chain.** `tavily-web-search` for what is being said about a protocol, then
-   `quicknode-blockchain-data` with no `address` on its chain to see what its published contracts
-   hold now.
-7. **A protocol's skill, then its chain.** `crypto-skills` with the protocol's id for how it
-   works and which contracts it names; then `quicknode-blockchain-data` on that chain with no
-   `address`, or with `rpc` on one of those contracts.
-8. **A task's skills, then the market.** `crypto-skills` with two or three keywords for the task; then
-   `nansen-crypto-screener` for the chain the chosen skill works on.
-9. **Learn the call, then make it.** `crypto-skills` with `quicknode-blockchain-data` for the
-   arguments; then the `quicknode-blockchain-data` call it describes.
-10. **What is said, then what is so.** `sippar-x-social` for what X is saying about a story this
-   week; then `tavily-web-search` for the sources behind it, or, for an onchain project,
-   `quicknode-blockchain-data` or `nansen-crypto-screener` to check the claims against the data.
-11. **A trip, then the news at the destination.** `sippar-flight-search` for the fares; then
+1. **A trip, then the news at the destination.** `sippar-flight-search` for the fares; then
    `tavily-web-search` for anything that could move the plan there (strikes, weather, events).
-12. **Two networks on one subject.** `sippar-linkedin-social` for who is posting about it on
+2. **Two networks on one subject.** `sippar-linkedin-social` for who is posting about it on
    LinkedIn and how it lands; `sippar-x-social` for the same subject on X.
-13. **Read the code, then the chain.** `sippar-github` for a protocol's contract source or its
-   deployment addresses in the repository; then `quicknode-blockchain-data` with `rpc` on those
-   addresses to see what they hold and do now.
-14. **The repository, then the conversation.** `sippar-github` for a library's latest release notes;
+3. **The repository, then the conversation.** `sippar-github` for a library's latest release notes;
    then `sippar-x-social` or `tavily-web-search` for what people say about that release.
-15. **Three networks on one subject.** `sippar-reddit-social` for the communities and threads
+4. **Three networks on one subject.** `sippar-reddit-social` for the communities and threads
    discussing it; `sippar-x-social` for the live conversation on X; `sippar-linkedin-social` for
    who posts about it professionally.
-16. **Flight, then a bed.** `sippar-flight-search` for the fare to a city; then `sippar-hotel-search`
+5. **Flight, then a bed.** `sippar-flight-search` for the fare to a city; then `sippar-hotel-search`
    for places to stay there, with the price level for a night and, with `offers`, where it is
    cheapest.
-
-17. **What people say, then what it costs.** `sippar-reddit-social` for the threads about a
+6. **What people say, then what it costs.** `sippar-reddit-social` for the threads about a
    product category; then `sippar-amazon` for the products named there, with price, rating and the
    reviews on the product page.
-
-18. **What they say, then what they advertise.** `sippar-x-social` or `sippar-reddit-social` for what
+7. **What they say, then what they advertise.** `sippar-x-social` or `sippar-reddit-social` for what
    people say about a brand; then `sippar-facebook-social` with `"by": "company"` for the ads the
    brand runs, and compare the claims.
-
-19. **The headline, then the reaction.** `sippar-news-search` for what the press published on a
+8. **The headline, then the reaction.** `sippar-news-search` for what the press published on a
    subject this week; then `sippar-x-social` or `sippar-reddit-social` for what people are saying
    about it.
-
-20. **An employer's openings, then the employer in the news.** `sippar-job-search` for the
+9. **An employer's openings, then the employer in the news.** `sippar-job-search` for the
    postings a company has open; then `sippar-news-search` for what the press published about it
    this week.
-
-21. **The reviews, then the price.** `sippar-video-search` for the review videos on a product
+10. **The reviews, then the price.** `sippar-video-search` for the review videos on a product
    category and the products they name in their titles and chapters; then `sippar-amazon` for
    those products, with price, rating and the reviews on the product page.
+11. **A component, then its library.** `ui-animation-search` for the component you want; then
+   `sippar-github` on its registry's repository for the docs and recent releases.
+12. **From a name to its transfers.** `tavily-web-search` for the token's contract address on
+   Ethereum; then `quicknode-blockchain-data` with `rpc` `eth_getLogs` on that address over a recent
+   block range.
+13. **From a ranking to a holder.** `nansen-crypto-screener` with `chains: ["base"]`, `sort:
+   volume`, `rows: 10`; take a contract from the page; then `quicknode-blockchain-data` on Base with
+   `address` (an account you watch) and `tokens: [that contract]`.
+14. **Market context for a chain read.** `quicknode-blockchain-data` on one chain for fees and
+   activity, beside `nansen-crypto-screener` for the same chain over `24h`: what the chain is
+   doing and what is trading on it, from two providers, at the same moment.
+15. **Two angles on the same market.** `nansen-crypto-screener` ranked by `netflow` over `1h`,
+   and `view: perp-screener` in a second call. Spot flows and perpetuals side by side.
+16. **A watchlist sweep.** For each address you follow, one `quicknode-blockchain-data` call per chain
+   it uses with the three `address*` fields; at most 8 calls in flight; the pages are the
+   record.
+17. **News plus the chain.** `tavily-web-search` for what is being said about a protocol, then
+   `quicknode-blockchain-data` with no `address` on its chain to see what its published contracts
+   hold now.
+18. **A protocol's skill, then its chain.** `crypto-skills` with the protocol's id for how it
+   works and which contracts it names; then `quicknode-blockchain-data` on that chain with no
+   `address`, or with `rpc` on one of those contracts.
+19. **A task's skills, then the market.** `crypto-skills` with two or three keywords for the task; then
+   `nansen-crypto-screener` for the chain the chosen skill works on.
+20. **Learn the call, then make it.** `crypto-skills` with `quicknode-blockchain-data` for the
+   arguments; then the `quicknode-blockchain-data` call it describes.
+21. **What is said, then what is so.** `sippar-x-social` for what X is saying about a story this
+   week; then `tavily-web-search` for the sources behind it, or, for an onchain project,
+   `quicknode-blockchain-data` or `nansen-crypto-screener` to check the claims against the data.
+22. **Read the code, then the chain.** `sippar-github` for a protocol's contract source or its
+   deployment addresses in the repository; then `quicknode-blockchain-data` with `rpc` on those
+   addresses to see what they hold and do now.
 
-## What the pages are not
+## Reading the numbers
 
-No derived figures anywhere. The chain-state page itself holds no prices and no history: its
-balances are the contract's ledger entry at the `latest` block, which is not finalized. Past
-blocks come only through `rpc`, as QuickNode returns them. A page
-with `ok: false` rows is a page with gaps; `counts.rowsFailed` says how many. If a figure looks
-wrong, read the page's notes before deciding it is: one chain's real gas limit looks absurd
-until you know that chain.
+Each page holds the provider's figures at one moment, with the time it was read. The chain data
+page reads the `latest` block, which is not yet final; older blocks come through `rpc`, as
+QuickNode returns them. A row with `ok: false` is a gap, and `counts.rowsFailed` says how many a
+page has. If a figure looks odd, read the page's notes first: one chain's real gas limit looks
+absurd until you know that chain.

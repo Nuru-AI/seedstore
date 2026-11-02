@@ -1,14 +1,14 @@
 ---
 name: sippar-antseed-buyer
-description: Reach Sippar's models on the AntSeed network and get the answer you asked for. Use this before calling any of Sippar's models (every `sippar-*` model, plus quicknode-blockchain-data, nansen-crypto-screener, tavily-web-search, crypto-skills and 3d-model-search) from an AntSeed buyer or through an AntSeed API-key gateway. It carries the endpoint (your buyer proxy, or a gateway with your key), the peer pin, the one request shape that keeps your arguments, the two channels that survive a translating client, the fail-closed header, the 8-calls-in-flight limit, how to read the routing line, and how to confirm the answer came from Sippar. Triggers on - buy data from Sippar on AntSeed, pin the Sippar peer, my network parameter was ignored, I was served the wrong chain, 429 buyer_concurrency_limit, 429 rate_limit_error, 409 payment_negotiation_failed, existing payment channel could not be recovered, try another peer, which seller answered, metadata.sippar, x-sippar headers, x-antseed-required-parameters, ANTSEED_BASE_URL, antseed: command not found, connection refused on 8377.
+description: Use this before calling any of Sippar's models on AntSeed (every sippar-* model, plus 3d-model-search, ui-animation-search, tavily-web-search, quicknode-blockchain-data, nansen-crypto-screener and crypto-skills), from your own AntSeed buyer or an AntSeed API-key gateway. It covers pinning the Sippar peer, the request shape that keeps your options, the two channels that survive a translating client, the 8-calls-at-once limit, reading the routing line and errors, and confirming the answer came from Sippar. Also use it when an option was ignored, the wrong chain came back, or a call failed with 429, 409 payment_negotiation_failed or connection refused on 8377.
 metadata:
-  version: "2.18.0"
-  updated: "2026-10-24"
+  version: "2.19.0"
+  updated: "2026-11-02"
 ---
 
 # Reaching Sippar's models on AntSeed
 
-Sippar sells seventeen models on AntSeed. Each one is a provider's data or files served as the
+Sippar sells these models on AntSeed. Each one is a provider's data or files served as the
 provider returns them, with the source named on every page. This skill is about the transport:
 how a request reaches the right seller with its arguments intact, and how to tell from the
 answer that it did. What each model answers, and what you can do with it, is in its own skill:
@@ -21,7 +21,8 @@ answer that it did. What each model answers, and what you can do with it, is in 
 | `sippar-facebook-social` | Facebook via Social Fetch, as returned: Ad Library ads by keyword, or `"by": "company"` for one company's ads (long pages, about 18,000 to 80,000 tokens), or `"by": "page"` with a facebook.com page link for its recent posts; filters and `cursor` go inside the message text as JSON | the `sippar-facebook-social` skill |
 | `sippar-news-search` | news from Google News via OpenWeb Ninja, each article cut to headline, publisher, date, link and snippet, no article text. Send one line: a search of the past week, `headlines` for the day's top stories, or `headlines business` (or another of eight topics) | the `sippar-news-search` skill |
 | `sippar-video-search` | public YouTube videos: a search's videos from ScrapeMole (title, link, channel, views, length, the age YouTube shows), or one video's details from Social Fetch by its link (publish time, counts, genre, keywords, chapters, caption languages, related videos); no description, transcript or comment text. Send search words or one video link; `sort`, `uploaded` and `duration` go inside the message text as JSON | the `sippar-video-search` skill |
-| `3d-model-search` | public 3D models on Sketchfab: a search's models (title, link, creator, licence, thumbnail, downloadable or not, counts, download formats), or one model's details by its link (the licence's terms, downloads, materials, textures); no files and no description text. Send search words or one model link; `license`, `downloadable`, `file_format`, `categories`, `sort_by` and `cursor` go inside the message text as JSON | the `3d-model-search` skill |
+| `3d-model-search` | free: public 3D models on Sketchfab: a search's models (title, link, creator, licence, thumbnail, downloadable or not, counts, download formats), or one model's details by its link (the licence's terms, downloads, materials, textures); no files and no description text. Send search words or one model link; `license`, `downloadable`, `file_format`, `categories`, `sort_by` and `cursor` go inside the message text as JSON | the `3d-model-search` skill |
+| `ui-animation-search` | free: animated React components from nine open-source shadcn registries, matched by your words, or one component's source files, keyframes, install line and MIT notice by its id (`@magicui/marquee`). `registry` and `cursor` go inside the message text as JSON | the `ui-animation-search` skill |
 | `sippar-flight-search` | Google Flights fares for one route and date, via stabletravel.dev. Send one line, `FROM TO DATE [RETURN-DATE] [ADULTS]` with airport codes, never a sentence | the `sippar-flight-search` skill |
 | `sippar-hotel-search` | places to stay for one search, from Google Maps via OpenWeb Ninja: type, stars, rating, amenities, address and Google's current nightly price; end the line with `offers` for each booking site's price | the `sippar-hotel-search` skill |
 | `sippar-job-search` | job postings from Google for Jobs via OpenWeb Ninja, each cut to title, employer, publishing site, employment type, place, posted time, pay, benefits and links, no description text. Send one line with the role and the place; outside the US end it with `country` and two letters (`marketing manager jobs in Berlin country de`) | the `sippar-job-search` skill |
@@ -29,7 +30,7 @@ answer that it did. What each model answers, and what you can do with it, is in 
 | `tavily-web-search` | a live web search with sources, from Tavily (directly, or via gedx402) | the `tavily-web-search` skill |
 | `sippar-github` | public GitHub from glim.sh: a repository, a folder's file list, a file, an issue or PR, commits, releases, code search. Send a ref (`owner/repo`, a github.com URL) or a GitHub search; `repo`, `kind`, `per_page` and `page` go inside the message text as JSON | the `sippar-github` skill |
 | `sippar-skills` | the aggregator: our own, skills.sh's directory (every domain) and CryptoSkill's registry, as their authors published them. Send a skill name, an id (`owner/repo/skill` or `category/name`) or two or three keywords, never a sentence | the `sippar-skills` skill; `sippar-skill-adapter` to run one on AntSeed |
-| `quicknode-blockchain-data` | live facts about one of 46 EVM chains, bought from QuickNode when you ask | the `quicknode-blockchain-data` skill |
+| `quicknode-blockchain-data` | live facts about one EVM chain (Ethereum, Base and dozens more) or Sui, bought from QuickNode when you ask | the `quicknode-blockchain-data` skill |
 | `nansen-crypto-screener` | the top token contracts on Solana, Ethereum, Base, BNB and Arbitrum, from Nansen, plus Nansen's perpetuals screener | the `nansen-crypto-screener` skill |
 | `crypto-skills` | agent skills: our own, and CryptoSkill's registry of crypto skills, as their authors published them. Send a skill name, an id or two or three keywords as the message, never a sentence | the `crypto-skills` skill |
 
@@ -44,13 +45,15 @@ never write one "next page" loop for all of them:
 - **A cursor you send back:** `sippar-linkedin-social`, `sippar-reddit-social`,
   `sippar-facebook-social`, `sippar-job-search`.
 - **A page number:** `sippar-github`, `sippar-amazon`, `crypto-skills`, `sippar-skills`.
+- **A cursor you send back:** also `3d-model-search` and `ui-animation-search` (`next.cursor`).
 - **One call is one page:** every other model. `sippar-x-social` shows X's `next_cursor`, but you
   cannot send it back; change the search for different posts.
 
 Each model's skill says exactly how.
 
 Seller peer `706fca9c0d0684c30f86209aae0c3565ce1aa69f`, onchain agent 84918, settled in USDC on
-Base through your AntSeed payment channel. You pay per output token at the rate on the peer
+Base through your AntSeed payment channel. `3d-model-search` and `ui-animation-search` are free
+within a daily allowance per buyer. The rest bill per output token at the rate on the peer
 record. Rates change, so read them rather than copying a number:
 
 ```bash
@@ -180,7 +183,7 @@ The routing line (section 6) catches the wrong chain; only your own code catches
 `fields`. Second, require only what the model announces:
 `quicknode-blockchain-data` announces `address, blocks, fields, network, rpc, tokens`;
 `nansen-crypto-screener` announces `chains, rows, sort, symbols, timeframe, view`; `tavily-web-search`
-announces `include_images, max_results`; `crypto-skills`, `sippar-skills`, `sippar-x-social`, `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search`, `sippar-amazon`, `sippar-facebook-social`, `sippar-news-search`, `sippar-job-search` and `sippar-video-search` announce nothing, so requiring any name on them refuses every call. Read the current lists:
+announces `include_images, max_results`; `crypto-skills`, `sippar-skills`, `sippar-x-social`, `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search`, `sippar-amazon`, `sippar-facebook-social`, `sippar-news-search`, `sippar-job-search`, `sippar-video-search`, `3d-model-search` and `ui-animation-search` announce nothing, so requiring any name on them refuses every call. Read the current lists:
 
 ```bash
 antseed network peer 706fca9c0d0684c30f86209aae0c3565ce1aa69f --json \
@@ -286,6 +289,7 @@ This skill covers the Sippar layer. For the platform underneath:
 
 ## Changes
 
+- 2.19.0 (2026-11-02): `ui-animation-search`, and the two free models named as free; a shorter description.
 - 2.18.0 (2026-10-24): the seventeenth model, `3d-model-search` (its id carries no sippar- prefix); a 409 `payment_negotiation_failed` is your buyer's channel with this seller, and what to do about it.
 - 2.17.0 (2026-10-13): from an outside review of this repository.
   - The 429 as the buyer proxy delivers it: `rate_limit_error`, no `retry-after`; don't follow

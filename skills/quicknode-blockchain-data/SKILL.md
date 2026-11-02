@@ -1,9 +1,9 @@
 ---
 name: quicknode-blockchain-data
-description: Buy live facts about one EVM chain from Sippar's quicknode-blockchain-data model on AntSeed, served as QuickNode returns them. Use it for the current block, gas and fees, how full the last block was, native and ERC-20 balances, one account's balances and transaction count, any ERC-20 balance by contract, transfer logs for a token or for a wallet over a block range, a block's header with its transaction hashes, a transaction's receipt, a transaction itself, an account's native balance at any block, the calls and internal transfers that touched a wallet, and any read-only contract call at any block. Triggers on - chain state, block number, gas price on Base, balance of an address on Arbitrum, token balance by contract, eth_getLogs, transfer logs, tokens a wallet sent or received, eth_getBlockByNumber, eth_getTransactionReceipt, eth_getTransactionByHash, eth_getBalance, balance at a past block, trace_filter, internal transactions, native coin moved by a contract, eth_call, balanceOf at a past block, transaction receipt, transaction by hash, rpc on AntSeed, rpc on Avalanche, zkSync, HyperEVM, Sei, Kaia, X Layer or another chain, sippar-chain-state, which chains does quicknode-blockchain-data serve.
+description: Use this when you need live blockchain facts on Ethereum, Base, Arbitrum or dozens of other EVM chains, or Sui: the current block, gas and fees, native and ERC-20 balances, one account's balances and transactions, transfer logs for a token or a wallet, a block, a transaction and its receipt, a balance at a past block, internal transfers (trace_filter) or any read-only contract call (eth_call). Sippar's quicknode-blockchain-data model on AntSeed answers as QuickNode returns it. It also answers as sippar-chain-state.
 metadata:
-  version: "3.6.2"
-  updated: "2026-10-21"
+  version: "3.6.3"
+  updated: "2026-11-02"
 ---
 
 # quicknode-blockchain-data
@@ -32,7 +32,7 @@ answers with the same data, arguments and rate.
 | The calls and internal transfers that touched a wallet, including native coin a contract sent it | the `rpc` answer, QuickNode's reply to `trace_filter` |
 | What a contract's read-only function returned at any block, such as a token balance then | the `rpc` answer, QuickNode's reply to `eth_call` |
 
-**Chains: `rpc` commands run on 46 (2026-10-09)**, each answered exactly as QuickNode returns
+**Chains: `rpc` commands run on every EVM chain below**, each answered exactly as QuickNode returns
 it. Name the chain with `network`; QuickNode's own network name is accepted too (`hype-mainnet`,
 `sei-pacific`, `avalanche-mainnet`):
 
@@ -43,7 +43,7 @@ lisk, mode, morph, arbitrum-nova, peaq, plasma, sei, story, tempo, vana, xlayer,
 
 **The summary page is an extra on the first 20** (ethereum to monad). A request without `rpc`
 gets it: the fields in the table above, which Sippar reads from QuickNode in several requests and
-lays out as rows (QuickNode's raw integer stays in `valueRaw`). On the other 26 a request without
+lays out as rows (QuickNode's raw integer stays in `valueRaw`). On the others a request without
 `rpc` is refused free, with a message saying that chain serves `rpc` commands only.
 
 A chain the model does not serve is refused with a free 400.
@@ -54,7 +54,7 @@ All six are optional top-level keys, all announced in `supportedParameters`.
 
 | Argument | What it does |
 |---|---|
-| `network` | Which chain, any of the 46. **Omit it and you get Ethereum**, in full, billed in full, with no error. On the 26 chains without the summary page, send `rpc` beside it. |
+| `network` | Which chain, any of those listed above. **Omit it and you get Ethereum**, in full, billed in full, with no error. On the chains without the summary page, send `rpc` beside it. |
 | `fields` | Which rows you pay for. Omit it and you get every row. The legal names are on every narrowed page as `selection.fieldsAvailable`. |
 | `address` | A `0x` + 40 hex account. Adds that account's three rows beside the chain's. Makes the page wider, so name `fields` to keep it narrow. Mixed case is checked as an EIP-55 checksum before anything is bought. |
 | `blocks` | With `address`: scan that account's transactions in the newest block. Capped at 1; older blocks are not served by this field. |
@@ -314,6 +314,7 @@ refusal bills nothing on an open channel.
 
 ## Changes
 
+- 3.6.3 (2026-11-02): no chain count in the text; a shorter description.
 - 3.6.2 (2026-10-22): Sui commands answered from Sui GraphQL, since Sui's JSON-RPC is retired.
 - 3.6.1 (2026-10-21): `rpc` without `network` runs on Ethereum, stated plainly.
 - 3.6.0 (2026-10-21): Sui, with its own read-only commands.

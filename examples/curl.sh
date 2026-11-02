@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Working calls to Sippar's seventeen models on AntSeed. Each one is a paid purchase from YOUR
-# AntSeed buyer proxy (default 127.0.0.1:8377), billed per output token at the rate on the
-# peer record. Run one at a time; read the routing line on a chain-state answer before you
-# use it. Transport rules: the sippar-antseed-buyer skill.
+# Working calls to Sippar's models on AntSeed, through YOUR AntSeed buyer proxy (default
+# 127.0.0.1:8377). `3d` and `ui` are free within a daily allowance; every other case is a paid
+# call, billed per output token at the rate on the peer record. Run one at a time.
+# Usage: ./curl.sh <case> ['your words'], e.g. ./curl.sh reddit 'home espresso machine'.
+# Transport rules: the sippar-antseed-buyer skill.
 set -euo pipefail
 PROXY="${SIPPAR_ANTSEED_PROXY:-http://127.0.0.1:8377}"
 PEER='706fca9c0d0684c30f86209aae0c3565ce1aa69f'
@@ -15,6 +16,39 @@ call() {
 }
 
 case "${1:-}" in
+  x)       # X posts: keywords, names or X operators (from:, lang:, since:, "phrase"); any subject; pass the search as $2
+    call "$(jq -cn --arg c "$2" '{model:"sippar-x-social",messages:[{role:"user",content:$c}]}')" ;;
+  reddit) # Reddit posts: keywords; pass the search as $2. Past week: content '{"query":"…","time":"week"}'
+    call "$(jq -cn --arg c "$2" '{model:"sippar-reddit-social",messages:[{role:"user",content:$c}]}')" ;;
+  linkedin) # LinkedIn posts: keywords; pass the search as $2. More posts: content '{"query":"…","posts":30}'
+    call "$(jq -cn --arg c "$2" '{model:"sippar-linkedin-social",messages:[{role:"user",content:$c}]}')" ;;
+  facebook) # Facebook/Instagram ads (Meta Ad Library): keywords, or one company's ads as JSON, e.g. '{"query":"Stripe","by":"company","country":"US"}'
+    call "$(jq -cn --arg c "$2" '{model:"sippar-facebook-social",messages:[{role:"user",content:$c}]}')" ;;
+  video) # Videos: search words, or one video's link for its details; filters as JSON, e.g. '{"query":"home espresso machine review","uploaded":"year"}'
+    call "$(jq -cn --arg c "$2" '{model:"sippar-video-search",messages:[{role:"user",content:$c}]}')" ;;
+  3d) # 3D models on Sketchfab: search words, or one model's link for its details; filters as JSON, e.g. '{"query":"phone stand","file_format":"stl","downloadable":"true"}'
+    call "$(jq -cn --arg c "$2" '{model:"3d-model-search",messages:[{role:"user",content:$c}]}')" ;;
+  ui) # Animated React components (free): search words, or a component id from a row, e.g. '@magicui/marquee' for its source
+    call "$(jq -cn --arg c "$2" '{model:"ui-animation-search",messages:[{role:"user",content:$c}]}')" ;;
+  news) # News: a search of the past week, or 'headlines', or 'headlines business' (eight topics)
+    call "$(jq -cn --arg c "$2" '{model:"sippar-news-search",messages:[{role:"user",content:$c}]}')" ;;
+  flights) # one line: FROM TO DATE [RETURN-DATE] [ADULTS], airport codes; pass it as $2
+    call "$(jq -cn --arg c "$2" '{model:"sippar-flight-search",messages:[{role:"user",content:$c}]}')" ;;
+  hotels) # Places to stay: one line, e.g. 'hostels in Lisbon, Portugal'; end it with "offers" for booking-site prices
+    call "$(jq -cn --arg c "$2" '{model:"sippar-hotel-search",messages:[{role:"user",content:$c}]}')" ;;
+  amazon) # Amazon: a search, bestsellers:<category>, an ASIN or a product URL; options as JSON, e.g. '{"query":"electric kettle","tld":"co.uk"}'
+    call "$(jq -cn --arg c "$2" '{model:"sippar-amazon",messages:[{role:"user",content:$c}]}')" ;;
+  jobs) # Job postings: one line, a role and a place; outside the US end it with the country, e.g. 'marketing manager jobs in Berlin country de'
+    call "$(jq -cn --arg c "$2" '{model:"sippar-job-search",messages:[{role:"user",content:$c}]}')" ;;
+  search)  # the last user message is the query; pass it as $2
+    call "$(jq -cn --arg c "$2" '{model:"tavily-web-search",messages:[{role:"user",content:$c}]}')" ;;
+  github) # GitHub: a ref (owner/repo, a github.com URL) or a GitHub search; pass it as $2.
+    # Options: content '{"query":"symbol:useRouter","repo":"vercel/next.js","kind":"code","per_page":10}'
+    call "$(jq -cn --arg c "$2" '{model:"sippar-github",messages:[{role:"user",content:$c}]}')" ;;
+  skills) # Agent skills from skills.sh and CryptoSkill: a skill id ('owner/repo/skill') or two or three keywords
+    call "$(jq -cn --arg c "$2" '{model:"sippar-skills",messages:[{role:"user",content:$c}]}')" ;;
+  skill)   # a CryptoSkill id (e.g. chains/aave), one of Sippar's skill names, or two or three keywords to search; pass it as $2
+    call "$(jq -cn --arg c "$2" '{model:"crypto-skills",messages:[{role:"user",content:$c}]}')" ;;
   chain)   # two fields on Base
     call '{"model":"quicknode-blockchain-data","network":"base","fields":["blockNumber","gasPrice"],
            "messages":[{"role":"user","content":"chain state"}]}' ;;
@@ -47,39 +81,13 @@ case "${1:-}" in
   perps)   # Nansen's perpetuals screener; "view" goes alone
     call '{"model":"nansen-crypto-screener","view":"perp-screener",
            "messages":[{"role":"user","content":"perps"}]}' ;;
-  search)  # the last user message is the query; pass it as $2
-    call "$(jq -cn --arg c "$2" '{model:"tavily-web-search",messages:[{role:"user",content:$c}]}')" ;;
-  skill)   # a CryptoSkill id (e.g. chains/aave), one of Sippar's skill names, or two or three keywords to search; pass it as $2
-    call "$(jq -cn --arg c "$2" '{model:"crypto-skills",messages:[{role:"user",content:$c}]}')" ;;
-  x)       # X posts: keywords, names or X operators (from:, lang:, since:, "phrase"); any subject; pass the search as $2
-    call "$(jq -cn --arg c "$2" '{model:"sippar-x-social",messages:[{role:"user",content:$c}]}')" ;;
-  flights) # one line: FROM TO DATE [RETURN-DATE] [ADULTS], airport codes; pass it as $2
-    call "$(jq -cn --arg c "$2" '{model:"sippar-flight-search",messages:[{role:"user",content:$c}]}')" ;;
-  linkedin) # LinkedIn posts: keywords; pass the search as $2. More posts: content '{"query":"…","posts":30}'
-    call "$(jq -cn --arg c "$2" '{model:"sippar-linkedin-social",messages:[{role:"user",content:$c}]}')" ;;
-  github) # GitHub: a ref (owner/repo, a github.com URL) or a GitHub search; pass it as $2.
-    # Options: content '{"query":"symbol:useRouter","repo":"vercel/next.js","kind":"code","per_page":10}'
-    call "$(jq -cn --arg c "$2" '{model:"sippar-github",messages:[{role:"user",content:$c}]}')" ;;
-  reddit) # Reddit posts: keywords; pass the search as $2. Past week: content '{"query":"…","time":"week"}'
-    call "$(jq -cn --arg c "$2" '{model:"sippar-reddit-social",messages:[{role:"user",content:$c}]}')" ;;
-  hotels) # Places to stay: one line, e.g. 'hostels in Lisbon, Portugal'; end it with "offers" for booking-site prices
-    call "$(jq -cn --arg c "$2" '{model:"sippar-hotel-search",messages:[{role:"user",content:$c}]}')" ;;
-  amazon) # Amazon: a search, bestsellers:<category>, an ASIN or a product URL; options as JSON, e.g. '{"query":"electric kettle","tld":"co.uk"}'
-    call "$(jq -cn --arg c "$2" '{model:"sippar-amazon",messages:[{role:"user",content:$c}]}')" ;;
-  facebook) # Facebook/Instagram ads (Meta Ad Library): keywords, or one company's ads as JSON, e.g. '{"query":"Stripe","by":"company","country":"US"}'
-    call "$(jq -cn --arg c "$2" '{model:"sippar-facebook-social",messages:[{role:"user",content:$c}]}')" ;;
-  news) # News: a search of the past week, or 'headlines', or 'headlines business' (eight topics)
-    call "$(jq -cn --arg c "$2" '{model:"sippar-news-search",messages:[{role:"user",content:$c}]}')" ;;
-  jobs) # Job postings: one line, a role and a place; outside the US end it with the country, e.g. 'marketing manager jobs in Berlin country de'
-    call "$(jq -cn --arg c "$2" '{model:"sippar-job-search",messages:[{role:"user",content:$c}]}')" ;;
-  video) # Videos: search words, or one video's link for its details; filters as JSON, e.g. '{"query":"home espresso machine review","uploaded":"year"}'
-    call "$(jq -cn --arg c "$2" '{model:"sippar-video-search",messages:[{role:"user",content:$c}]}')" ;;
-  3d) # 3D models on Sketchfab: search words, or one model's link for its details; filters as JSON, e.g. '{"query":"phone stand","file_format":"stl","downloadable":"true"}'
-    call "$(jq -cn --arg c "$2" '{model:"3d-model-search",messages:[{role:"user",content:$c}]}')" ;;
   translated) # a client that must post the Anthropic shape: arguments ride metadata.sippar and survive
     curl -s "$PROXY/v1/messages" -H 'content-type: application/json' -H "x-antseed-pin-peer: $PEER" \
       -d '{"model":"quicknode-blockchain-data","max_tokens":1024,
            "metadata":{"sippar":{"network":"base","fields":["blockNumber","gasPrice"]}},
            "messages":[{"role":"user","content":"chain state"}]}' ;;
-  *) echo "usage: $0 chain | account 0x… | logs | wallet 0x… | block | tokens | stocks | perps | search 'question' | skill 'chains/aave' | x 'Formula 1 since:2026-10-01' | flights 'JFK LHR 2026-11-12 2026-11-19 2' | linkedin 'remote work burnout' | github 'x402-foundation/x402' | reddit 'home espresso machine' | hotels 'hostels in Lisbon, Portugal' | amazon 'usb c charger' | facebook 'running shoes' | news 'Federal Reserve interest rates' | jobs 'data engineer jobs in Austin, TX' | video 'home espresso machine review' | 3d 'phone stand' | translated"; exit 2 ;;
+  *) echo "usage: $0 <case> ['your words']" >&2
+     echo "cases: x reddit linkedin facebook video 3d ui news flights hotels amazon jobs search github skills skill chain account logs wallet block tokens stocks perps translated" >&2
+     echo "e.g.:  $0 flights 'JFK LHR 2026-11-12 2026-11-19 2'   $0 3d 'phone stand'   $0 x 'Formula 1 since:2026-10-01'" >&2
+     exit 2 ;;
 esac

@@ -2,8 +2,8 @@
 name: crypto-skills
 description: Get agent skills from Sippar's crypto-skills model on AntSeed. It serves Sippar's own skills for its data models, and CryptoSkill's registry of crypto agent skills by id, by search, and file by file, each served as its author published it with the author named. Use it when an agent on AntSeed needs instructions for a crypto protocol or task, or wants Sippar's skill for one of its data models without leaving AntSeed. Triggers on - get a skill, skill for aave, find a skill for, crypto agent skills, cryptoskill, SKILL.md from AntSeed, crypto-skills.
 metadata:
-  version: "2.1.1"
-  updated: "2026-10-13"
+  version: "2.1.2"
+  updated: "2026-11-02"
 ---
 
 # crypto-skills
@@ -21,7 +21,8 @@ Two sources, both read fresh on every call:
   `sippar-skills` and `sippar-skill-adapter`. The other models' skills (`sippar-x-social`,
   `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`,
   `sippar-hotel-search`, `sippar-amazon`, `sippar-facebook-social`, `sippar-news-search`,
-  `sippar-job-search`, `sippar-video-search`) open when you send the exact name. The earlier names
+  `sippar-job-search`, `sippar-video-search`, `3d-model-search`, `ui-animation-search`) open when you
+  send the exact name. The earlier names
   `sippar-chain-state` and `onchain-token-rankings` fetch the same files as the new ones.
 - **CryptoSkill's registry** of crypto agent skills (cryptoskill.org, github.com/jiayaoqijia/cryptoskill),
   thousands of skills across chains, DeFi, exchanges, wallets, trading and more.
@@ -116,6 +117,7 @@ a greeting and a no-match page.
 
 ## Changes
 
+- 2.1.2 (2026-11-02): the two free models' skills open by exact name too (3D models, UI animation).
 - 2.1.1 (2026-10-13): the four newest models' skills open by exact name too (Facebook, news,
   jobs, video). A plainer warning to read a third-party skill before running it.
 - 2.1.0 (2026-10-11): `sippar-skills` is its own model, the aggregator, not an earlier id of this

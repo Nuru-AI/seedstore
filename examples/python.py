@@ -1,10 +1,10 @@
-"""Working calls to Sippar's seventeen models on AntSeed with the OpenAI Python SDK.
+"""Working calls to Sippar's models on AntSeed with the OpenAI Python SDK.
 
-Each call is a paid purchase from YOUR AntSeed buyer proxy, billed per output token at the
-rate on the peer record. Use the chat-completions path only: the SDK's `responses` path is
-translated by the proxy and your arguments are dropped. `extra_body` is flattened into the
-request body by the SDK, which is exactly the top-level shape the models read.
-Transport rules: the sippar-antseed-buyer skill.
+`models3d` and `ui_components` are free within a daily allowance per buyer. Every other call is a
+paid purchase from YOUR AntSeed buyer proxy, billed per output token at the rate on the peer
+record. Use the chat-completions path only: the SDK's `responses` path is translated by the proxy
+and your options are dropped. `extra_body` is flattened into the request body by the SDK, which is
+exactly the top-level shape the models read. Transport rules: the sippar-antseed-buyer skill.
 """
 import json
 import os
@@ -13,6 +13,205 @@ from openai import OpenAI
 PEER = "706fca9c0d0684c30f86209aae0c3565ce1aa69f"
 client = OpenAI(base_url=os.environ.get("SIPPAR_ANTSEED_PROXY", "http://127.0.0.1:8377") + "/v1",
                 api_key="not-used", default_headers={"x-antseed-pin-peer": PEER})
+
+
+def x_posts(search: str) -> str:
+    """Public X posts: keywords, names or X operators (from:, lang:, since:, "phrase"), never a sentence."""
+    r = client.chat.completions.create(
+        model="sippar-x-social",
+        messages=[{"role": "user", "content": search}],
+    )
+    return r.choices[0].message.content
+
+
+def reddit_posts(search: str, time: str | None = None, cursor: str | None = None) -> str:
+    """Public Reddit posts: title, thread link, subreddit, author, date, score and comment count per
+    post (no post text or comments). `time` (hour, day, week, month, year, all) and `cursor` (an
+    earlier answer's next.cursor) go INSIDE the message text, as JSON."""
+    ask = {"query": search}
+    if time:
+        ask["time"] = time
+    if cursor:
+        ask["cursor"] = cursor
+    r = client.chat.completions.create(
+        model="sippar-reddit-social",
+        messages=[{"role": "user", "content": json.dumps(ask)}],
+    )
+    return r.choices[0].message.content
+
+
+def linkedin_posts(search: str, posts: int = 10, cursor: str | None = None) -> str:
+    """Public LinkedIn posts: link, date, author and counts per post (no post text). `posts` (up to
+    50) and `cursor` (an earlier answer's next.cursor) go INSIDE the message text, as JSON."""
+    ask = {"query": search, "posts": posts}
+    if cursor:
+        ask["cursor"] = cursor
+    r = client.chat.completions.create(
+        model="sippar-linkedin-social",
+        messages=[{"role": "user", "content": json.dumps(ask)}],
+    )
+    return r.choices[0].message.content
+
+
+def facebook_ads(search: str, company: bool = False, **filters) -> str:
+    """Facebook and Instagram ads from Meta's Ad Library, as Social Fetch returns them (30 ads a page).
+    `company=True` lists one company's ads instead of a keyword search. Filters: country, status,
+    sortBy, mediaType, startDate, endDate, cursor. Everything goes INSIDE the message text, as JSON."""
+    ask = {"query": search, **({"by": "company"} if company else {}), **filters}
+    r = client.chat.completions.create(
+        model="sippar-facebook-social",
+        messages=[{"role": "user", "content": json.dumps(ask) if (company or filters) else search}],
+    )
+    return r.choices[0].message.content
+
+
+def facebook_page_posts(page_url: str, cursor: str | None = None) -> str:
+    """One public Facebook page's recent posts as Social Fetch returns them (3 a call): text, link, date,
+    counts, media links and top comments. `page_url` is its facebook.com link."""
+    ask = {"query": page_url, "by": "page", **({"cursor": cursor} if cursor else {})}
+    r = client.chat.completions.create(
+        model="sippar-facebook-social",
+        messages=[{"role": "user", "content": json.dumps(ask)}],
+    )
+    return r.choices[0].message.content
+
+
+def video(line: str, **filters: str) -> str:
+    """Public YouTube videos: search words for up to 20 matching videos, or one video's link
+    ("https://www.youtube.com/watch?v=...") for its details. Search filters ride inside the message
+    text as JSON: sort, uploaded (hour, today, week, month, year) and duration (short, medium,
+    long), e.g. video("home espresso machine review", uploaded="year"). There is no description,
+    transcript or comment text; check each title against your words before using a row."""
+    content = json.dumps({"query": line, **filters}) if filters else line
+    r = client.chat.completions.create(
+        model="sippar-video-search",
+        messages=[{"role": "user", "content": content}],
+    )
+    return r.choices[0].message.content
+
+
+def models3d(line: str, **filters: str) -> str:
+    """Public 3D models on Sketchfab: search words for up to 24 matching models, or one model's link
+    ("https://sketchfab.com/3d-models/...") for its details. Search filters ride inside the message
+    text as JSON: license (cc0, by, by-sa, by-nd, by-nc, ...), downloadable ("true"), file_format
+    (the uploaded type, e.g. "stl"), categories, sort_by and cursor, e.g.
+    models3d("phone stand", file_format="stl", downloadable="true"). No files and no description
+    text: open the link and download on Sketchfab with an account. Check each model's licence."""
+    content = json.dumps({"query": line, **filters}) if filters else line
+    r = client.chat.completions.create(
+        model="3d-model-search",
+        messages=[{"role": "user", "content": content}],
+    )
+    return r.choices[0].message.content
+
+
+def ui_components(line: str, **filters: str) -> str:
+    """Animated React components from nine open-source shadcn registries: search words for up to 24
+    matching components, "@registry" for one registry's list, or a row's id ("@magicui/marquee") for
+    its source files, keyframes, install line and MIT notice. `registry` and `cursor` ride inside the
+    message text as JSON. Free within a daily allowance."""
+    content = json.dumps({"query": line, **filters}) if filters else line
+    r = client.chat.completions.create(
+        model="ui-animation-search",
+        messages=[{"role": "user", "content": content}],
+    )
+    return r.choices[0].message.content
+
+
+def news(line: str = "headlines") -> str:
+    """News from Google News via OpenWeb Ninja: a search of the past week ("Federal Reserve interest
+    rates"), the day's top stories ("headlines"), or one topic's ("headlines business"). Each article
+    has its headline, publisher, date, link and a short snippet; there is no article text."""
+    r = client.chat.completions.create(
+        model="sippar-news-search",
+        messages=[{"role": "user", "content": line}],
+    )
+    return r.choices[0].message.content
+
+
+def flights(line: str) -> str:
+    """Google Flights fares: one line, FROM TO DATE [RETURN-DATE] [ADULTS], airport codes ("JFK LHR 2026-11-12 2026-11-19 2")."""
+    r = client.chat.completions.create(
+        model="sippar-flight-search",
+        messages=[{"role": "user", "content": line}],
+    )
+    return r.choices[0].message.content
+
+
+def hotels(search: str, offers: bool = False) -> str:
+    """Places to stay for one search, e.g. "hostels in Lisbon, Portugal": type, stars, rating,
+    amenities, address and Google's current nightly price. `offers` asks for five places with each
+    booking site's price and link (a much wider, costlier page)."""
+    r = client.chat.completions.create(
+        model="sippar-hotel-search",
+        messages=[{"role": "user", "content": search + (" offers" if offers else "")}],
+    )
+    return r.choices[0].message.content
+
+
+def amazon(line: str, **options) -> str:
+    """Amazon through glim.sh. `line` is a search ("usb c charger"), "bestsellers:<category>", an ASIN
+    from a search result, or an amazon.<tld>/dp/<ASIN> URL. Options use glim.sh's names: tld, page,
+    sort_by, min_reviews, include_paid, include_suggested, response_format."""
+    content = json.dumps({"query": line, **options}) if options else line
+    r = client.chat.completions.create(
+        model="sippar-amazon",
+        messages=[{"role": "user", "content": content}],
+    )
+    return r.choices[0].message.content
+
+
+def jobs(line: str) -> str:
+    """Job postings from Google for Jobs via OpenWeb Ninja: one line naming the role and the place
+    ("data engineer jobs in Austin, TX"). Outside the US end the line with the country
+    ("marketing manager jobs in Berlin country de"); for the next page end it with "cursor" and the
+    page's data.cursor value. Each posting has its title, employer, publishing site, place, pay
+    where stated and the link; there is no description text."""
+    r = client.chat.completions.create(
+        model="sippar-job-search",
+        messages=[{"role": "user", "content": line}],
+    )
+    return r.choices[0].message.content
+
+
+def web_search(question: str) -> str:
+    """The last user message is the query; `max_results` and `include_images` are optional."""
+    r = client.chat.completions.create(
+        model="tavily-web-search",
+        messages=[{"role": "user", "content": question}],
+    )
+    return r.choices[0].message.content
+
+
+def github(line: str, repo: str | None = None, kind: str | None = None, per_page: int | None = None, page: int | None = None) -> str:
+    """Public GitHub through glim.sh: a ref ('owner/repo', a github.com URL) or a GitHub search.
+    `repo`, `kind`, `per_page` and `page` go INSIDE the message text, as JSON."""
+    opts = {k: v for k, v in {"repo": repo, "kind": kind, "per_page": per_page, "page": page}.items() if v is not None}
+    content = json.dumps({"query": line, **opts}) if opts else line
+    r = client.chat.completions.create(
+        model="sippar-github",
+        messages=[{"role": "user", "content": content}],
+    )
+    return r.choices[0].message.content
+
+
+def agent_skills(request: str) -> str:
+    """Agent skills from skills.sh and CryptoSkill: a skills.sh id ("owner/repo/skill"), a CryptoSkill
+    id ("chains/aave"), one of Sippar's skill names, or two or three keywords to search."""
+    r = client.chat.completions.create(
+        model="sippar-skills",
+        messages=[{"role": "user", "content": request}],
+    )
+    return r.choices[0].message.content
+
+
+def skill(request: str) -> str:
+    """A CryptoSkill id ("chains/aave"), one of Sippar's skill names, or two or three keywords to search."""
+    r = client.chat.completions.create(
+        model="crypto-skills",
+        messages=[{"role": "user", "content": request}],
+    )
+    return r.choices[0].message.content
 
 
 def chain_state(network: str, fields: list[str], **more) -> str:
@@ -54,183 +253,6 @@ def perp_screener() -> str:
     return r.choices[0].message.content
 
 
-def web_search(question: str) -> str:
-    """The last user message is the query; `max_results` and `include_images` are optional."""
-    r = client.chat.completions.create(
-        model="tavily-web-search",
-        messages=[{"role": "user", "content": question}],
-    )
-    return r.choices[0].message.content
-
-
-def skill(request: str) -> str:
-    """A CryptoSkill id ("chains/aave"), one of Sippar's skill names, or two or three keywords to search."""
-    r = client.chat.completions.create(
-        model="crypto-skills",
-        messages=[{"role": "user", "content": request}],
-    )
-    return r.choices[0].message.content
-
-
-def x_posts(search: str) -> str:
-    """Public X posts: keywords, names or X operators (from:, lang:, since:, "phrase"), never a sentence."""
-    r = client.chat.completions.create(
-        model="sippar-x-social",
-        messages=[{"role": "user", "content": search}],
-    )
-    return r.choices[0].message.content
-
-
-def github(line: str, repo: str | None = None, kind: str | None = None, per_page: int | None = None, page: int | None = None) -> str:
-    """Public GitHub through glim.sh: a ref ('owner/repo', a github.com URL) or a GitHub search.
-    `repo`, `kind`, `per_page` and `page` go INSIDE the message text, as JSON."""
-    opts = {k: v for k, v in {"repo": repo, "kind": kind, "per_page": per_page, "page": page}.items() if v is not None}
-    content = json.dumps({"query": line, **opts}) if opts else line
-    r = client.chat.completions.create(
-        model="sippar-github",
-        messages=[{"role": "user", "content": content}],
-    )
-    return r.choices[0].message.content
-
-
-def linkedin_posts(search: str, posts: int = 10, cursor: str | None = None) -> str:
-    """Public LinkedIn posts: link, date, author and counts per post (no post text). `posts` (up to
-    50) and `cursor` (an earlier answer's next.cursor) go INSIDE the message text, as JSON."""
-    ask = {"query": search, "posts": posts}
-    if cursor:
-        ask["cursor"] = cursor
-    r = client.chat.completions.create(
-        model="sippar-linkedin-social",
-        messages=[{"role": "user", "content": json.dumps(ask)}],
-    )
-    return r.choices[0].message.content
-
-
-def reddit_posts(search: str, time: str | None = None, cursor: str | None = None) -> str:
-    """Public Reddit posts: title, thread link, subreddit, author, date, score and comment count per
-    post (no post text or comments). `time` (hour, day, week, month, year, all) and `cursor` (an
-    earlier answer's next.cursor) go INSIDE the message text, as JSON."""
-    ask = {"query": search}
-    if time:
-        ask["time"] = time
-    if cursor:
-        ask["cursor"] = cursor
-    r = client.chat.completions.create(
-        model="sippar-reddit-social",
-        messages=[{"role": "user", "content": json.dumps(ask)}],
-    )
-    return r.choices[0].message.content
-
-
-def hotels(search: str, offers: bool = False) -> str:
-    """Places to stay for one search, e.g. "hostels in Lisbon, Portugal": type, stars, rating,
-    amenities, address and Google's current nightly price. `offers` asks for five places with each
-    booking site's price and link (a much wider, costlier page)."""
-    r = client.chat.completions.create(
-        model="sippar-hotel-search",
-        messages=[{"role": "user", "content": search + (" offers" if offers else "")}],
-    )
-    return r.choices[0].message.content
-
-
-def amazon(line: str, **options) -> str:
-    """Amazon through glim.sh. `line` is a search ("usb c charger"), "bestsellers:<category>", an ASIN
-    from a search result, or an amazon.<tld>/dp/<ASIN> URL. Options use glim.sh's names: tld, page,
-    sort_by, min_reviews, include_paid, include_suggested, response_format."""
-    content = json.dumps({"query": line, **options}) if options else line
-    r = client.chat.completions.create(
-        model="sippar-amazon",
-        messages=[{"role": "user", "content": content}],
-    )
-    return r.choices[0].message.content
-
-
-def facebook_page_posts(page_url: str, cursor: str | None = None) -> str:
-    """One public Facebook page's recent posts as Social Fetch returns them (3 a call): text, link, date,
-    counts, media links and top comments. `page_url` is its facebook.com link."""
-    ask = {"query": page_url, "by": "page", **({"cursor": cursor} if cursor else {})}
-    r = client.chat.completions.create(
-        model="sippar-facebook-social",
-        messages=[{"role": "user", "content": json.dumps(ask)}],
-    )
-    return r.choices[0].message.content
-
-
-def facebook_ads(search: str, company: bool = False, **filters) -> str:
-    """Facebook and Instagram ads from Meta's Ad Library, as Social Fetch returns them (30 ads a page).
-    `company=True` lists one company's ads instead of a keyword search. Filters: country, status,
-    sortBy, mediaType, startDate, endDate, cursor. Everything goes INSIDE the message text, as JSON."""
-    ask = {"query": search, **({"by": "company"} if company else {}), **filters}
-    r = client.chat.completions.create(
-        model="sippar-facebook-social",
-        messages=[{"role": "user", "content": json.dumps(ask) if (company or filters) else search}],
-    )
-    return r.choices[0].message.content
-
-
-def news(line: str = "headlines") -> str:
-    """News from Google News via OpenWeb Ninja: a search of the past week ("Federal Reserve interest
-    rates"), the day's top stories ("headlines"), or one topic's ("headlines business"). Each article
-    has its headline, publisher, date, link and a short snippet; there is no article text."""
-    r = client.chat.completions.create(
-        model="sippar-news-search",
-        messages=[{"role": "user", "content": line}],
-    )
-    return r.choices[0].message.content
-
-
-def jobs(line: str) -> str:
-    """Job postings from Google for Jobs via OpenWeb Ninja: one line naming the role and the place
-    ("data engineer jobs in Austin, TX"). Outside the US end the line with the country
-    ("marketing manager jobs in Berlin country de"); for the next page end it with "cursor" and the
-    page's data.cursor value. Each posting has its title, employer, publishing site, place, pay
-    where stated and the link; there is no description text."""
-    r = client.chat.completions.create(
-        model="sippar-job-search",
-        messages=[{"role": "user", "content": line}],
-    )
-    return r.choices[0].message.content
-
-
-def video(line: str, **filters: str) -> str:
-    """Public YouTube videos: search words for up to 20 matching videos, or one video's link
-    ("https://www.youtube.com/watch?v=...") for its details. Search filters ride inside the message
-    text as JSON: sort, uploaded (hour, today, week, month, year) and duration (short, medium,
-    long), e.g. video("home espresso machine review", uploaded="year"). There is no description,
-    transcript or comment text; check each title against your words before using a row."""
-    content = json.dumps({"query": line, **filters}) if filters else line
-    r = client.chat.completions.create(
-        model="sippar-video-search",
-        messages=[{"role": "user", "content": content}],
-    )
-    return r.choices[0].message.content
-
-
-def models3d(line: str, **filters: str) -> str:
-    """Public 3D models on Sketchfab: search words for up to 24 matching models, or one model's link
-    ("https://sketchfab.com/3d-models/...") for its details. Search filters ride inside the message
-    text as JSON: license (cc0, by, by-sa, by-nd, by-nc, ...), downloadable ("true"), file_format
-    (the uploaded type, e.g. "stl"), categories, sort_by and cursor, e.g.
-    models3d("phone stand", file_format="stl", downloadable="true"). No files and no description
-    text: open the link and download on Sketchfab with an account. Check each model's licence."""
-    content = json.dumps({"query": line, **filters}) if filters else line
-    r = client.chat.completions.create(
-        model="3d-model-search",
-        messages=[{"role": "user", "content": content}],
-    )
-    return r.choices[0].message.content
-
-
-def flights(line: str) -> str:
-    """Google Flights fares: one line, FROM TO DATE [RETURN-DATE] [ADULTS], airport codes ("JFK LHR 2026-11-12 2026-11-19 2")."""
-    r = client.chat.completions.create(
-        model="sippar-flight-search",
-        messages=[{"role": "user", "content": line}],
-    )
-    return r.choices[0].message.content
-
-
 if __name__ == "__main__":
-    page = chain_state("base", ["blockNumber", "gasPrice"])
-    # Read the routing line before using the page: mode=declared means your network arrived.
-    print(page)
+    # Free: 3D models you can print, with each one's licence.
+    print(models3d("phone stand", file_format="stl", downloadable="true"))

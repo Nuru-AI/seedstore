@@ -1,125 +1,153 @@
-# Sippar's data models on AntSeed
+# Sippar's models on AntSeed
 
-Sippar sells live data, and agent skills, as models on the [AntSeed](https://antseed.com) peer-to-peer inference
-network. An agent with an AntSeed buyer calls them like any model, pays per output token in USDC
-on Base from its own payment channel, and gets the provider's data as the provider returns it,
-with the source named on every page. Sippar is the connector: it buys the data when you ask,
-passes it through unchanged, and does not store, cache or blend it.
+Live data from X, Reddit, LinkedIn, YouTube, Google Flights, Amazon, job boards, news, GitHub and
+web search, available as models on [AntSeed](https://antseed.com). Every answer names its source.
+Two models are free: `3d-model-search` and `ui-animation-search`.
 
-Seventeen models, one seller peer:
+AntSeed is a peer-to-peer marketplace for AI models. You run its desktop app or command-line buyer
+on your own machine; it finds a seller, sends your request and pays per answer from your AntSeed
+balance. No account is needed. The free models work before you top up; for the others, top up
+inside the app. To set it up, follow [AntSeed's install guide](https://antseed.com/docs/install).
 
-| Model string | What it answers | Source |
-|---|---|---|
-| `quicknode-blockchain-data` | live facts about one of 46 EVM chains (a summary page on the first 20): block, gas and fees, balances, one account's balances and transactions, any ERC-20 balance, transfer logs for a token or a wallet, a block and its transaction hashes, a transaction and its receipt, a native balance at any block | QuickNode |
-| `nansen-crypto-screener` | the top token contracts on Solana, Ethereum, Base, BNB and Arbitrum, ranked the way you choose, or only the tickers you name, such as tokenized stocks; and Nansen's perpetuals screener | Nansen |
-| `tavily-web-search` | a live web search with sources and an answer | Tavily (directly, or via gedx402) |
-| `crypto-skills` | agent skills: Sippar's own for these models, and CryptoSkill's registry of crypto skills, by id, by search and file by file | Sippar; CryptoSkill and each skill's author |
-| `sippar-skills` | the aggregator: agent skills from skills.sh (every domain) and CryptoSkill (crypto), by id, by a search of both and file by file, plus Sippar's own skills and the adapter that runs any of them on AntSeed | Sippar; skills.sh, CryptoSkill and each skill's author |
-| `sippar-x-social` | public X (Twitter) posts on any subject matching a search, with X's search operators | glim.sh |
-| `sippar-flight-search` | Google Flights fares for one route and date, one way or round trip, for one to nine adults, with Google's price insights | Google Flights, via stabletravel.dev |
-| `sippar-linkedin-social` | public LinkedIn posts on any subject matching a search: each post's link, date, author (name, profile link, followers) and reaction and comment counts, not the post text; up to 50 posts a call | Social Fetch |
-| `sippar-github` | public GitHub: a repository's README and metadata, a folder's file list, one file, an issue, a PR with comments and changed files, commits, releases, and code search with snippets and line numbers | glim.sh |
-| `sippar-reddit-social` | public Reddit posts on any subject matching a search: each post's title, thread link, subreddit, author, date, score and comment count, not the post text or comments; up to 10 posts a call | glim.sh |
-| `sippar-hotel-search` | hotels, hostels and other places to stay for one search: type, star class, guest rating, amenities, address and the current nightly price Google shows, and on request each booking site's price; up to 10 places a call | Google Maps, via OpenWeb Ninja |
-| `sippar-amazon` | Amazon products for a search or a category's bestsellers on amazon.com, .co.uk, .de, .fr, .es and .it, with gross and VAT-excluded price, rating and review count; or one product's buybox offer, other sellers, stock, delivery and top reviews | glim.sh |
-| `sippar-facebook-social` | Facebook and Instagram ads from Meta's Ad Library (a keyword search across all advertisers, or the ads one company runs; 30 ads a call), or one public Facebook page's recent posts with text, counts, media links and top comments (3 posts a call) | Meta Ad Library and Facebook, via Social Fetch |
-| `sippar-news-search` | news articles for a search of the past week, or the day's top stories overall or for one of eight topics: each article's headline, publisher, date, link and a short snippet, and related articles from other outlets on a headlines page; no article text | Google News, via OpenWeb Ninja |
-| `sippar-job-search` | job postings for one search (a role and a place), up to 10 a call: each posting's title, employer, the site that published it, employment type, place, posted time, pay where the posting states it, benefits and the link to the posting; no description text | Google for Jobs, via OpenWeb Ninja |
-| `sippar-video-search` | public YouTube videos: a search's matching videos, up to 20 a call, each with its title, link, channel, views, length and the age YouTube shows; or one video's details by its link: publish time, views, likes, comment count, genre, keywords, chapters, caption languages and related videos; no description, transcript or comment text | YouTube, via ScrapeMole (search) and Social Fetch (details) |
-| `3d-model-search` | public 3D models: a search's matching models, up to 24 a call, each with its title, link, creator, licence, thumbnail, whether it can be downloaded, face and vertex counts, views, likes and the download formats Sketchfab offers; filters for licence, downloadable models, the uploaded file type (such as STL) and category; or one model's details by its link: the licence's terms, downloads, materials and textures; no files and no description text | Sketchfab |
+This repository documents the models Sippar sells there, which together make up SeedStore: what
+each one returns and how to call it.
 
-Two models also answer under their earlier ids, with the same data and rate: `sippar-chain-state`
-and `onchain-token-rankings`. Use the new ids above. `sippar-skills` and `crypto-skills` are two
-models: the aggregator over both indexes, and the CryptoSkill-only one.
+## Try it in the app
 
-## Where to look
+The AntSeed desktop app has a chat. Pick any chat model there and ask:
 
-| You want to | Read |
-|---|---|
-| reach the seller, send a request that keeps its arguments, stay under the call limit, read the routing line | [skills/sippar-antseed-buyer/SKILL.md](./skills/sippar-antseed-buyer/SKILL.md) |
-| chain facts: the six arguments, the page, transfer logs for a token or a wallet, a block, a transaction and its receipt | [skills/quicknode-blockchain-data/SKILL.md](./skills/quicknode-blockchain-data/SKILL.md) |
-| token rankings, named tickers and the perpetuals screener: the six arguments, the two page shapes | [skills/nansen-crypto-screener/SKILL.md](./skills/nansen-crypto-screener/SKILL.md) |
-| web search: how to ask, the page | [skills/tavily-web-search/SKILL.md](./skills/tavily-web-search/SKILL.md) |
-| agent skills: how to ask for one or search, what the page carries | [skills/crypto-skills/SKILL.md](./skills/crypto-skills/SKILL.md) |
-| the aggregator: skills.sh ids and files, a search of both indexes, the license line and audit verdicts | [skills/sippar-skills/SKILL.md](./skills/sippar-skills/SKILL.md) |
-| run a public skill on AntSeed: keep its process, swap its tooling for Sippar's models and AntSeed's catalog | [skills/sippar-skill-adapter/SKILL.md](./skills/sippar-skill-adapter/SKILL.md) |
-| X posts: how to search, which operators work, the page | [skills/sippar-x-social/SKILL.md](./skills/sippar-x-social/SKILL.md) |
-| flight fares: the one-line request, reading the page, round trips | [skills/sippar-flight-search/SKILL.md](./skills/sippar-flight-search/SKILL.md) |
-| LinkedIn posts: how to search, more posts per call, the next page, reading the page | [skills/sippar-linkedin-social/SKILL.md](./skills/sippar-linkedin-social/SKILL.md) |
-| GitHub: refs, code search, the options, reading the page, keeping pages small | [skills/sippar-github/SKILL.md](./skills/sippar-github/SKILL.md) |
-| Reddit posts: how to search, the date window, the next page, reading the page | [skills/sippar-reddit-social/SKILL.md](./skills/sippar-reddit-social/SKILL.md) |
-| places to stay: the one-line search, the default-night price, booking-site offers, reading the page | [skills/sippar-hotel-search/SKILL.md](./skills/sippar-hotel-search/SKILL.md) |
-| Amazon: searches, bestsellers, a product's offer and reviews, the options, reading the page | [skills/sippar-amazon/SKILL.md](./skills/sippar-amazon/SKILL.md) |
-| Facebook and Instagram ads (keyword or company) and a page's posts: the filters, the next page, reading the page | [skills/sippar-facebook-social/SKILL.md](./skills/sippar-facebook-social/SKILL.md) |
-| news: a search, the top stories, a topic's stories, reading the two page shapes | [skills/sippar-news-search/SKILL.md](./skills/sippar-news-search/SKILL.md) |
-| job postings: the one-line search, the country, the next page, reading the page | [skills/sippar-job-search/SKILL.md](./skills/sippar-job-search/SKILL.md) |
-| videos: a search and its filters, one video's details by its link, reading the two page shapes | [skills/sippar-video-search/SKILL.md](./skills/sippar-video-search/SKILL.md) |
-| 3D models: a search and its filters, printable STL uploads, what each licence allows, one model's details by its link | [skills/3d-model-search/SKILL.md](./skills/3d-model-search/SKILL.md) |
-| ideas: what each model is for, options per model, and how to combine them | [use-cases.md](./use-cases.md) |
-| copy a working call | [examples/curl.sh](./examples/curl.sh), [examples/python.py](./examples/python.py) |
-| check, offline and free, which request shapes keep your arguments | [tools/check-argument-survival.mjs](./tools/check-argument-survival.mjs) |
+> Use the flight model on AntSeed to find New York to London for two, 12 to 19 November 2026
 
-The nineteen files under `skills/` are agent skills (a `SKILL.md` with frontmatter) and they are
-also the documentation. Give your agent the folder, or read them yourself; they say the same
-thing either way.
+The chat model calls Sippar's flight search and shows the fares for those dates. Ask for any model
+in the table the same way:
 
-## One call
+> Use the X model on AntSeed to see what people are saying about Tesla this week
+>
+> Use the jobs model on AntSeed to find data engineer jobs in Austin
+>
+> Use the 3d-model-search model on AntSeed to find a printable cable clip
 
-You need the AntSeed buyer proxy, from the desktop app or `npm i -g @antseed/cli`. Pin the
-peer on the request, send the chat-completions shape, name what you want:
+## Call it from code
+
+1. Start the AntSeed buyer. Either open the desktop app, or install the command-line buyer with
+   `npm i -g @antseed/cli` and run `antseed buyer start`.
+2. The buyer listens on your machine at `127.0.0.1:8377` and speaks the OpenAI chat-completions
+   format.
+3. Send a call. The `x-antseed-pin-peer` header sends it to Sippar rather than another seller; use
+   this exact value for every model here. This call is free:
 
 ```bash
 curl http://127.0.0.1:8377/v1/chat/completions \
   -H 'content-type: application/json' \
   -H 'x-antseed-pin-peer: 706fca9c0d0684c30f86209aae0c3565ce1aa69f' \
-  -d '{
-    "model": "quicknode-blockchain-data",
-    "network": "base",
-    "fields": ["blockNumber", "gasPrice"],
-    "messages": [{"role": "user", "content": "chain state"}]
-  }'
+  -d '{"model": "3d-model-search", "messages": [{"role": "user", "content": "cable clip"}]}'
 ```
 
-Two things decide whether you get what you asked for, and both are in the main skill: post to
-`/v1/chat/completions` (a translated shape drops your arguments and you are served the default
-page), and read the routing line on the answer. If your client cannot change shape, the
-arguments also travel under `metadata.sippar` or as `x-sippar-*` headers, and every model reads
-both.
+The model id goes in `model` and your search in the `content` of the last user message. A paid
+call looks the same, for example `"model": "sippar-news-search"` with `"content": "Federal Reserve
+interest rates"`.
 
-## Identity and proofs
+Options go inside that `content` too, written as a JSON string, because the message text reaches
+the seller unchanged through every AntSeed client. This asks only for models
+uploaded as STL files that you can download:
 
-| | |
-|---|---|
-| Seller peer | `706fca9c0d0684c30f86209aae0c3565ce1aa69f` |
-| Onchain agent | `84918` |
-| Settlement | USDC on Base mainnet |
-| Domain proof | <https://sippar.network/.well-known/antseed.json> |
-| GitHub proof | [`antseed.json`](./antseed.json) in this repository |
+```bash
+curl http://127.0.0.1:8377/v1/chat/completions \
+  -H 'content-type: application/json' \
+  -H 'x-antseed-pin-peer: 706fca9c0d0684c30f86209aae0c3565ce1aa69f' \
+  -d '{"model": "3d-model-search", "messages": [{"role": "user",
+       "content": "{\"query\": \"cable clip\", \"file_format\": \"stl\", \"downloadable\": \"true\"}"}]}'
+```
 
-[`provider.json`](./provider.json) carries the same facts, and each model's announced
-parameters, in machine-readable form. Prices are on the peer record and change, so this
-repository does not print them:
+The answer from `3d-model-search`, shortened to one of its eight results. A source line comes
+first, then Sketchfab's JSON, then a note on how to ask again and a licence line. Each model's guide
+shows its own answer and how to read it:
+
+```
+Source: Sketchfab (public 3D models), GET https://api.sketchfab.com/v3/search, retrieved
+2026-11-02T19:30:12.127Z. Request sent: {"type":"models","q":"cable clip","count":"24",
+"downloadable":"true","file_format":"stl"}. Below, for each model Sketchfab returned: ...
+
+{"query":"cable clip","count":8,"models":[{"title":"Free Cable Clip 3D Printable STL",
+"url":"https://sketchfab.com/3d-models/none-632bc4551d2f46cd8a475ff36974f17f",
+"creator":"ScaleSupply","license":"CC Attribution","downloadable":true,"views":380,
+"formats":["glb","gltf","source","usdz"], ...}, ...],"next":null}
+```
+
+Three models take their options differently, as fields at the top of the request body beside
+`model`: web search, chain data and token rankings. Some models want keywords rather than a
+sentence. Each model's guide says how to ask it.
+
+More calls, in curl and Python: [examples/](./examples). The [buyer guide](./skills/sippar-antseed-buyer/SKILL.md)
+covers other clients, limits and every error.
+
+## The models
+
+| Model | What you get | Source | Guide |
+|---|---|---|---|
+| `sippar-x-social` | Public X posts for a search, with X's search operators | glim.sh | [guide](./skills/sippar-x-social/SKILL.md) |
+| `sippar-reddit-social` | Reddit threads for a search: title, subreddit, score, comment count and link | glim.sh | [guide](./skills/sippar-reddit-social/SKILL.md) |
+| `sippar-linkedin-social` | Public LinkedIn posts for a search: author, date, reactions and link, up to 50 a call | Social Fetch | [guide](./skills/sippar-linkedin-social/SKILL.md) |
+| `sippar-facebook-social` | Ads from Meta's Ad Library, or a public Facebook page's recent posts | Social Fetch | [guide](./skills/sippar-facebook-social/SKILL.md) |
+| `sippar-video-search` | YouTube videos for a search, or one video's details and chapters | ScrapeMole, Social Fetch | [guide](./skills/sippar-video-search/SKILL.md) |
+| `3d-model-search` | Free. 3D models with creator, licence and download formats, with a filter for printable STL | Sketchfab | [guide](./skills/3d-model-search/SKILL.md) |
+| `ui-animation-search` | Free. Animated React UI components, and any one component's full source with its MIT notice | Open-source shadcn registries | [guide](./skills/ui-animation-search/SKILL.md) |
+| `sippar-news-search` | News from the past week for a search, or today's top stories by topic | Google News, via OpenWeb Ninja | [guide](./skills/sippar-news-search/SKILL.md) |
+| `sippar-flight-search` | Fares for one route and date, one way or return, with Google's call on whether the price is low, typical or high | Google Flights, via stabletravel.dev | [guide](./skills/sippar-flight-search/SKILL.md) |
+| `sippar-hotel-search` | Places to stay with stars, rating, amenities and a nightly price, and each booking site's price on request | Google Maps, via OpenWeb Ninja | [guide](./skills/sippar-hotel-search/SKILL.md) |
+| `sippar-amazon` | Amazon search results, bestsellers, or one product's offer and reviews, on six marketplaces | glim.sh | [guide](./skills/sippar-amazon/SKILL.md) |
+| `sippar-job-search` | Job postings for a role and a place, with employer, pay where stated and link | Google for Jobs, via OpenWeb Ninja | [guide](./skills/sippar-job-search/SKILL.md) |
+| `tavily-web-search` | A live web search: twenty results with their links, and an answer written from them | Tavily | [guide](./skills/tavily-web-search/SKILL.md) |
+| `sippar-github` | Public GitHub: a repo's README, files, issues, pull requests, releases and code search | glim.sh | [guide](./skills/sippar-github/SKILL.md) |
+| `sippar-skills` | Agent skills from skills.sh and CryptoSkill, with author, licence and audit results | skills.sh, CryptoSkill | [guide](./skills/sippar-skills/SKILL.md) |
+| `crypto-skills` | Crypto agent skills from CryptoSkill alone | CryptoSkill | [guide](./skills/crypto-skills/SKILL.md) |
+| `quicknode-blockchain-data` | Live chain data on Ethereum, Base and dozens more chains: blocks, gas, balances, transfers, contract reads | QuickNode | [guide](./skills/quicknode-blockchain-data/SKILL.md) |
+| `nansen-crypto-screener` | The top tokens on Solana, Ethereum, Base, BNB and Arbitrum, tokenized stocks by ticker, and a perpetuals screener | Nansen | [guide](./skills/nansen-crypto-screener/SKILL.md) |
+
+The two free models share one allowance: 50 calls in total per buyer address, and 150 per IP
+address, over a rolling 24 hours. The paid models charge per output token. Check Sippar's current rates
+with:
 
 ```bash
 antseed network peer 706fca9c0d0684c30f86209aae0c3565ce1aa69f
 ```
 
+## If something goes wrong
+
+| What you see | What to do |
+|---|---|
+| Your options were ignored and you got a default answer | Post to `/v1/chat/completions`. The buyer rewrites other request formats and drops options on the way. |
+| `connection refused` on port 8377 | The AntSeed buyer is not running. Start the app, or `antseed buyer start`. |
+| HTTP 429 | More than 8 calls at once: wait a second and retry. With `free_tier_exhausted`, the free models' daily allowance is used up: retry after the time the answer gives. |
+| HTTP 409 `payment_negotiation_failed` | Your buyer's payment channel with Sippar needs recovering. Recover or close it in the AntSeed app, then retry. |
+| The answer is not from Sippar | The `x-antseed-peer-id` header on each answer names the seller that answered. Pin the peer as above. |
+
+## Ideas
+
+[use-cases.md](./use-cases.md) has a few things to try with each model, and ways to chain them:
+the threads people start about a product, then that product's price on Amazon; a flight, then a
+hotel at the other end.
+
 ## About the data
 
-Every page is the provider's data. `quicknode-blockchain-data` is QuickNode's answer to documented
-JSON-RPC reads, with QuickNode's own integer beside each readable value. `nansen-crypto-screener`
-is Nansen's screener data with the attribution Nansen requires. `tavily-web-search` is Tavily's
-response, whole, bought from Tavily or through its reseller gedx402 as the page says. `crypto-skills` serves CryptoSkill's files as their authors published them, with the
-author and license named in each skill's `SOURCE.md` and CryptoSkill's risk flags beside it; `sippar-skills`
-adds skills.sh's skills, each with its repository's license line and skills.sh's audit verdicts; Sippar
-does not review, rank or filter them. `sippar-x-social` is glim.sh's X search response, whole, including
-glim.sh's own page totals; posts belong to their authors and some results are spam or off-topic.
-What you compute from a page is yours; Sippar adds no derived figures.
+Each answer is a fresh call to the provider. The provider's data is passed on unchanged, between
+a source line and a short note. Content belongs to its authors; each guide covers licences and
+how to credit them.
 
-## More from Sippar
+## Who runs this
 
-The wider Sippar catalog of payable services: <https://sippar.network/marketplace>, machine-readable
-at <https://sippar.network/llms.txt>.
+Sippar sells these models from one AntSeed peer.
+
+| | |
+|---|---|
+| Seller peer | `706fca9c0d0684c30f86209aae0c3565ce1aa69f` |
+| Onchain agent | `84918` |
+| Settlement | USDC on Base |
+| Domain proof | <https://sippar.network/.well-known/antseed.json> |
+| GitHub proof | [`antseed.json`](./antseed.json) |
+
+[`provider.json`](./provider.json) has the same facts, and each model's options, for a program to
+read.
 
 ## License
 

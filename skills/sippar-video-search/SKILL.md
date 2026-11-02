@@ -135,4 +135,5 @@ missing video 275; a filter on a video link 249. A refused line bills nothing.
 
 ## Changes
 
+- 1.0.1 (2026-10-12): `sort: date` is refused and points to `uploaded`.
 - 1.0.0 (2026-10-12): first publish.

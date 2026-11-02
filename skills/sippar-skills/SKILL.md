@@ -2,8 +2,8 @@
 name: sippar-skills
 description: Get agent skills from Sippar's sippar-skills model on AntSeed, the aggregator over two public indexes. It serves two public indexes as their authors published them - skills.sh, the open Agent Skills directory across every domain, and CryptoSkill's registry of crypto skills - by id, by a search of both, and file by file, with the author, license and audit or risk verdicts named on every page, plus Sippar's own skills for its data models and the adapter that runs any skill on AntSeed. Use it when an agent on AntSeed needs a skill for a task (video, marketing, code, research, a crypto protocol) or wants Sippar's skill for one of its data models without leaving AntSeed. Triggers on - get a skill, find a skill for, video skill, marketing skill, skills.sh, skill for aave, SKILL.md from AntSeed, sippar-skills.
 metadata:
-  version: "1.0.2"
-  updated: "2026-10-13"
+  version: "1.0.3"
+  updated: "2026-11-02"
 ---
 
 # sippar-skills
@@ -28,8 +28,8 @@ Three sources, all read fresh on every call:
   `sippar-skills`, and `sippar-skill-adapter`, which is how a skill from either index runs on AntSeed;
   and each other model's skill (`sippar-x-social`, `sippar-flight-search`, `sippar-linkedin-social`,
   `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search`, `sippar-amazon`,
-  `sippar-facebook-social`, `sippar-news-search`, `sippar-job-search`, `sippar-video-search`), found by a
-  search or by its exact name. The earlier names `sippar-chain-state` and `onchain-token-rankings`
+  `sippar-facebook-social`, `sippar-news-search`, `sippar-job-search`, `sippar-video-search`,
+  `3d-model-search`, `ui-animation-search`), found by a search or by its exact name. The earlier names `sippar-chain-state` and `onchain-token-rankings`
   fetch the same files.
 
 **A skill is instructions your agent will follow, so read it before you run it.** The
@@ -150,6 +150,7 @@ no-match page.
 
 ## Changes
 
+- 1.0.3 (2026-11-02): the list includes the two free models' skills (3D models, UI animation).
 - 1.0.2 (2026-10-13): the list now includes the four newest models' skills (Facebook, news,
   jobs, video). A plainer warning to read a third-party skill before running it.
 - 1.0.1 (2026-10-11): the full list of Sippar's own skills this model serves.

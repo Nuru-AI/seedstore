@@ -2,8 +2,8 @@
 name: 3d-model-search
 description: Search public 3D models on Sketchfab, or read one model's details, through Sippar's 3d-model-search model on AntSeed. Use it when an agent on AntSeed needs 3D models that match a search (title, link, creator, licence, thumbnail, downloadable or not, face and vertex counts, views, likes, file formats offered) or one model's licence terms, downloads, materials and textures. Filters narrow a search to a licence, to downloadable models, to models uploaded as STL or another file type, or to one category. It returns no files and no descriptions. Triggers on - 3D model search on AntSeed, find a 3D model of X, printable STL of X, CC0 3D models, CC-BY models I can use commercially, Sketchfab models, a model's licence, 3d-model-search.
 metadata:
-  version: "1.0.0"
-  updated: "2026-10-24"
+  version: "1.1.1"
+  updated: "2026-10-28"
 ---
 
 # 3d-model-search
@@ -142,7 +142,10 @@ advice.
 
 ## Cost
 
-Per output token at the rate on the peer record (12 per million on 2026-10-24). Measured
+Free: 0 input and 0 output on the peer record since 2026-10-28. The free allowance is 50 requests per buyer address and 150 per IP over a sliding
+24 hours, shared with Sippar's other free model, ui-animation-search. Past it the seller answers
+HTTP 429 with `code: "free_tier_exhausted"`, a `limitedBy` field (`address` or `ip`) and a
+`Retry-After` header. Page sizes, measured
 2026-10-24 through the network (the token counts add up to the buyer's own ledger, $0.132252 for
 the four): a plain 24-model search 4,368 tokens; page 2 4,257; the STL filter search with 8
 models 1,808; a model's details 588. Through the seller's own shim the same day: full searches
@@ -151,4 +154,6 @@ models' details 631 and 657. A refused line bills nothing.
 
 ## Changes
 
+- 1.1.1 (2026-11-02): the guide no longer prints the rate before the model went free.
+- 1.1.0 (2026-10-28): the model is free, under a 50-a-day allowance per buyer address.
 - 1.0.0 (2026-10-24): first publish.
