@@ -2,17 +2,22 @@
 name: quicknode-blockchain-data
 description: Use this when you need live blockchain facts on Ethereum, Base, Arbitrum or dozens of other EVM chains, or Sui: the current block, gas and fees, native and ERC-20 balances, one account's balances and transactions, transfer logs for a token or a wallet, a block, a transaction and its receipt, a balance at a past block, internal transfers (trace_filter) or any read-only contract call (eth_call). Sippar's quicknode-blockchain-data model on AntSeed answers as QuickNode returns it. It also answers as sippar-chain-state.
 metadata:
-  version: "3.6.3"
-  updated: "2026-11-02"
+  version: "3.7.0"
+  updated: "2026-11-03"
 ---
 
 # quicknode-blockchain-data
 
-Live facts about one chain, bought from QuickNode at the moment you ask and passed through
-unchanged. Every page names QuickNode as the source. Transport (pin, request shape, the two
-surviving channels, the 8-in-flight limit) is in the `sippar-antseed-buyer` skill; read
-it first. Model string: `quicknode-blockchain-data`. The earlier id `sippar-chain-state` still
-answers with the same data, arguments and rate.
+Live facts about one chain, bought from QuickNode at the moment you ask and passed on unchanged,
+with QuickNode named on every page. The earlier id `sippar-chain-state` answers with the same data,
+options and rate. How to reach the seller is in the `sippar-antseed-buyer` skill.
+
+## Try it
+
+```json
+{"model": "quicknode-blockchain-data", "network": "base", "fields": ["blockNumber", "gasPrice"],
+ "messages": [{"role": "user", "content": "chain state"}]}
+```
 
 ## What it answers
 
@@ -48,9 +53,10 @@ lays out as rows (QuickNode's raw integer stays in `valueRaw`). On the others a 
 
 A chain the model does not serve is refused with a free 400.
 
-## The six arguments
+## How to ask
 
-All six are optional top-level keys, all announced in `supportedParameters`.
+This model takes its options as top-level fields beside `messages`, not inside the message. All
+six are optional:
 
 | Argument | What it does |
 |---|---|
@@ -61,14 +67,7 @@ All six are optional top-level keys, all announced in `supportedParameters`.
 | `tokens` | With `address`: up to 10 ERC-20 contracts, as a list or a comma string. Two rows per contract, the balance in the token's smallest unit and the contract's own `decimals()`. A contract that does not answer shows as failed, never as zero. A contract already on the chain's own token list is not read here: sent alone it is refused free with a note; sent beside other contracts it is silently left out. For those, ask for `addressErc20Balance` in `fields` instead. |
 | `rpc` | One read-only QuickNode command, answered as QuickNode returns it: `eth_getLogs` (transfer logs), `eth_getBlockByNumber` (a block), `eth_getTransactionReceipt` (a receipt), `eth_getTransactionByHash` (a transaction), `eth_getBalance` (a native balance at a block), `trace_filter` (the traces that touched a wallet) or `eth_call` (a contract's read-only answer at a block). Send it alone. `network` is needed only for a chain other than Ethereum: without it, `rpc` runs on Ethereum and is billed. |
 
-Example, two fields on Base:
-
-```json
-{"model": "quicknode-blockchain-data", "network": "base", "fields": ["blockNumber", "gasPrice"],
- "messages": [{"role": "user", "content": "chain state"}]}
-```
-
-Example, one account on Arbitrum, only its own rows:
+One account on Arbitrum, only its own rows:
 
 ```json
 {"model": "quicknode-blockchain-data", "network": "arbitrum",
@@ -76,23 +75,23 @@ Example, one account on Arbitrum, only its own rows:
  "messages": [{"role": "user", "content": "chain state"}]}
 ```
 
-Through a translating client, the same arguments go under `metadata.sippar` or as
+Through a client that rewrites requests, the same fields go under `metadata.sippar` or as
 `x-sippar-network`, `x-sippar-fields`, `x-sippar-address`, `x-sippar-blocks`, `x-sippar-tokens`,
-`x-sippar-rpc` (the main skill, section 3).
+`x-sippar-rpc` headers (the buyer skill, section 3).
 
 ## `rpc`: one QuickNode command
 
 Read-only QuickNode commands, opened one at a time, each answered exactly as QuickNode returns it
-under a line saying what was read and when. On 2026-10-09 there were seven: `eth_getLogs`,
+under a line saying what was read and when. There are seven: `eth_getLogs`,
 `eth_getBlockByNumber`, `eth_getTransactionReceipt`, `eth_getTransactionByHash`, `eth_getBalance`,
 `trace_filter`, `eth_call`. **The live list is
 in the refusal:** a command the listing does not serve is refused free with a message naming every
 command it does serve, so send one when you need to know. Every command that writes is refused.
-**All seven are proven on Ethereum (2026-10-09).** On another chain, a command may not be
+**All seven are proven on Ethereum.** On another chain, a command may not be
 served, and old-block (archive) reads and traces vary most from chain to chain. An unsupported
-command comes back as QuickNode's own error, unchanged. On the 26 chains added on 2026-10-09 (0g to zksync above), each answers
+command comes back as QuickNode's own error, unchanged. On the chains without a summary page (0g to zksync above), each answers
 `eth_chainId` with its own chain id, and `eth_getBlockByNumber` is proven on zksync; nothing else
-is proven there yet. flow and gravity, added on 2026-10-19, answer `eth_chainId` with 747 and 1625. The `rpc` object may be at most 1,000 bytes.
+is proven there yet. flow and gravity answer `eth_chainId` with 747 and 1625. The `rpc` object may be at most 1,000 bytes.
 
 The same command on another chain, here the newest block on zkSync:
 
@@ -280,13 +279,13 @@ a coin type), `suix_getCoinMetadata` and `suix_getTotalSupply` (a coin type such
   QuickNode returns it: `response` is a GraphQL body (`data`, plus `errors` when there are any), and
   the answer carries `"via": "graphql"`. Lists stop at 50 entries and say whether there are more.
 
-## Reading the page
+## Reading the answer
 
 The page is a markdown table for a person with the same rows fenced as JSON beneath it for a
 program, then the source line and notes. Parse the JSON; pass the table through as it arrives;
 keep the notes and the attribution.
 
-- `routing.mode` must be `declared` before you trust which chain you got (main skill, section 6).
+- `routing.mode` must be `declared` before you trust which chain you got (the buyer skill, section 6).
 - Rows are keyed by `(metric, target, asset)`. `addressErc20Balance` and `erc20Balance` are one
   row per token. There is no `address` key on a row; the subject is `target`.
 - `value` is already human-readable. `valueRaw` is QuickNode's unscaled integer and `decimals`
@@ -304,33 +303,23 @@ keep the notes and the attribution.
 - The notes stop a model from reading a correct outlier as corrupt data. One chain's real gas
   limit looks absurd if you do not know that chain.
 
+## Limits and caveats
+
+- Leave out `network` and you get Ethereum, in full and billed in full, with no error. Read the
+  routing line before you use a page.
+- Pages hold one moment. There is no history and there are no prices: sample the same request on a
+  schedule and keep the pages, using `asOf` and each row's `id`.
+- Old-block (archive) reads and traces vary most from chain to chain. An unsupported command comes
+  back as QuickNode's own error, unchanged.
+- A chain the model does not serve, or a command that writes, is refused with a free 400.
+- `x-antseed-required-parameters` may name only `address`, `blocks`, `fields`, `network`, `rpc` and
+  `tokens`.
+
 ## Cost
 
-Per output token at the rate on the peer record. Naming `fields` is what makes a call cheap:
-measured 2026-09-24, a dropped `fields` costs about 7.6 times what the same call costs with two
-rows named, and one row still costs about 13% of the full page because the envelope and notes
-are most of a small answer. An `address` makes the page wider; `fields` narrows it again. A
-refusal bills nothing on an open channel.
+Per output token, at the rate on Sippar's peer record. Naming `fields` is what makes a call cheap:
+leaving `fields` out costs about 7.6 times what the same call costs with two rows named, and one row
+still costs about 13% of the full page, because the envelope and notes are most of a small answer
+(measured 2026-09-24). An `address` makes the page wider; `fields` narrows it again. A refusal bills
+nothing on an open payment channel.
 
-## Changes
-
-- 3.6.3 (2026-11-02): no chain count in the text; a shorter description.
-- 3.6.2 (2026-10-22): Sui commands answered from Sui GraphQL, since Sui's JSON-RPC is retired.
-- 3.6.1 (2026-10-21): `rpc` without `network` runs on Ethereum, stated plainly.
-- 3.6.0 (2026-10-21): Sui, with its own read-only commands.
-- 3.5.1 (2026-10-09): `rpc` stated as the way in on all 46 chains; the summary page is an extra on
-  the first 20.
-- 3.5.0 (2026-10-09): `rpc` on 26 more chains with no page (`rpc`-only), from avalanche to zksync.
-- 3.4.1 (2026-10-09): removed the price-feed example from `eth_call`.
-- 3.4.0 (2026-10-09): `eth_call`, a contract's read-only answer at any block, with long results
-  served in slices.
-- 3.3.0 (2026-10-09): `trace_filter`, the calls and internal transfers that touched a wallet,
-  with wide answers resumed by `after`.
-- 3.2.0 (2026-10-08): `eth_getBalance`, an account's native balance at any block.
-- 3.1.0 (2026-10-08): `eth_getTransactionByHash`, with long `input` served in slices; where to read
-  the live command list.
-- 3.0.0 (2026-10-08): the model is `quicknode-blockchain-data` (the old id `sippar-chain-state`
-  still answers). `rpc` adds wallet-filtered `eth_getLogs`, `eth_getBlockByNumber` and
-  `eth_getTransactionReceipt`.
-- 2.0.0 (2026-10-08): own skill. Added `rpc` and its served-in-part page, `tokens`, the partial
-  page rule, and the wei note.

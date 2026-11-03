@@ -2,16 +2,33 @@
 name: sippar-antseed-buyer
 description: Use this before calling any of Sippar's models on AntSeed (every sippar-* model, plus 3d-model-search, ui-animation-search, tavily-web-search, quicknode-blockchain-data, nansen-crypto-screener and crypto-skills), from your own AntSeed buyer or an AntSeed API-key gateway. It covers pinning the Sippar peer, the request shape that keeps your options, the two channels that survive a translating client, the 8-calls-at-once limit, reading the routing line and errors, and confirming the answer came from Sippar. Also use it when an option was ignored, the wrong chain came back, or a call failed with 429, 409 payment_negotiation_failed or connection refused on 8377.
 metadata:
-  version: "2.19.0"
-  updated: "2026-11-02"
+  version: "3.0.0"
+  updated: "2026-11-03"
 ---
 
 # Reaching Sippar's models on AntSeed
 
-Sippar sells these models on AntSeed. Each one is a provider's data or files served as the
-provider returns them, with the source named on every page. This skill is about the transport:
-how a request reaches the right seller with its arguments intact, and how to tell from the
-answer that it did. What each model answers, and what you can do with it, is in its own skill:
+Sippar sells data as models on AntSeed. Each answer is a provider's data or files, passed on as
+the provider returns them, with the source named on its first line. This guide is about getting
+there: how a request reaches Sippar with its options intact, and how to tell from the answer that
+it did. What each model answers is in its own guide.
+
+## Try it
+
+This call is free:
+
+```bash
+curl http://127.0.0.1:8377/v1/chat/completions \
+  -H 'content-type: application/json' \
+  -H 'x-antseed-pin-peer: 706fca9c0d0684c30f86209aae0c3565ce1aa69f' \
+  -d '{"model": "3d-model-search", "messages": [{"role": "user", "content": "cable clip"}]}'
+```
+
+Three things decide whether you get what you asked for: the pin (section 1), the
+chat-completions path (section 2), and, for the models with top-level options, the routing line
+(section 6).
+
+## The models
 
 | Model string | What it answers | Skill |
 |---|---|---|
@@ -178,7 +195,7 @@ misspelled name in the header (`netwrok`) is not announced, so the call is refus
 422. A misspelled key in the body, under a correct header, passes the check: the seller never
 sees your `network`, serves the default page and bills it. The same goes for a name you require
 but leave out of the body: requiring `fields` and sending none is served at full width and billed
-in full, which an outside buyer measured on 2026-10-12 as the one billing trap this header leaves.
+in full; an outside buyer found this to be the one billing trap the header leaves.
 The routing line (section 6) catches the wrong chain; only your own code catches a missing
 `fields`. Second, require only what the model announces:
 `quicknode-blockchain-data` announces `address, blocks, fields, network, rpc, tokens`;
@@ -197,9 +214,9 @@ ninth is refused with HTTP 429; nothing is served and nothing is billed. The pee
 `maxConcurrency` is the node's ceiling, not this number.
 
 What reaches you is the buyer proxy's wrapper around our refusal, not the refusal itself. The
-seller sends `buyer_concurrency_limit` with `retry-after: 1`. Through the buyer proxy, an outside
-buyer measured on 2026-10-12 that it arrived as `error.type` `rate_limit_error`, with our message
-in `error.peer_message` and no `retry-after` header. So:
+seller sends `buyer_concurrency_limit` with `retry-after: 1`. Through the buyer proxy it arrives as
+`error.type` `rate_limit_error`, with our message in `error.peer_message` and no `retry-after`
+header (measured by an outside buyer). So:
 
 - Key on the 429 status, not on an error code.
 - Wait about a second and retry the same pinned peer.
@@ -208,13 +225,17 @@ in `error.peer_message` and no `retry-after` header. So:
 
 A sweep over many chains runs in batches of 8 or fewer, with a retry on 429.
 
+**A 429 with `code: "free_tier_exhausted"` is the free models' daily allowance.** `3d-model-search`
+and `ui-animation-search` share 50 calls per buyer address and 150 per IP over a rolling 24 hours.
+The answer carries `limitedBy` (`address` or `ip`) and a `Retry-After` header; wait that long.
+
 **A 409 with `error.type` `payment_negotiation_failed` is your buyer's channel, not the seller.**
 Its `peer_message` reads "An existing payment channel could not be recovered automatically. Close
 or recover the channel and retry." Your own buyer raises it, in its payment code
 (`buyer-payment-negotiator`), when the payment channel it holds with this seller cannot be
-recovered, and it gives up before your request is sent. Measured on 2026-10-24: one buyer got it
-on seven calls over twenty minutes, on two different models of ours, while another buyer's
-channel with the same seller kept working. Retrying the pinned peer does not clear it. Recover or
+recovered, and it gives up before your request is sent. It can hit one buyer on every call while
+another buyer's channel with the same seller keeps working. Retrying the pinned peer does not clear
+it. Recover or
 close that channel in your buyer (in the AntSeed app, or with `antseed buyer channels` if your
 buyer runs from the CLI), then retry. As with the 429, ignore the wrapper's advice to try another
 peer or auto routing: it reaches a different seller.
@@ -262,8 +283,7 @@ non-zero if the behaviour has moved.
 
 ## 8. Confirm the answer came from Sippar
 
-The buyer proxy adds `x-antseed-*` headers to every answer. Two are worth reading in code
-(measured by an outside buyer, 2026-10-12):
+The buyer proxy adds `x-antseed-*` headers to every answer. Two are worth reading in code:
 
 - `x-antseed-peer-id` names the seller that answered. It must be
   `706fca9c0d0684c30f86209aae0c3565ce1aa69f`. This is how you know a call reached Sippar, pinned
@@ -287,48 +307,3 @@ This skill covers the Sippar layer. For the platform underneath:
 | the CLI commands | https://antseed.com/docs/commands |
 | the proxy from any OpenAI-compatible tool | https://antseed.com/docs/guides/using-the-api |
 
-## Changes
-
-- 2.19.0 (2026-11-02): `ui-animation-search`, and the two free models named as free; a shorter description.
-- 2.18.0 (2026-10-24): the seventeenth model, `3d-model-search` (its id carries no sippar- prefix); a 409 `payment_negotiation_failed` is your buyer's channel with this seller, and what to do about it.
-- 2.17.0 (2026-10-13): from an outside review of this repository.
-  - The 429 as the buyer proxy delivers it: `rate_limit_error`, no `retry-after`; don't follow
-    its "try another peer" advice.
-  - A misspelled name in `x-antseed-required-parameters` is refused free. A misspelled or missing
-    body key is served and billed.
-  - Section 8: check `x-antseed-peer-id` to confirm the seller.
-  - The three ways a model answers (HTTP error, `Not sent` page, supplier error page) and what
-    each costs.
-  - Paging per model.
-  - The model table ordered by what people ask for.
-  - The description no longer lists every model.
-  - The AntSeed docs map.
-
-- 2.16.0 (2026-10-12): the sixteenth model, `sippar-video-search`.
-- 2.15.0 (2026-10-12): the fifteenth model, `sippar-job-search`.
-- 2.14.0 (2026-10-12): the fourteenth model, `sippar-news-search`.
-- 2.13.1 (2026-10-11): `sippar-facebook-social` also serves a public page's posts (`"by": "page"`).
-- 2.13.0 (2026-10-11): the thirteenth model, `sippar-facebook-social`.
-- 2.12.2 (2026-10-11): `tavily-web-search` buys from Tavily directly first, via gedx402 when Tavily refuses.
-- 2.12.1 (2026-10-11): `tavily-web-search` announces `include_images, max_results`;
-  `sippar-skills` announces nothing; 46 chains; the 8-in-flight limit spans all twelve models.
-- 2.12.0 (2026-10-10): the twelfth model, `sippar-amazon`.
-- 2.11.0 (2026-10-10): through an AntSeed API-key gateway. When `ANTSEED_BASE_URL` and
-  `ANTSEED_API_KEY` are set, post there with the key: no local proxy and no `antseed` command
-  are needed.
-- 2.10.0 (2026-10-10): the eleventh model, `sippar-hotel-search`.
-- 2.9.0 (2026-10-10): the tenth model, `sippar-reddit-social`.
-- 2.8.1 (2026-10-10): `nansen-crypto-screener`'s announced list includes `symbols`.
-- 2.8.0 (2026-10-10): `tavily-web-search` announces `include_images, include_raw_content, max_results`.
-- 2.7.0 (2026-10-10): `sippar-skills` is the ninth model, the aggregator (skills.sh and CryptoSkill);
-  `crypto-skills` stays CryptoSkill-only; the `sippar-skill-adapter` skill.
-- 2.6.0 (2026-10-10): the eighth model, `sippar-github`.
-- 2.5.0 (2026-10-09): the seventh model, `sippar-linkedin-social`.
-- 2.4.0 (2026-10-09): the sixth model, `sippar-flight-search`.
-- 2.3.0 (2026-10-09): the fifth model, `sippar-x-social`.
-- 2.2.0 (2026-10-08): the models are named after their providers; the earlier ids still answer.
-  Skills are referred to by name.
-- 2.1.0 (2026-10-08): the fourth model, `sippar-skills` (now `crypto-skills`).
-- 2.0.0 (2026-10-08): transport only; the per-model content moved to its own skills. Added the
-  8-in-flight limit, the `extra_body` refusal, and the three announced parameter lists.
-- 1.0.0 (2026-09-24): first publish, one skill for two models.

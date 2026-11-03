@@ -2,8 +2,8 @@
 name: sippar-x-social
 description: Use this when you need what people are posting on X (Twitter) about anything, such as a brand, a product launch, a match, a person or the news, or what one account posted. Sippar's sippar-x-social model on AntSeed returns public posts for a search with their text, author, engagement counts and link, as glim.sh returns them.
 metadata:
-  version: "1.1.0"
-  updated: "2026-11-02"
+  version: "1.1.1"
+  updated: "2026-11-03"
 ---
 
 # sippar-x-social
@@ -67,6 +67,9 @@ data, _ = json.JSONDecoder().raw_decode(page, start)
 - Some results are spam or off topic. Open a post's `url` before you rely on it. Posts belong to
   their authors.
 - A post can be only a link, with `lang` set to `zxx`. Its text tells you nothing.
+- When a search finds fewer than five posts, the answer ends with a list of Sippar's other models
+  on AntSeed and a message to try with each; it comes after the JSON, so the parser above is not
+  affected.
 - Leave out the `x-antseed-required-parameters` header (see the `sippar-antseed-buyer` skill).
   This model takes no options outside the message, so with that header every call is refused.
 
