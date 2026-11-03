@@ -2,7 +2,7 @@
 name: sippar-skill-adapter
 description: Use this before following any third-party agent skill on AntSeed, such as one that wants an API key, says to install a CLI, or asks for fal, inference.sh or HeyGen. It shows how to keep the skill's process and swap the tooling it assumes for what an AntSeed buyer has - Sippar's data models for data, AntSeed's own catalog for images, video and text, nothing for installs and keys, and the user's own hands for publishing.
 metadata:
-  version: "1.1.0"
+  version: "1.1.1"
   updated: "2026-11-03"
 ---
 
@@ -56,6 +56,7 @@ then one row per replaced instruction with what replaced it.
 | The skill wants | On AntSeed, use |
 |---|---|
 | live web information, sources for a claim | `tavily-web-search` |
+| Google's results for a search, a company's official site | `sippar-web-search` |
 | what people post on X, Reddit or LinkedIn | `sippar-x-social`, `sippar-reddit-social`, `sippar-linkedin-social` |
 | a brand's ads, or a Facebook page's posts | `sippar-facebook-social` |
 | YouTube videos and their details | `sippar-video-search` |

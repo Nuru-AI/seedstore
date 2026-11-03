@@ -2,7 +2,7 @@
 name: crypto-skills
 description: Use this when you need instructions for a crypto protocol or task (a skill such as chains/aave or a uniswap swap), or Sippar's own skill for one of its models, without leaving AntSeed. Sippar's crypto-skills model on AntSeed serves CryptoSkill's registry of crypto agent skills by id, by search and file by file, each as its author published it, with the author, licence and CryptoSkill's risk flags.
 metadata:
-  version: "2.2.0"
+  version: "2.2.1"
   updated: "2026-11-03"
 ---
 
@@ -19,7 +19,8 @@ and Sippar's own skills only. How to reach the seller is in the `sippar-antseed-
   `sippar-skills` and `sippar-skill-adapter`. The other models' skills (`sippar-x-social`,
   `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`,
   `sippar-hotel-search`, `sippar-amazon`, `sippar-facebook-social`, `sippar-news-search`,
-  `sippar-job-search`, `sippar-video-search`, `3d-model-search`, `ui-animation-search`) open when you
+  `sippar-job-search`, `sippar-video-search`, `sippar-web-search`, `3d-model-search`,
+  `ui-animation-search`) open when you
   send the exact name. The earlier names `sippar-chain-state` and `onchain-token-rankings` fetch the
   same files.
 

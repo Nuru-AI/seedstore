@@ -2,7 +2,7 @@
 name: sippar-antseed-buyer
 description: Use this before calling any of Sippar's models on AntSeed (every sippar-* model, plus 3d-model-search, ui-animation-search, tavily-web-search, quicknode-blockchain-data, nansen-crypto-screener and crypto-skills), from your own AntSeed buyer or an AntSeed API-key gateway. It covers pinning the Sippar peer, the request shape that keeps your options, the two channels that survive a translating client, the 8-calls-at-once limit, reading the routing line and errors, and confirming the answer came from Sippar. Also use it when an option was ignored, the wrong chain came back, or a call failed with 429, 409 payment_negotiation_failed or connection refused on 8377.
 metadata:
-  version: "3.0.0"
+  version: "3.1.0"
   updated: "2026-11-03"
 ---
 
@@ -44,6 +44,7 @@ chat-completions path (section 2), and, for the models with top-level options, t
 | `sippar-hotel-search` | places to stay for one search, from Google Maps via OpenWeb Ninja: type, stars, rating, amenities, address and Google's current nightly price; end the line with `offers` for each booking site's price | the `sippar-hotel-search` skill |
 | `sippar-job-search` | job postings from Google for Jobs via OpenWeb Ninja, each cut to title, employer, publishing site, employment type, place, posted time, pay, benefits and links, no description text. Send one line with the role and the place; outside the US end it with `country` and two letters (`marketing manager jobs in Berlin country de`) | the `sippar-job-search` skill |
 | `sippar-amazon` | Amazon from glim.sh: products for a search or `bestsellers:<category>` on six marketplaces, or one product's offer, other sellers and top reviews by ASIN or product URL; options in a JSON message | the `sippar-amazon` skill |
+| `sippar-web-search` | the first page of Google's US results for one search, via an Apify Actor: position, link, title and Google's description per result, no page text. Send the search as you would type it into Google | the `sippar-web-search` skill |
 | `tavily-web-search` | a live web search with sources, from Tavily (directly, or via gedx402) | the `tavily-web-search` skill |
 | `sippar-github` | public GitHub from glim.sh: a repository, a folder's file list, a file, an issue or PR, commits, releases, code search. Send a ref (`owner/repo`, a github.com URL) or a GitHub search; `repo`, `kind`, `per_page` and `page` go inside the message text as JSON | the `sippar-github` skill |
 | `sippar-skills` | the aggregator: our own, skills.sh's directory (every domain) and CryptoSkill's registry, as their authors published them. Send a skill name, an id (`owner/repo/skill` or `category/name`) or two or three keywords, never a sentence | the `sippar-skills` skill; `sippar-skill-adapter` to run one on AntSeed |
@@ -200,7 +201,7 @@ The routing line (section 6) catches the wrong chain; only your own code catches
 `fields`. Second, require only what the model announces:
 `quicknode-blockchain-data` announces `address, blocks, fields, network, rpc, tokens`;
 `nansen-crypto-screener` announces `chains, rows, sort, symbols, timeframe, view`; `tavily-web-search`
-announces `include_images, max_results`; `crypto-skills`, `sippar-skills`, `sippar-x-social`, `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search`, `sippar-amazon`, `sippar-facebook-social`, `sippar-news-search`, `sippar-job-search`, `sippar-video-search`, `3d-model-search` and `ui-animation-search` announce nothing, so requiring any name on them refuses every call. Read the current lists:
+announces `include_images, max_results`; `crypto-skills`, `sippar-skills`, `sippar-x-social`, `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search`, `sippar-amazon`, `sippar-facebook-social`, `sippar-news-search`, `sippar-job-search`, `sippar-video-search`, `sippar-web-search`, `3d-model-search` and `ui-animation-search` announce nothing, so requiring any name on them refuses every call. Read the current lists:
 
 ```bash
 antseed network peer 706fca9c0d0684c30f86209aae0c3565ce1aa69f --json \

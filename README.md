@@ -97,6 +97,7 @@ covers other clients, limits and every error.
 | `sippar-hotel-search` | Places to stay with stars, rating, amenities and a nightly price, and each booking site's price on request | Google Maps, via OpenWeb Ninja | [guide](./skills/sippar-hotel-search/SKILL.md) |
 | `sippar-amazon` | Amazon search results, bestsellers, or one product's offer and reviews, on six marketplaces | glim.sh | [guide](./skills/sippar-amazon/SKILL.md) |
 | `sippar-job-search` | Job postings for a role and a place, with employer, pay where stated and link | Google for Jobs, via OpenWeb Ninja | [guide](./skills/sippar-job-search/SKILL.md) |
+| `sippar-web-search` | The first page of Google's results for a search: up to ten links with titles and Google's descriptions | Google, via an Apify Actor | [guide](./skills/sippar-web-search/SKILL.md) |
 | `tavily-web-search` | A live web search: twenty results with their links, and an answer written from them | Tavily | [guide](./skills/tavily-web-search/SKILL.md) |
 | `sippar-github` | Public GitHub: a repo's README, files, issues, pull requests, releases and code search | glim.sh | [guide](./skills/sippar-github/SKILL.md) |
 | `sippar-skills` | Agent skills from skills.sh and CryptoSkill, with author, licence and audit results | skills.sh, CryptoSkill | [guide](./skills/sippar-skills/SKILL.md) |

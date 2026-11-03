@@ -4,6 +4,8 @@ The newest first. Each guide's current version is in its `metadata.version`.
 
 ## 2026-11-03
 
+- `sippar-web-search`: its guide, 1.0.0. The first page of Google's results for a search, read live
+  by an Apify Actor.
 - Every guide in one shape: Try it, How to ask, Reading the answer, Limits and caveats, Cost.
   Descriptions say when to use the model; dated test notes are gone from the body; each guide's
   own change list moved here.
@@ -31,6 +33,7 @@ The newest first. Each guide's current version is in its `metadata.version`.
 
 ## crypto-skills
 
+- 2.2.1 (2026-11-03): `sippar-web-search`'s skill opens by exact name too.
 - 2.2.0 (2026-11-03): the guide in the new shape.
 - 2.1.2 (2026-11-02): the two free models' skills open by exact name too (3D models, UI animation).
 - 2.1.1 (2026-10-13): the four newest models' skills open by exact name too (Facebook, news,
@@ -85,6 +88,7 @@ The newest first. Each guide's current version is in its `metadata.version`.
 
 ## sippar-antseed-buyer
 
+- 3.1.0 (2026-11-03): `sippar-web-search`.
 - 3.0.0 (2026-11-03): the guide in the new shape.
 - 2.19.0 (2026-11-02): `ui-animation-search`, and the two free models named as free; a shorter description.
 - 2.18.0 (2026-10-24): the seventeenth model, `3d-model-search` (its id carries no sippar- prefix); a 409 `payment_negotiation_failed` is your buyer's channel with this seller, and what to do about it.
@@ -176,6 +180,7 @@ The newest first. Each guide's current version is in its `metadata.version`.
 
 ## sippar-skill-adapter
 
+- 1.1.1 (2026-11-03): `sippar-web-search` in the capability map.
 - 1.1.0 (2026-11-03): the guide in the new shape.
 - 1.0.1 (2026-10-10): what the first real run taught the video lane: frame shape, the 409 retry, the two duration shapes.
 - 1.0.0 (2026-10-10): first draft, from the video adapter experiments of 2026-10-09/10 (five
@@ -185,6 +190,7 @@ The newest first. Each guide's current version is in its `metadata.version`.
 
 ## sippar-skills
 
+- 1.1.1 (2026-11-03): the list includes `sippar-web-search`'s skill.
 - 1.1.0 (2026-11-03): the guide in the new shape.
 - 1.0.3 (2026-11-02): the list includes the two free models' skills (3D models, UI animation).
 - 1.0.2 (2026-10-13): the list now includes the four newest models' skills (Facebook, news,
@@ -200,6 +206,10 @@ The newest first. Each guide's current version is in its `metadata.version`.
 - 1.1.0 (2026-11-03): the guide in the new shape.
 - 1.0.1 (2026-10-12): `sort: date` is refused and points to `uploaded`.
 - 1.0.0 (2026-10-12): first publish.
+
+## sippar-web-search
+
+- 1.0.0 (2026-11-03): first publish.
 
 ## sippar-x-social
 

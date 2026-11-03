@@ -174,6 +174,15 @@ def jobs(line: str) -> str:
     return r.choices[0].message.content
 
 
+def web_results(search: str) -> str:
+    """The first page of Google's results for one search: position, link, title and Google's description."""
+    r = client.chat.completions.create(
+        model="sippar-web-search",
+        messages=[{"role": "user", "content": search}],
+    )
+    return r.choices[0].message.content
+
+
 def web_search(question: str) -> str:
     """The last user message is the query; `max_results` and `include_images` are optional."""
     r = client.chat.completions.create(

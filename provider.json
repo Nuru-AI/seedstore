@@ -21,6 +21,10 @@
       "supportedParameters": ["include_images", "max_results"]
     },
     {
+      "id": "sippar-web-search",
+      "supportedParameters": []
+    },
+    {
       "id": "crypto-skills",
       "supportedParameters": []
     },

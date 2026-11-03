@@ -40,6 +40,8 @@ case "${1:-}" in
     call "$(jq -cn --arg c "$2" '{model:"sippar-amazon",messages:[{role:"user",content:$c}]}')" ;;
   jobs) # Job postings: one line, a role and a place; outside the US end it with the country, e.g. 'marketing manager jobs in Berlin country de'
     call "$(jq -cn --arg c "$2" '{model:"sippar-job-search",messages:[{role:"user",content:$c}]}')" ;;
+  web) # The first page of Google's results: the search as you would type it into Google; pass it as $2
+    call "$(jq -cn --arg c "$2" '{model:"sippar-web-search",messages:[{role:"user",content:$c}]}')" ;;
   search)  # the last user message is the query; pass it as $2
     call "$(jq -cn --arg c "$2" '{model:"tavily-web-search",messages:[{role:"user",content:$c}]}')" ;;
   github) # GitHub: a ref (owner/repo, a github.com URL) or a GitHub search; pass it as $2.

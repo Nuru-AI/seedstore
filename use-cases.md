@@ -203,6 +203,14 @@ Stripe postings. Check `employer_name` on each row.
 **Outside the US.** End the line with the country: `marketing manager jobs in Berlin country de`.
 Without it the search runs in the US.
 
+## sippar-web-search
+
+**A company's own site.** Send the name with "official website"; the company's own site is usually
+the first result. Read `url` from the first rows rather than guessing a domain.
+
+**What ranks for a phrase.** Send the phrase as a buyer would type it; `results` is Google's order,
+and `related_keywords` lists the searches Google suggests next.
+
 ## tavily-web-search
 
 **Current information with sources.** Ask the question as the last user message; the page is
