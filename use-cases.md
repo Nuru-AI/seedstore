@@ -75,6 +75,25 @@ claims and offers a category leads with. Cite each ad by its `url` in the Ad Lib
 
 **Go deeper.** Follow the cursor in the closing line: the next 30 ads, or the next 3 posts.
 
+## sippar-instagram-social
+
+**What a brand posted this month.** Send its `@name`: its recent posts with likes, comments, shares
+and plays. Sort by `date` first; the list is not in date order.
+
+**Which reels travel.** `{"query": "@natgeo", "by": "reels"}`, then compare `plays` with `likes`
+across the rows. Open the top links to watch them on Instagram.
+
+**Size up an account.** `{"query": "@natgeo", "by": "profile"}`: followers, post count, category,
+website and the start of the bio.
+
+## sippar-tiktok-social
+
+**What a creator posts and how it lands.** Send `@handle`: their latest videos with views, likes,
+comments, shares and saves. Skip `pinned` rows and `ad` rows when you compare recent videos.
+
+**One video's numbers.** `{"query": "<video link>", "by": "video"}`: its counts, length and the
+creator's handle.
+
 ## sippar-video-search
 
 Public YouTube videos: a search's videos, or one video's details. No description, transcript or

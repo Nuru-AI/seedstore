@@ -24,6 +24,10 @@ case "${1:-}" in
     call "$(jq -cn --arg c "$2" '{model:"sippar-linkedin-social",messages:[{role:"user",content:$c}]}')" ;;
   facebook) # Facebook/Instagram ads (Meta Ad Library): keywords, or one company's ads as JSON, e.g. '{"query":"Stripe","by":"company","country":"US"}'
     call "$(jq -cn --arg c "$2" '{model:"sippar-facebook-social",messages:[{role:"user",content:$c}]}')" ;;
+  instagram) # One Instagram account's recent posts: its @name or profile link; reels or profile as JSON, e.g. '{"query":"@natgeo","by":"reels"}'
+    call "$(jq -cn --arg c "$2" '{model:"sippar-instagram-social",messages:[{role:"user",content:$c}]}')" ;;
+  tiktok) # One TikTok creator's latest videos: @handle or profile link; one video as JSON, e.g. '{"query":"<video link>","by":"video"}'
+    call "$(jq -cn --arg c "$2" '{model:"sippar-tiktok-social",messages:[{role:"user",content:$c}]}')" ;;
   video) # Videos: search words, or one video's link for its details; filters as JSON, e.g. '{"query":"home espresso machine review","uploaded":"year"}'
     call "$(jq -cn --arg c "$2" '{model:"sippar-video-search",messages:[{role:"user",content:$c}]}')" ;;
   3d) # 3D models on Sketchfab: search words, or one model's link for its details; filters as JSON, e.g. '{"query":"phone stand","file_format":"stl","downloadable":"true"}'

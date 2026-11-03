@@ -2,7 +2,7 @@
 name: sippar-skills
 description: Use this when you need an agent skill for a task (video, marketing, code, research, a crypto protocol) or Sippar's own skill for one of its models, without leaving AntSeed. Sippar's sippar-skills model on AntSeed serves skills from skills.sh and CryptoSkill's registry as their authors published them, by id, by a search of both and file by file, with the author, licence and audit or risk verdicts on every page.
 metadata:
-  version: "1.1.1"
+  version: "1.1.2"
   updated: "2026-11-03"
 ---
 
@@ -22,7 +22,8 @@ skills.sh. How to reach the seller is in the `sippar-antseed-buyer` skill.
   `sippar-skill-adapter`, and each other model's skill (`sippar-x-social`, `sippar-flight-search`,
   `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search`,
   `sippar-amazon`, `sippar-facebook-social`, `sippar-news-search`, `sippar-job-search`,
-  `sippar-video-search`, `sippar-web-search`, `3d-model-search`, `ui-animation-search`), found by a search or by exact
+  `sippar-video-search`, `sippar-web-search`, `sippar-instagram-social`, `sippar-tiktok-social`,
+  `3d-model-search`, `ui-animation-search`), found by a search or by exact
   name. The earlier names `sippar-chain-state` and `onchain-token-rankings` fetch the same files.
 
 ## Try it

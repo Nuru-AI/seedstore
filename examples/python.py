@@ -76,6 +76,28 @@ def facebook_page_posts(page_url: str, cursor: str | None = None) -> str:
     return r.choices[0].message.content
 
 
+def instagram(account: str, by: str = "posts", cursor: str | None = None) -> str:
+    """One public Instagram account: its recent posts, its reels (by="reels") or its profile (by="profile").
+    `account` is its @name or profile link. Links, counts and caption starts; no photos or videos."""
+    ask = {"query": account, **({"by": by} if by != "posts" else {}), **({"cursor": cursor} if cursor else {})}
+    r = client.chat.completions.create(
+        model="sippar-instagram-social",
+        messages=[{"role": "user", "content": json.dumps(ask) if len(ask) > 1 else account}],
+    )
+    return r.choices[0].message.content
+
+
+def tiktok(creator_or_video: str, by: str = "profile", cursor: str | None = None) -> str:
+    """One public TikTok creator's latest videos (@handle or profile link), or one video (by="video", its link).
+    Links, counts and caption starts; no video files."""
+    ask = {"query": creator_or_video, **({"by": by} if by != "profile" else {}), **({"cursor": cursor} if cursor else {})}
+    r = client.chat.completions.create(
+        model="sippar-tiktok-social",
+        messages=[{"role": "user", "content": json.dumps(ask) if len(ask) > 1 else creator_or_video}],
+    )
+    return r.choices[0].message.content
+
+
 def video(line: str, **filters: str) -> str:
     """Public YouTube videos: search words for up to 20 matching videos, or one video's link
     ("https://www.youtube.com/watch?v=...") for its details. Search filters ride inside the message

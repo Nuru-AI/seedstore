@@ -4,6 +4,8 @@ The newest first. Each guide's current version is in its `metadata.version`.
 
 ## 2026-11-03
 
+- `sippar-instagram-social` and `sippar-tiktok-social`: their guides, 1.0.0. One account's posts,
+  reels or profile on Instagram; one creator's videos, or one video, on TikTok; from Social Fetch.
 - `sippar-web-search`: its guide, 1.0.0. The first page of Google's results for a search, read live
   by an Apify Actor.
 - Every guide in one shape: Try it, How to ask, Reading the answer, Limits and caveats, Cost.
@@ -33,6 +35,7 @@ The newest first. Each guide's current version is in its `metadata.version`.
 
 ## crypto-skills
 
+- 2.2.2 (2026-11-03): the Instagram and TikTok models' skills open by exact name too.
 - 2.2.1 (2026-11-03): `sippar-web-search`'s skill opens by exact name too.
 - 2.2.0 (2026-11-03): the guide in the new shape.
 - 2.1.2 (2026-11-02): the two free models' skills open by exact name too (3D models, UI animation).
@@ -88,6 +91,7 @@ The newest first. Each guide's current version is in its `metadata.version`.
 
 ## sippar-antseed-buyer
 
+- 3.2.0 (2026-11-03): `sippar-instagram-social` and `sippar-tiktok-social`.
 - 3.1.0 (2026-11-03): `sippar-web-search`.
 - 3.0.0 (2026-11-03): the guide in the new shape.
 - 2.19.0 (2026-11-02): `ui-animation-search`, and the two free models named as free; a shorter description.
@@ -158,6 +162,10 @@ The newest first. Each guide's current version is in its `metadata.version`.
 - 1.1.0 (2026-11-03): the guide in the new shape.
 - 1.0.0 (2026-10-10): first publish.
 
+## sippar-instagram-social
+
+- 1.0.0 (2026-11-03): first publish.
+
 ## sippar-job-search
 
 - 1.1.0 (2026-11-03): the guide in the new shape.
@@ -180,6 +188,7 @@ The newest first. Each guide's current version is in its `metadata.version`.
 
 ## sippar-skill-adapter
 
+- 1.1.2 (2026-11-03): Instagram and TikTok in the capability map.
 - 1.1.1 (2026-11-03): `sippar-web-search` in the capability map.
 - 1.1.0 (2026-11-03): the guide in the new shape.
 - 1.0.1 (2026-10-10): what the first real run taught the video lane: frame shape, the 409 retry, the two duration shapes.
@@ -190,6 +199,7 @@ The newest first. Each guide's current version is in its `metadata.version`.
 
 ## sippar-skills
 
+- 1.1.2 (2026-11-03): the list includes the Instagram and TikTok models' skills.
 - 1.1.1 (2026-11-03): the list includes `sippar-web-search`'s skill.
 - 1.1.0 (2026-11-03): the guide in the new shape.
 - 1.0.3 (2026-11-02): the list includes the two free models' skills (3D models, UI animation).
@@ -200,6 +210,10 @@ The newest first. Each guide's current version is in its `metadata.version`.
   ids, files by path, a search of both indexes paged together, the repository's license line and
   skills.sh's audit verdicts on every skills.sh page. `crypto-skills` keeps serving CryptoSkill and
   Sippar's own skills only. The `sippar-skill-adapter` skill.
+
+## sippar-tiktok-social
+
+- 1.0.0 (2026-11-03): first publish.
 
 ## sippar-video-search
 

@@ -89,6 +89,8 @@ covers other clients, limits and every error.
 | `sippar-reddit-social` | Reddit threads for a search: title, subreddit, score, comment count and link | glim.sh | [guide](./skills/sippar-reddit-social/SKILL.md) |
 | `sippar-linkedin-social` | Public LinkedIn posts for a search: author, date, reactions and link, up to 50 a call | Social Fetch | [guide](./skills/sippar-linkedin-social/SKILL.md) |
 | `sippar-facebook-social` | Ads from Meta's Ad Library, or a public Facebook page's recent posts | Social Fetch | [guide](./skills/sippar-facebook-social/SKILL.md) |
+| `sippar-instagram-social` | One public Instagram account's recent posts, reels or profile: link, date, likes, comments, plays and the start of each caption | Social Fetch | [guide](./skills/sippar-instagram-social/SKILL.md) |
+| `sippar-tiktok-social` | One public TikTok creator's latest videos, or one video: link, date, views, likes, shares, saves and the start of each caption | Social Fetch | [guide](./skills/sippar-tiktok-social/SKILL.md) |
 | `sippar-video-search` | YouTube videos for a search, or one video's details and chapters | ScrapeMole, Social Fetch | [guide](./skills/sippar-video-search/SKILL.md) |
 | `3d-model-search` | Free. 3D models with creator, licence and download formats, with a filter for printable STL | Sketchfab | [guide](./skills/3d-model-search/SKILL.md) |
 | `ui-animation-search` | Free. Animated React UI components, and any one component's full source with its MIT notice | Open-source shadcn registries | [guide](./skills/ui-animation-search/SKILL.md) |

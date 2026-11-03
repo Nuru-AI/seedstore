@@ -2,7 +2,7 @@
 name: sippar-antseed-buyer
 description: Use this before calling any of Sippar's models on AntSeed (every sippar-* model, plus 3d-model-search, ui-animation-search, tavily-web-search, quicknode-blockchain-data, nansen-crypto-screener and crypto-skills), from your own AntSeed buyer or an AntSeed API-key gateway. It covers pinning the Sippar peer, the request shape that keeps your options, the two channels that survive a translating client, the 8-calls-at-once limit, reading the routing line and errors, and confirming the answer came from Sippar. Also use it when an option was ignored, the wrong chain came back, or a call failed with 429, 409 payment_negotiation_failed or connection refused on 8377.
 metadata:
-  version: "3.1.0"
+  version: "3.2.0"
   updated: "2026-11-03"
 ---
 
@@ -36,6 +36,8 @@ chat-completions path (section 2), and, for the models with top-level options, t
 | `sippar-reddit-social` | public Reddit posts matching a search, from glim.sh: title, thread link, subreddit, author, date, score and comment count per post, no post text or comments. Send keywords; `time` and `cursor` go inside the message text as JSON | the `sippar-reddit-social` skill |
 | `sippar-linkedin-social` | public LinkedIn posts matching a search, from Social Fetch: link, date, author and counts per post, no post text. Send keywords; `posts` and `cursor` go inside the message text as JSON | the `sippar-linkedin-social` skill |
 | `sippar-facebook-social` | Facebook via Social Fetch, as returned: Ad Library ads by keyword, or `"by": "company"` for one company's ads (long pages, about 18,000 to 80,000 tokens), or `"by": "page"` with a facebook.com page link for its recent posts; filters and `cursor` go inside the message text as JSON | the `sippar-facebook-social` skill |
+| `sippar-instagram-social` | one public Instagram account from Social Fetch, cut to search results: its recent posts or reels (link, date, counts, the caption's first 150 characters) or its profile; no photos, videos or full captions. Send the account's @name or profile link; `by` and `cursor` go inside the message text as JSON | the `sippar-instagram-social` skill |
+| `sippar-tiktok-social` | one public TikTok creator's latest videos, or one video by its link, from Social Fetch, cut to search results (link, date, counts, the caption's first 150 characters); no video files or full captions. Send an @handle or profile link; `by` and `cursor` go inside the message text as JSON | the `sippar-tiktok-social` skill |
 | `sippar-news-search` | news from Google News via OpenWeb Ninja, each article cut to headline, publisher, date, link and snippet, no article text. Send one line: a search of the past week, `headlines` for the day's top stories, or `headlines business` (or another of eight topics) | the `sippar-news-search` skill |
 | `sippar-video-search` | public YouTube videos: a search's videos from ScrapeMole (title, link, channel, views, length, the age YouTube shows), or one video's details from Social Fetch by its link (publish time, counts, genre, keywords, chapters, caption languages, related videos); no description, transcript or comment text. Send search words or one video link; `sort`, `uploaded` and `duration` go inside the message text as JSON | the `sippar-video-search` skill |
 | `3d-model-search` | free: public 3D models on Sketchfab: a search's models (title, link, creator, licence, thumbnail, downloadable or not, counts, download formats), or one model's details by its link (the licence's terms, downloads, materials, textures); no files and no description text. Send search words or one model link; `license`, `downloadable`, `file_format`, `categories`, `sort_by` and `cursor` go inside the message text as JSON | the `3d-model-search` skill |
@@ -61,7 +63,8 @@ Load only the skill of the model you are calling, not all of them. Paging differ
 never write one "next page" loop for all of them:
 
 - **A cursor you send back:** `sippar-linkedin-social`, `sippar-reddit-social`,
-  `sippar-facebook-social`, `sippar-job-search`.
+  `sippar-facebook-social`, `sippar-job-search`, `sippar-instagram-social` and `sippar-tiktok-social`
+  (`page.nextCursor`, when the answer carries one).
 - **A page number:** `sippar-github`, `sippar-amazon`, `crypto-skills`, `sippar-skills`.
 - **A cursor you send back:** also `3d-model-search` and `ui-animation-search` (`next.cursor`).
 - **One call is one page:** every other model. `sippar-x-social` shows X's `next_cursor`, but you
@@ -201,7 +204,7 @@ The routing line (section 6) catches the wrong chain; only your own code catches
 `fields`. Second, require only what the model announces:
 `quicknode-blockchain-data` announces `address, blocks, fields, network, rpc, tokens`;
 `nansen-crypto-screener` announces `chains, rows, sort, symbols, timeframe, view`; `tavily-web-search`
-announces `include_images, max_results`; `crypto-skills`, `sippar-skills`, `sippar-x-social`, `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search`, `sippar-amazon`, `sippar-facebook-social`, `sippar-news-search`, `sippar-job-search`, `sippar-video-search`, `sippar-web-search`, `3d-model-search` and `ui-animation-search` announce nothing, so requiring any name on them refuses every call. Read the current lists:
+announces `include_images, max_results`; `crypto-skills`, `sippar-skills`, `sippar-x-social`, `sippar-flight-search`, `sippar-linkedin-social`, `sippar-github`, `sippar-reddit-social`, `sippar-hotel-search`, `sippar-amazon`, `sippar-facebook-social`, `sippar-instagram-social`, `sippar-tiktok-social`, `sippar-news-search`, `sippar-job-search`, `sippar-video-search`, `sippar-web-search`, `3d-model-search` and `ui-animation-search` announce nothing, so requiring any name on them refuses every call. Read the current lists:
 
 ```bash
 antseed network peer 706fca9c0d0684c30f86209aae0c3565ce1aa69f --json \
