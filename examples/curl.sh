@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Working calls to Sippar's models on AntSeed, through YOUR AntSeed buyer proxy (default
-# 127.0.0.1:8377). `3d` and `ui` are free within a daily allowance; every other case is a paid
-# call, billed per output token at the rate on the peer record. Run one at a time.
+# 127.0.0.1:8377). `3d`, `ui` and the ten public-data cases (papers to books) are free within a daily
+# allowance; every other case is a paid call, billed per output token at the rate on the peer record. Run one at a time.
 # Usage: ./curl.sh <case> ['your words'], e.g. ./curl.sh reddit 'home espresso machine'.
 # Transport rules: the sippar-antseed-buyer skill.
 set -euo pipefail
@@ -34,6 +34,26 @@ case "${1:-}" in
     call "$(jq -cn --arg c "$2" '{model:"3d-model-search",messages:[{role:"user",content:$c}]}')" ;;
   ui) # Animated React components (free): search words, or a component id from a row, e.g. '@magicui/marquee' for its source
     call "$(jq -cn --arg c "$2" '{model:"ui-animation-search",messages:[{role:"user",content:$c}]}')" ;;
+  papers) # Scholarly works from OpenAlex: search words; fewer rows as JSON, e.g. '{"query":"large language model agents","limit":5}' (free)
+    call "$(jq -cn --arg c "$2" '{model:"openalex-search",messages:[{role:"user",content:$c}]}')" ;;
+  records) # Publication records from Crossref: search words (free)
+    call "$(jq -cn --arg c "$2" '{model:"crossref-search",messages:[{role:"user",content:$c}]}')" ;;
+  arxiv) # arXiv preprints matching every word: two or three precise words, e.g. 'protein structure prediction' (free)
+    call "$(jq -cn --arg c "$2" '{model:"arxiv-search",messages:[{role:"user",content:$c}]}')" ;;
+  filings) # US company filings from SEC EDGAR holding a phrase; forms as JSON, e.g. '{"query":"stablecoin reserves","forms":"10-K"}' (free)
+    call "$(jq -cn --arg c "$2" '{model:"sec-edgar-search",messages:[{role:"user",content:$c}]}')" ;;
+  quakes) # Recent earthquakes from USGS: e.g. 'M6 30 days' (free)
+    call "$(jq -cn --arg c "$2" '{model:"usgs-earthquakes",messages:[{role:"user",content:$c}]}')" ;;
+  weather) # Daily weather from NASA POWER: LAT LON START END, e.g. '32.08 34.78 2026-10-01 2026-10-07' (free)
+    call "$(jq -cn --arg c "$2" '{model:"nasa-power-weather",messages:[{role:"user",content:$c}]}')" ;;
+  indicator) # World Bank Open Data: a country code and an indicator code or word, e.g. 'IL gdp growth' (free)
+    call "$(jq -cn --arg c "$2" '{model:"country-indicators",messages:[{role:"user",content:$c}]}')" ;;
+  wiki) # English Wikipedia articles: search words (free)
+    call "$(jq -cn --arg c "$2" '{model:"wikipedia-search",messages:[{role:"user",content:$c}]}')" ;;
+  npm) # npm packages: search words, e.g. 'csv parser' (free)
+    call "$(jq -cn --arg c "$2" '{model:"package-search-for-npm",messages:[{role:"user",content:$c}]}')" ;;
+  books) # Books from Open Library: a title, an author or words (free)
+    call "$(jq -cn --arg c "$2" '{model:"open-library-search",messages:[{role:"user",content:$c}]}')" ;;
   news) # News: a search of the past week, or 'headlines', or 'headlines business' (eight topics)
     call "$(jq -cn --arg c "$2" '{model:"sippar-news-search",messages:[{role:"user",content:$c}]}')" ;;
   flights) # one line: FROM TO DATE [RETURN-DATE] [ADULTS], airport codes; pass it as $2

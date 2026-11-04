@@ -1,8 +1,10 @@
 # Sippar's models on AntSeed
 
 Live data from X, Reddit, LinkedIn, YouTube, Google Flights, Amazon, job boards, news, GitHub and
-web search, available as models on [AntSeed](https://antseed.com). Every answer names its source.
-Two models are free: `3d-model-search` and `ui-animation-search`.
+web search, available as models on [AntSeed](https://antseed.com), plus free public data: research
+papers, company filings, earthquakes, weather, World Bank figures, Wikipedia, npm packages and books.
+Every answer names its source. Twelve models are free: the ten public-data models, `3d-model-search`
+and `ui-animation-search`.
 
 AntSeed is a peer-to-peer marketplace for AI models. You run its desktop app or command-line buyer
 on your own machine; it finds a seller, sends your request and pays per answer from your AntSeed
@@ -94,6 +96,16 @@ covers other clients, limits and every error.
 | `sippar-video-search` | YouTube videos for a search, or one video's details and chapters | ScrapeMole, Social Fetch | [guide](./skills/sippar-video-search/SKILL.md) |
 | `3d-model-search` | Free. 3D models with creator, licence and download formats, with a filter for printable STL | Sketchfab | [guide](./skills/3d-model-search/SKILL.md) |
 | `ui-animation-search` | Free. Animated React UI components, and any one component's full source with its MIT notice | Open-source shadcn registries | [guide](./skills/ui-animation-search/SKILL.md) |
+| `openalex-search` | Free. Scholarly papers, books and datasets for a search: year, venue, citation count, authors, DOI and open-access link | OpenAlex | [guide](./skills/openalex-search/SKILL.md) |
+| `crossref-search` | Free. Publication records for a search: title, type, date, venue, publisher, authors, citation count and DOI | Crossref | [guide](./skills/crossref-search/SKILL.md) |
+| `arxiv-search` | Free. Preprints matching every search word, with abstracts and links to the paper and its PDF | arXiv | [guide](./skills/arxiv-search/SKILL.md) |
+| `sec-edgar-search` | Free. US company filings whose text holds a phrase: company, form, filing date and a link to the filing, with an optional form filter | SEC EDGAR | [guide](./skills/sec-edgar-search/SKILL.md) |
+| `usgs-earthquakes` | Free. Recent earthquakes worldwide above a magnitude over up to 30 days: place, time, depth, tsunami flag and event page | USGS | [guide](./skills/usgs-earthquakes/SKILL.md) |
+| `nasa-power-weather` | Free. Daily temperature, rainfall, solar irradiance and wind for a latitude and longitude, up to 31 days | NASA POWER | [guide](./skills/nasa-power-weather/SKILL.md) |
+| `country-indicators` | Free. One development indicator for one country by year: GDP, growth, population, inflation, unemployment, or any indicator code | World Bank Open Data | [guide](./skills/country-indicators/SKILL.md) |
+| `wikipedia-search` | Free. English Wikipedia articles for a search: title, the matching snippet, word count, last edit and link | Wikipedia | [guide](./skills/wikipedia-search/SKILL.md) |
+| `package-search-for-npm` | Free. JavaScript packages for a search: version, licence, last publish, weekly and monthly downloads, dependents and links | npm registry | [guide](./skills/package-search-for-npm/SKILL.md) |
+| `open-library-search` | Free. Books by title, author or subject: first publication year, editions, languages, ISBNs and link | Open Library | [guide](./skills/open-library-search/SKILL.md) |
 | `sippar-news-search` | News from the past week for a search, or today's top stories by topic | Google News, via OpenWeb Ninja | [guide](./skills/sippar-news-search/SKILL.md) |
 | `sippar-flight-search` | Fares for one route and date, one way or return, with Google's call on whether the price is low, typical or high | Google Flights, via stabletravel.dev | [guide](./skills/sippar-flight-search/SKILL.md) |
 | `sippar-hotel-search` | Places to stay with stars, rating, amenities and a nightly price, and each booking site's price on request | Google Maps, via OpenWeb Ninja | [guide](./skills/sippar-hotel-search/SKILL.md) |

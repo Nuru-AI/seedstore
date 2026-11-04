@@ -89,6 +89,46 @@
       "supportedParameters": []
     },
     {
+      "id": "openalex-search",
+      "supportedParameters": []
+    },
+    {
+      "id": "crossref-search",
+      "supportedParameters": []
+    },
+    {
+      "id": "arxiv-search",
+      "supportedParameters": []
+    },
+    {
+      "id": "sec-edgar-search",
+      "supportedParameters": []
+    },
+    {
+      "id": "usgs-earthquakes",
+      "supportedParameters": []
+    },
+    {
+      "id": "nasa-power-weather",
+      "supportedParameters": []
+    },
+    {
+      "id": "country-indicators",
+      "supportedParameters": []
+    },
+    {
+      "id": "wikipedia-search",
+      "supportedParameters": []
+    },
+    {
+      "id": "package-search-for-npm",
+      "supportedParameters": []
+    },
+    {
+      "id": "open-library-search",
+      "supportedParameters": []
+    },
+    {
       "id": "sippar-chain-state",
       "sameAs": "quicknode-blockchain-data",
       "supportedParameters": ["address", "blocks", "fields", "network", "rpc", "tokens"]

@@ -1,9 +1,9 @@
 ---
 name: sippar-antseed-buyer
-description: Use this before calling any of Sippar's models on AntSeed (every sippar-* model, plus 3d-model-search, ui-animation-search, tavily-web-search, quicknode-blockchain-data, nansen-crypto-screener and crypto-skills), from your own AntSeed buyer or an AntSeed API-key gateway. It covers pinning the Sippar peer, the request shape that keeps your options, the two channels that survive a translating client, the 8-calls-at-once limit, reading the routing line and errors, and confirming the answer came from Sippar. Also use it when an option was ignored, the wrong chain came back, or a call failed with 429, 409 payment_negotiation_failed or connection refused on 8377.
+description: Use this before calling any of Sippar's models on AntSeed (every sippar-* model, plus 3d-model-search, ui-animation-search, the ten free public-data models such as openalex-search and usgs-earthquakes, tavily-web-search, quicknode-blockchain-data, nansen-crypto-screener and crypto-skills), from your own AntSeed buyer or an AntSeed API-key gateway. It covers pinning the Sippar peer, the request shape that keeps your options, the two channels that survive a translating client, the 8-calls-at-once limit, reading the routing line and errors, and confirming the answer came from Sippar. Also use it when an option was ignored, the wrong chain came back, or a call failed with 429, 409 payment_negotiation_failed or connection refused on 8377.
 metadata:
-  version: "3.2.0"
-  updated: "2026-11-03"
+  version: "3.3.0"
+  updated: "2026-11-04"
 ---
 
 # Reaching Sippar's models on AntSeed
@@ -42,6 +42,16 @@ chat-completions path (section 2), and, for the models with top-level options, t
 | `sippar-video-search` | public YouTube videos: a search's videos from ScrapeMole (title, link, channel, views, length, the age YouTube shows), or one video's details from Social Fetch by its link (publish time, counts, genre, keywords, chapters, caption languages, related videos); no description, transcript or comment text. Send search words or one video link; `sort`, `uploaded` and `duration` go inside the message text as JSON | the `sippar-video-search` skill |
 | `3d-model-search` | free: public 3D models on Sketchfab: a search's models (title, link, creator, licence, thumbnail, downloadable or not, counts, download formats), or one model's details by its link (the licence's terms, downloads, materials, textures); no files and no description text. Send search words or one model link; `license`, `downloadable`, `file_format`, `categories`, `sort_by` and `cursor` go inside the message text as JSON | the `3d-model-search` skill |
 | `ui-animation-search` | free: animated React components from nine open-source shadcn registries, matched by your words, or one component's source files, keyframes, install line and MIT notice by its id (`@magicui/marquee`). `registry` and `cursor` go inside the message text as JSON | the `ui-animation-search` skill |
+| `openalex-search` | free: scholarly works from OpenAlex for search words (title, year, venue, citation count, authors, DOI, open-access link); no abstracts | the `openalex-search` skill |
+| `crossref-search` | free: publication records registered with Crossref for search words (title, type, date, venue, publisher, authors, citation count, DOI) | the `crossref-search` skill |
+| `arxiv-search` | free: arXiv preprints matching every search word, with abstracts and links to the paper and PDF | the `arxiv-search` skill |
+| `sec-edgar-search` | free: US company filings from SEC EDGAR full-text search whose text holds a phrase (company, CIK, form, dates, link); `forms` inside the message text as JSON | the `sec-edgar-search` skill |
+| `usgs-earthquakes` | free: recent earthquakes from the USGS catalog, newest first; a magnitude (`M5`) and days (`30 days`) in the line, or `minmagnitude` and `days` as JSON | the `usgs-earthquakes` skill |
+| `nasa-power-weather` | free: daily weather and solar data from NASA POWER for one point. Send `LAT LON START END`, e.g. `32.08 34.78 2026-10-01 2026-10-07`, at most 31 days; coordinates, not place names | the `nasa-power-weather` skill |
+| `country-indicators` | free: one World Bank Open Data indicator for one country by year. Send a country code and an indicator code or word, e.g. `IL gdp`, `USA NY.GDP.PCAP.CD` | the `country-indicators` skill |
+| `wikipedia-search` | free: English Wikipedia articles for search words (title, matching snippet, word count, last edit, link); no article text | the `wikipedia-search` skill |
+| `package-search-for-npm` | free: npm registry packages for search words (version, description, licence, last publish, downloads, dependents, links) | the `package-search-for-npm` skill |
+| `open-library-search` | free: Open Library books by title, author or words (authors, first year, editions, languages, ISBNs, link) | the `open-library-search` skill |
 | `sippar-flight-search` | Google Flights fares for one route and date, via stabletravel.dev. Send one line, `FROM TO DATE [RETURN-DATE] [ADULTS]` with airport codes, never a sentence | the `sippar-flight-search` skill |
 | `sippar-hotel-search` | places to stay for one search, from Google Maps via OpenWeb Ninja: type, stars, rating, amenities, address and Google's current nightly price; end the line with `offers` for each booking site's price | the `sippar-hotel-search` skill |
 | `sippar-job-search` | job postings from Google for Jobs via OpenWeb Ninja, each cut to title, employer, publishing site, employment type, place, posted time, pay, benefits and links, no description text. Send one line with the role and the place; outside the US end it with `country` and two letters (`marketing manager jobs in Berlin country de`) | the `sippar-job-search` skill |
@@ -73,8 +83,9 @@ never write one "next page" loop for all of them:
 Each model's skill says exactly how.
 
 Seller peer `706fca9c0d0684c30f86209aae0c3565ce1aa69f`, onchain agent 84918, settled in USDC on
-Base through your AntSeed payment channel. `3d-model-search` and `ui-animation-search` are free
-within a daily allowance per buyer. The rest bill per output token at the rate on the peer
+Base through your AntSeed payment channel. `3d-model-search`, `ui-animation-search` and the ten
+public-data models (`openalex-search` to `open-library-search` above) are free within a daily
+allowance per buyer. The rest bill per output token at the rate on the peer
 record. Rates change, so read them rather than copying a number:
 
 ```bash
@@ -229,8 +240,9 @@ header (measured by an outside buyer). So:
 
 A sweep over many chains runs in batches of 8 or fewer, with a retry on 429.
 
-**A 429 with `code: "free_tier_exhausted"` is the free models' daily allowance.** `3d-model-search`
-and `ui-animation-search` share 50 calls per buyer address and 150 per IP over a rolling 24 hours.
+**A 429 with `code: "free_tier_exhausted"` is the free models' daily allowance.** The free models
+(`3d-model-search`, `ui-animation-search` and the ten public-data models) share 50 calls per buyer
+address and 150 per IP over a rolling 24 hours.
 The answer carries `limitedBy` (`address` or `ip`) and a `Retry-After` header; wait that long.
 
 **A 409 with `error.type` `payment_negotiation_failed` is your buyer's channel, not the seller.**

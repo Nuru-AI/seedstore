@@ -2,6 +2,15 @@
 
 The newest first. Each guide's current version is in its `metadata.version`.
 
+## 2026-11-04
+
+- Ten free public-data models, each with its guide, 1.0.0: `openalex-search`, `crossref-search`,
+  `arxiv-search`, `sec-edgar-search`, `usgs-earthquakes`, `nasa-power-weather`, `country-indicators`
+  (World Bank Open Data), `wikipedia-search`, `package-search-for-npm` and `open-library-search`.
+  Each serves its provider's public data as the provider returns it, live for each request.
+- README and buyer guide 3.3.0: the ten in the model tables, the free allowance shared by all free
+  models.
+
 ## 2026-11-03
 
 - `sippar-instagram-social` and `sippar-tiktok-social`: their guides, 1.0.0. One account's posts,

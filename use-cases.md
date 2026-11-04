@@ -146,6 +146,26 @@ dependencies and the MIT notice to keep with the copy.
 
 **Browse one registry.** `@magicui` or `@motion-primitives` lists its components, 24 at a time.
 
+## The ten free public-data models
+
+Each serves one provider's public data as that provider returns it, live for each call. Free.
+
+**Literature on a topic.** `openalex-search` for papers with citation counts, `crossref-search` for
+the DOI records, `arxiv-search` for preprints with their abstracts. Read `citedBy` across the rows to
+find the work most cited.
+
+**Who discloses what.** `sec-edgar-search` with a phrase you expect in a filing (`stablecoin
+reserves`), with `"forms": "10-K"` for annual reports only. Each row links to the filing on sec.gov.
+
+**What happened on the ground.** `usgs-earthquakes` with `M6 30 days` for the month's largest
+quakes; `nasa-power-weather` with coordinates and dates for daily temperature, rain, sun and wind.
+
+**A country in numbers.** `country-indicators` with `IL gdp growth`, `DE inflation` or any World
+Bank indicator code, newest year first.
+
+**Background and tools.** `wikipedia-search` for the articles on a subject, `package-search-for-npm`
+for libraries with their downloads and licence, `open-library-search` for books by title or author.
+
 ## sippar-news-search
 
 News articles as Google News lists them: a search of the past week, or the day's top stories.
@@ -386,34 +406,40 @@ Each is a sequence of calls. A value from one answer goes into the next request.
    those products, with price, rating and the reviews on the product page.
 11. **A component, then its library.** `ui-animation-search` for the component you want; then
    `sippar-github` on its registry's repository for the docs and recent releases.
-12. **From a name to its transfers.** `tavily-web-search` for the token's contract address on
+12. **The paper, then the conversation.** `openalex-search` or `arxiv-search` for the work on a
+    subject; then `sippar-x-social` or `sippar-reddit-social` with its title for what people say about it.
+13. **The filing, then the news.** `sec-edgar-search` for the companies that disclose a phrase; then
+    `sippar-news-search` with a company's name for this week's coverage.
+14. **The quake, then the coverage.** `usgs-earthquakes` for the week's largest events; then
+    `sippar-news-search` with the place for the reports from there.
+15. **From a name to its transfers.** `tavily-web-search` for the token's contract address on
    Ethereum; then `quicknode-blockchain-data` with `rpc` `eth_getLogs` on that address over a recent
    block range.
-13. **From a ranking to a holder.** `nansen-crypto-screener` with `chains: ["base"]`, `sort:
+16. **From a ranking to a holder.** `nansen-crypto-screener` with `chains: ["base"]`, `sort:
    volume`, `rows: 10`; take a contract from the page; then `quicknode-blockchain-data` on Base with
    `address` (an account you watch) and `tokens: [that contract]`.
-14. **Market context for a chain read.** `quicknode-blockchain-data` on one chain for fees and
+17. **Market context for a chain read.** `quicknode-blockchain-data` on one chain for fees and
    activity, beside `nansen-crypto-screener` for the same chain over `24h`: what the chain is
    doing and what is trading on it, from two providers, at the same moment.
-15. **Two angles on the same market.** `nansen-crypto-screener` ranked by `netflow` over `1h`,
+18. **Two angles on the same market.** `nansen-crypto-screener` ranked by `netflow` over `1h`,
    and `view: perp-screener` in a second call. Spot flows and perpetuals side by side.
-16. **A watchlist sweep.** For each address you follow, one `quicknode-blockchain-data` call per chain
+19. **A watchlist sweep.** For each address you follow, one `quicknode-blockchain-data` call per chain
    it uses with the three `address*` fields; at most 8 calls in flight; the pages are the
    record.
-17. **News plus the chain.** `tavily-web-search` for what is being said about a protocol, then
+20. **News plus the chain.** `tavily-web-search` for what is being said about a protocol, then
    `quicknode-blockchain-data` with no `address` on its chain to see what its published contracts
    hold now.
-18. **A protocol's skill, then its chain.** `crypto-skills` with the protocol's id for how it
+21. **A protocol's skill, then its chain.** `crypto-skills` with the protocol's id for how it
    works and which contracts it names; then `quicknode-blockchain-data` on that chain with no
    `address`, or with `rpc` on one of those contracts.
-19. **A task's skills, then the market.** `crypto-skills` with two or three keywords for the task; then
+22. **A task's skills, then the market.** `crypto-skills` with two or three keywords for the task; then
    `nansen-crypto-screener` for the chain the chosen skill works on.
-20. **Learn the call, then make it.** `crypto-skills` with `quicknode-blockchain-data` for the
+23. **Learn the call, then make it.** `crypto-skills` with `quicknode-blockchain-data` for the
    arguments; then the `quicknode-blockchain-data` call it describes.
-21. **What is said, then what is so.** `sippar-x-social` for what X is saying about a story this
+24. **What is said, then what is so.** `sippar-x-social` for what X is saying about a story this
    week; then `tavily-web-search` for the sources behind it, or, for an onchain project,
    `quicknode-blockchain-data` or `nansen-crypto-screener` to check the claims against the data.
-22. **Read the code, then the chain.** `sippar-github` for a protocol's contract source or its
+25. **Read the code, then the chain.** `sippar-github` for a protocol's contract source or its
    deployment addresses in the repository; then `quicknode-blockchain-data` with `rpc` on those
    addresses to see what they hold and do now.
 
