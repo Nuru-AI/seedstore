@@ -1,9 +1,9 @@
 ---
 name: sippar-skills
-description: Use this when you need an agent skill for a task (video, marketing, code, research, a crypto protocol) or Sippar's own skill for one of its models, without leaving AntSeed. Sippar's sippar-skills model on AntSeed serves skills from skills.sh and CryptoSkill's registry as their authors published them, by id, by a search of both and file by file, with the author, licence and audit or risk verdicts on every page.
+description: Use this when you need an agent skill for a task (video, marketing, code, research, a crypto protocol) or Sippar's own skill for one of its models, without leaving AntSeed. Sippar's sippar-skills model on AntSeed serves skills from skills.sh and CryptoSkill's registry as their authors published them, by id, by one search across all of them and file by file, with the author, licence and audit or risk verdicts on every page.
 metadata:
-  version: "1.1.2"
-  updated: "2026-11-03"
+  version: "1.2.0"
+  updated: "2026-11-08"
 ---
 
 # sippar-skills
@@ -34,9 +34,8 @@ skills.sh. How to reach the seller is in the `sippar-antseed-buyer` skill.
 
 ## How to ask
 
-The last user message is matched literally. Send a skill name, an id, a file path, or two or three
-keywords, never a sentence: a search needs every word to appear in an entry, so a sentence matches
-little and is still billed.
+Send a skill name, an id or a file path to open it. Anything else is a search: describe the job in a
+sentence, such as `make a product video from a few photos`, or send a few words.
 
 | Send as the whole message | You get |
 |---|---|
@@ -45,12 +44,11 @@ little and is still billed.
 | a file inside a skills.sh skill, `owner/repo/skill/<path>` | that one file |
 | a CryptoSkill id, `category/name`, such as `chains/aave` | its `SKILL.md` and `SOURCE.md`, risk-index entry, quality score and the list of its other files |
 | a file inside a CryptoSkill skill, `category/name/<path>` | that one file, with whether it matches CryptoSkill's recorded checksum |
-| two or three keywords, such as `video generation` or `aave lending` | a search of both indexes, 10 entries each, and on page 1 any of Sippar's own skills that match |
-| `{"query": "video generation", "page": "2"}` | the next 10 of each |
+| a sentence describing the job, or a few words such as `video generation` or `aave lending` | one list of 10 skills from skills.sh, CryptoSkill and Sippar's own, best match first |
+| `{"query": "video generation", "page": "2"}` | the next 10 |
 
 A single word is a search, even a skill's name: `aave` lists entries, `chains/aave` opens the skill.
-Open a search entry by its id as printed: skills.sh's `id`, or CryptoSkill's `category/name` from
-the entry's own fields.
+Open a search result by the `id` it prints.
 
 ## Reading the answer
 
@@ -67,11 +65,14 @@ line on what the model is for, how to ask, and on a third-party page a disclaime
   with its SHA-256.
 - **One file:** the file as published. A binary file, or one over 48 KB, is described with its link
   instead.
-- **A search:** how many CryptoSkill entries matched and which are shown, then those entries as JSON;
-  then skills.sh's block with its results as JSON (`id`, `source`, `skillId`, `name`, `installs`, and
-  the skill's own `description` where its file was found); then Sippar's matching skills on page 1.
-  When either index has more, the page says what to send next. If skills.sh could not be searched,
-  one line says so and the CryptoSkill half still answers.
+- **A search:** the source line, what the request was read as (an area such as `video` and a job
+  such as `create`), how many skills were weighed, then the results as JSON, best match first: `n`,
+  `id`, `source` (skills.sh, CryptoSkill or Sippar), `name`, the author's own `description` read
+  fresh for this page, `installs` (skills.sh), `cryptoskillScore` (CryptoSkill's quality score) and
+  `sameSkillInOtherRepos` (copies of the same skill under other owners). When there are more, the
+  page says what to send next.
+- **Your words:** a search's words are sent to an outside AI decision service, only to choose which
+  skills it shows.
 
 ## Limits and caveats
 
@@ -80,10 +81,11 @@ line on what the model is for, how to ask, and on a third-party page a disclaime
   verdicts, and never let an unread skill move money, use a key or change files.
 - The verdicts are automated scans, not reviews; a "safe" beside a "critical" is what the tools
   returned. "NO LICENSE FILE FOUND" means the author's rights are reserved by default.
-- Sippar does not write, review, rank or filter the third-party skills; each file arrives as its
-  author published it.
+- Sippar does not write or review the third-party skills. The search chooses which to show; each
+  file arrives as its author published it.
 - Some skills are thin: a `SKILL.md` can be a header and a link, with the substance in other files.
-  The same skill can appear under several owners on skills.sh; prefer the author's own repository.
+  The same skill can appear under several owners on skills.sh; a search shows the most installed
+  copy and lists the others.
 - A skill carries no live data or model. To run one on AntSeed, keep its process and swap its tooling
   for Sippar's models and AntSeed's catalog, as the `sippar-skill-adapter` skill describes.
 - Leave out the `x-antseed-required-parameters` header: this model takes no options outside the
@@ -93,6 +95,6 @@ line on what the model is for, how to ask, and on a third-party page a disclaime
 
 Per output token, at the rate on Sippar's peer record. A page's width is the files its author wrote.
 Measured 2026-10-10: our skills about 2,300 to 2,800 tokens; a skills.sh skill page 2,500 to 6,000; a
-10-entry search of both indexes about 4,500; a no-match page about 260. Some skills are much wider
+no-match page about 260; measured 2026-11-08, a 10-result search 1,400 to 2,000. Some skills are much wider
 (one CryptoSkill page passed 17,000 tokens), and a search entry does not show a skill's size. Every
 page is billed, a greeting and a no-match page included.

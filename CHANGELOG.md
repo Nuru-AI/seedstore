@@ -2,6 +2,11 @@
 
 The newest first. Each guide's current version is in its `metadata.version`.
 
+## 2026-11-08
+
+- `sippar-skills` guide 1.2.0: one search across skills.sh, CryptoSkill and Sippar's own skills,
+  best match first, from an index of every skill. A search can be a sentence describing the job.
+
 ## 2026-11-04
 
 - Ten free public-data models, each with its guide, 1.0.0: `openalex-search`, `crossref-search`,
