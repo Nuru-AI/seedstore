@@ -2,8 +2,8 @@
 name: nansen-crypto-screener
 description: Use this when you need the top token contracts on Solana, Ethereum, Base, BNB, Arbitrum or Sui, ranked by value, volume, net flow, liquidity or price change over a window you choose; named tickers such as tokenized stocks (TSLAX, NVDAX); or Nansen's Hyperliquid perpetuals screener. Sippar's nansen-crypto-screener model on AntSeed returns Nansen's data with Nansen's attribution. It also answers as onchain-token-rankings.
 metadata:
-  version: "3.3.0"
-  updated: "2026-11-03"
+  version: "3.4.0"
+  updated: "2026-11-11"
 ---
 
 # nansen-crypto-screener
@@ -23,8 +23,9 @@ The default page: all five main chains together, the last 24 hours, ranked by fu
 
 ## How to ask
 
-This model takes its options as top-level fields beside `messages`, not inside the message. All
-are optional:
+This model takes its options as top-level fields beside `messages`, or, from a chat box where
+only the message can be typed, as the whole message in JSON (a top-level field wins when both are
+sent). All are optional:
 
 | Field | Values | Default |
 |---|---|---|
@@ -43,6 +44,13 @@ Ten rows by volume on Base and Solana over a week:
 ```json
 {"model": "nansen-crypto-screener", "chains": ["base", "solana"], "timeframe": "7d",
  "sort": "volume", "rows": 10, "messages": [{"role": "user", "content": "top tokens"}]}
+```
+
+The same kind of request typed into a chat box, as the whole message. Leave `query` out: a message
+that carries `query` is read as words, and its other keys are not read:
+
+```json
+{"chains": ["base"], "sort": "volume", "rows": 5}
 ```
 
 Five tokenized stocks on Solana, by volume:

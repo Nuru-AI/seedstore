@@ -2,8 +2,8 @@
 name: sippar-facebook-social
 description: Use this when you need the ads a brand runs on Facebook and Instagram, which advertisers run ads on a topic, or what a company, organisation or public figure posted on its Facebook page. Sippar's sippar-facebook-social model on AntSeed returns Meta Ad Library ads by keyword or by company, or a public page's recent posts, from Social Fetch.
 metadata:
-  version: "1.2.0"
-  updated: "2026-11-03"
+  version: "1.3.0"
+  updated: "2026-11-11"
 ---
 
 # sippar-facebook-social
@@ -47,15 +47,20 @@ single-post link is refused before anything is bought.
 | `mediaType` | `image`, `video`, `meme`, `image-and-meme`, `none` or `all` |
 | `startDate`, `endDate` | `YYYY-MM-DD` |
 | `cursor` | the next page: the cursor the previous answer's closing line gives |
+| `limit` | Ad Library only: serve only the first N ads, 3 to 50; a smaller answer bills less |
 
-A page request takes only `cursor`; the other filters are for the Ad Library. Field names are
+A page request takes only `cursor` (a `limit` there is accepted but changes nothing: a page-posts
+read is already 3 posts); the other filters are for the Ad Library. Field names are
 case-sensitive (`sortBy`, `mediaType`, `startDate`), and a value outside these lists
 (`"status": "ACTIVE"`, `"country": "United States"`) is refused before anything is bought. In
 Python: `content=json.dumps({"query": "Stripe", "by": "company", "country": "US"})`.
 
-Each Ad Library page carries 30 ads and each page-posts read carries 3 posts; there is no count
-option. For more, follow the cursor: the closing line gives the next message ready to copy, with
-your filters repeated.
+Each Ad Library page carries 30 ads and each page-posts read carries 3 posts. For a smaller, cheaper
+answer, add `limit`: `{"query": "Nike", "limit": 5}` serves the first 5 ads in Social Fetch's order,
+and the first line says how many were kept of how many returned. 3 is the smallest `limit`. For
+more, follow the cursor: the closing line gives the next message ready to copy, with your filters
+and `limit` repeated. The cursor continues after all 30 ads of the page, so with `limit` the rest of
+that page is skipped; leave `limit` out to get every ad.
 
 ## Reading the answer
 
@@ -102,9 +107,10 @@ Each page post:
 - Media are links, not files, and they can expire. Ads are what Meta's library showed at the
   retrieval time; quote them with that time. Each ad belongs to its advertiser, each post to its
   author and each comment to its commenter. Not affiliated with Meta.
-- An answer with fewer than five ads or posts ends with a list of Sippar's other models on AntSeed
-  and a message to try with each, after the JSON. A page-posts read carries 3 posts, so it always
-  ends with that list.
+- An answer where Social Fetch returned fewer than five ads or posts ends with a list of Sippar's
+  other models on AntSeed and a message to try with each, after the JSON. A page-posts read carries
+  3 posts, so it always ends with that list. Rows you leave out with `limit` do not count: a 30-ad
+  page cut to 3 has no list.
 - Leave out the `x-antseed-required-parameters` header: this model takes no options outside the
   message, so with that header every call is refused.
 
@@ -112,6 +118,7 @@ Each page post:
 
 Per output token, at the rate on Sippar's peer record. Ad Library pages are long: 18,000 to
 80,000 tokens, median about 31,000 (eleven reads, measured 2026-10-11). If your per-request budget
-is lower than that, raise it or narrow the request with `country`, `status`, `mediaType` or dates.
+is lower than that, add `limit` (3 ads is a few thousand tokens) or narrow the request with
+`country`, `status`, `mediaType` or dates.
 Page-posts reads are short: about 2,300 to 3,500 tokens. A request refused before buying bills
 nothing.

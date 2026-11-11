@@ -2,8 +2,8 @@
 name: quicknode-blockchain-data
 description: Use this when you need live blockchain facts on Ethereum, Base, Arbitrum or dozens of other EVM chains, or Sui: the current block, gas and fees, native and ERC-20 balances, one account's balances and transactions, transfer logs for a token or a wallet, a block, a transaction and its receipt, a balance at a past block, internal transfers (trace_filter) or any read-only contract call (eth_call). Sippar's quicknode-blockchain-data model on AntSeed answers as QuickNode returns it. It also answers as sippar-chain-state.
 metadata:
-  version: "3.7.0"
-  updated: "2026-11-03"
+  version: "3.7.1"
+  updated: "2026-11-11"
 ---
 
 # quicknode-blockchain-data
@@ -54,6 +54,10 @@ lays out as rows (QuickNode's raw integer stays in `valueRaw`). On the others a 
 A chain the model does not serve is refused with a free 400.
 
 ## How to ask
+
+From a chat box, name the chain as the whole message: `base` on its own is served Base. A
+sentence never chooses a chain: "latest block on base" is refused free with a message saying to
+send `base` alone, and a longer sentence is served Ethereum.
 
 This model takes its options as top-level fields beside `messages`, not inside the message. All
 six are optional:

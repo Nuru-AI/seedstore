@@ -2,8 +2,8 @@
 name: sippar-x-social
 description: Use this when you need what people are posting on X (Twitter) about anything, such as a brand, a product launch, a match, a person or the news, or what one account posted. Sippar's sippar-x-social model on AntSeed returns public posts for a search with their text, author, engagement counts and link, as glim.sh returns them.
 metadata:
-  version: "1.1.1"
-  updated: "2026-11-03"
+  version: "1.2.0"
+  updated: "2026-11-11"
 ---
 
 # sippar-x-social
@@ -39,11 +39,20 @@ Named things (a brand, a product, a team, an event) return focused pages. A sing
 does not: a coin ticker such as `USDC` comes back as mostly giveaway posts, and no filter removes
 them. Narrow with `from:`, an exact phrase or more words.
 
+For a smaller, cheaper answer, send the message as JSON with `limit`, 1 to 50: only the first N
+posts in X's order are served, and you pay for those tokens only.
+
+```json
+{"model": "sippar-x-social",
+ "messages": [{"role": "user", "content": "{\"query\": \"Formula 1 since:2026-10-01\", \"limit\": 5}"}]}
+```
+
 ## Reading the answer
 
 The first line names glim.sh, when the search ran and the request sent (`Request sent: {"query": ...}`),
-and ends with "glim.sh's response, unchanged." Then glim.sh's JSON, then a closing line and a
-disclaimer. The request echo on the first line also has braces, so start parsing after that
+and ends with "glim.sh's response, unchanged." With `limit`, it first says how many posts were kept
+of how many glim.sh returned, and still ends the same way. Then glim.sh's JSON, then a closing line
+and a disclaimer. The request echo on the first line also has braces, so start parsing after that
 ending:
 
 ```python
@@ -58,7 +67,7 @@ data, _ = json.JSONDecoder().raw_decode(page, start)
   `engagement_rate`, plus `media`, `entities` or
   `quoted_tweet` when the post has them.
 - `count`, `summary` (totals for the page) and `topics` (top hashtags, domains and mentioned
-  accounts).
+  accounts). These are glim.sh's figures for every post it returned, also when `limit` kept fewer.
 - `has_more` and `next_cursor`. This model has no next page: the cursor cannot be sent back. For
   other posts, narrow or widen the search, for example with `since:` or `from:`.
 
@@ -69,12 +78,13 @@ data, _ = json.JSONDecoder().raw_decode(page, start)
 - A post can be only a link, with `lang` set to `zxx`. Its text tells you nothing.
 - When a search finds fewer than five posts, the answer ends with a list of Sippar's other models
   on AntSeed and a message to try with each; it comes after the JSON, so the parser above is not
-  affected.
+  affected. Posts you leave out with `limit` do not count.
 - Leave out the `x-antseed-required-parameters` header (see the `sippar-antseed-buyer` skill).
   This model takes no options outside the message, so with that header every call is refused.
 
 ## Cost
 
 Per output token, at the rate on Sippar's peer record. Most of a page is post text and author
-details: 5,500 to 17,500 tokens, typically 6,000 to 11,000 (measured 2026-10-08). A search that
-fails is refused and, on an open payment channel, bills nothing.
+details: 5,500 to 17,500 tokens, typically 6,000 to 11,000 (measured 2026-10-08). Fewer posts with
+`limit` bill proportionally less. A search that fails is refused and, on an open payment channel,
+bills nothing.

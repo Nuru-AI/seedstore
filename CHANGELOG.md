@@ -2,6 +2,19 @@
 
 The newest first. Each guide's current version is in its `metadata.version`.
 
+## 2026-11-11
+
+- `nansen-crypto-screener` guide 3.4.0: the options can also be typed as the whole message in JSON,
+  such as `{"chains": ["base"], "sort": "volume", "rows": 5}`, with no `query`.
+- `quicknode-blockchain-data` guide 3.7.1: from a chat box, the chain is the whole message (`base`);
+  a short sentence naming a chain is refused free with the message to send instead.
+- `sippar-tiktok-social`: its refusals no longer point at keyword search, which this model does not
+  serve, and each one names a message that works.
+- `sippar-facebook-social` 1.3.0, `sippar-x-social` 1.2.0 and `sippar-amazon` 1.2.0: a `limit`
+  option in the JSON message serves only the first N rows (ads, posts, products), for a
+  smaller answer that bills less at the same rate. Facebook takes 3 to 50; X and Amazon 1 to 50.
+  Without `limit`, every answer is the same as before.
+
 ## 2026-11-08
 
 - `sippar-skills` guide 1.2.0: one search across skills.sh, CryptoSkill and Sippar's own skills,

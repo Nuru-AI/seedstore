@@ -2,8 +2,8 @@
 name: sippar-amazon
 description: Use this when you need Amazon products for a search or a category's bestsellers, with price (with and without VAT), rating and review count, or one product's buybox offer, other sellers, stock, delivery and top reviews, on amazon.com, .co.uk, .de, .fr, .es or .it. Sippar's sippar-amazon model on AntSeed returns Amazon data from glim.sh.
 metadata:
-  version: "1.1.0"
-  updated: "2026-11-03"
+  version: "1.2.0"
+  updated: "2026-11-11"
 ---
 
 # sippar-amazon
@@ -42,7 +42,9 @@ To add options, send the message as JSON with glim.sh's own field names, `query`
   lookup is refused.
 - `response_format`: `concise` (default) or `detailed`, which keeps images, variants and the full
   offers list.
-- There is no count option. Keep the first N yourself.
+- `limit` (a search only), 1 to 50: serve only the first N products of each list, in Amazon's
+  order, for a smaller answer that bills less. `{"query": "usb c charger", "limit": 5}`. The first
+  line says how many were kept of how many glim.sh returned. With a product lookup it is refused.
 - Category slugs differ by marketplace: `electronics` on .com, `elektronik` on .de, `electronique` on
   .fr. An unknown slug is answered with glim.sh's 404 and a suggestion, and costs only that short page.
 
@@ -95,7 +97,7 @@ A product (`asin` at the top):
 - A line the model can tell is wrong before buying opens with `Not sent to glim.sh:` and the reason.
 - When a search finds fewer than five products, the answer ends with a list of Sippar's other models
   on AntSeed and a message to try with each; it comes after the JSON, so the parser above is not
-  affected.
+  affected. Products you leave out with `limit` do not count.
 - Leave out the `x-antseed-required-parameters` header: this model takes no options outside the
   message, so with that header every call is refused.
 
@@ -103,4 +105,5 @@ A product (`asin` at the top):
 
 Per output token, at the rate on Sippar's peer record. Searches are about 430 to 7,300 tokens,
 median 2,700; product pages 800 to 2,100, median 1,000, and about twice as wide with reviews
-(measured 2026-10-10). A refused line bills nothing.
+(measured 2026-10-10). Fewer products with `limit` bill proportionally less. A refused line bills
+nothing.
